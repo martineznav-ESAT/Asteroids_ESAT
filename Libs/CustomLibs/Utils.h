@@ -8,13 +8,19 @@
 #include <time.h>
 #include <math.h>
 
+#include "./JMATH.h"
+
 #ifndef Utils_H
 #define Utils_H
 
 namespace Utils{
+    struct Color{
+        float r, g, b, a ;
+    };
+
     struct Collider{
-        esat::Vec2 P1 = {0,0};
-        esat::Vec2 P2 = {10,10};
+        JMATH::Vec2 P1 = {0,0};
+        JMATH::Vec2 P2 = {10,10};
     };
 
     extern const unsigned char kFPS;

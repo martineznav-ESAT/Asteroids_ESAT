@@ -28,7 +28,7 @@ void UpdateGame(){
     GameStatus::DebugUpdate();
     switch(GameStatus::game_status.level){
         case GameStatus::Level::LOGIN_MENU :
-
+        
         break;
 
         case GameStatus::Level::REGISTER_MENU :
@@ -114,8 +114,9 @@ int esat::main(int argc, char **argv) {
 
         Utils::ControlFps();
     }
-    EmptyMemory();
+
     CloseFiles();
+    EmptyMemory();
 
     esat::WindowDestroy();
 
