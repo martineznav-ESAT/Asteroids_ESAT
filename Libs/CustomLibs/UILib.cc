@@ -16,8 +16,11 @@
 namespace UILib{
     const int kMaxTextLength = 30;
 
-    //BUTTONS
+    //BUTTON
 
+    //Executes the given function
+    //Gives a print in case its given null
+    //Mainly thought for buttons or similar action-like UI elements and keyboard inputs
     void LaunchAction(void (*action)()){
         if(action != nullptr){
             action();
@@ -26,6 +29,7 @@ namespace UILib{
         }
     }
 
+    //Detects if the mouse is inside a button area
     bool MouseInButton(Button b){
         return (
             b.collider.P1.x < esat::MousePositionX() &&
@@ -35,6 +39,8 @@ namespace UILib{
         );
     }
 
+    //Changes button color in case the mouse is hovering on it
+    //and grants acces to click the button if that's the case
     void OnButtonHover(Button *b){
         if(b->is_visible && MouseInButton(*b)){
             //OnHover
@@ -48,18 +54,21 @@ namespace UILib{
         }
     }
 
+    //Given a button memory block, it all gets checked to manage button workability
     void ButtonUpdate(Button *buttons, int total_btns){
         for(int i = 0; i < total_btns; i++){
             OnButtonHover((buttons+i));
         }
     }
 
+    //Draws a text given a position and Text structure 
     void DrawText(float x, float y, Text text){
         esat::DrawSetFillColor(text.color.r, text.color.g, text.color.b, text.color.a);
         esat::DrawSetTextSize(text.font_size);
         esat::DrawText(x, y, text.text);
     }
 
+    //Draws the int value given as text on designed position 
     void DrawIntText(float x, float y, int value){
         char* text = (char*) malloc(sizeof(char)*3);
         text = itoa(value,text,10);
@@ -67,7 +76,7 @@ namespace UILib{
         free(text);
     }
 
-    //Draws the button given as parameter
+    //Draws on screen the button given as parameter
     void DrawButton(Button b){
         if(b.is_visible){
             //Generates draw coords and draws de button collider with the button values
@@ -86,7 +95,7 @@ namespace UILib{
             //In case the button has a text, it's drawn centered to the button
             if(b.button_text.text != nullptr){
                 UILib::DrawText(
-                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - (strlen(b.button_text.text) * 0.33 * b.button_text.font_size ),
+                    b.collider.P1.x + ((b.collider.P2.x-b.collider.P1.x) * 0.5f) - (strlen(b.button_text.text) * b.button_text.font_size * 0.33 ), //Multiplied by 0.33 because it is the scale needed to be centered based con the custom font. The reasonable multiplication should be 0.5 (/2)
                     b.collider.P2.y - ((b.collider.P2.y-b.collider.P1.y) * 0.5f) + (b.button_text.font_size*0.5f), 
                     b.button_text
                 );
@@ -95,4 +104,7 @@ namespace UILib{
             free(draw_coords);
         }
     }
+
+    //TEXT_INPUT
+
 }

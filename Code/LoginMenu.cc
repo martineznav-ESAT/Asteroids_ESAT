@@ -15,9 +15,11 @@
 #include "./LoginMenu.h"
 
 namespace LoginMenu{
+    //Memory block that holds all the buttons no matter if they are visible or not.
     UILib::Button *buttons = nullptr;
+    UILib::TextInput *text_inputs = nullptr;
 
-    //Actions
+    //Button Actions
     void LoginAction(){
         
     }
@@ -26,6 +28,7 @@ namespace LoginMenu{
         
     }
     
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color color, UILib::Text b_text, bool is_visible, void (*action)()){
         *b = {
             coll,
@@ -36,6 +39,7 @@ namespace LoginMenu{
         };
     }
 
+    //Initializes all posible buttons
     void InitButtons(){
         JMATH::Vec2 centered_bottom_coords = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight-50.0f};
         Utils::Collider left_button = 
@@ -107,10 +111,12 @@ namespace LoginMenu{
         );
     }
 
+    //Whole Login Menu initializer
     void Init(){
         InitButtons();
     }
 
+    //Based on the level/screen you come from, the Login Menu will be loaded differently
     void Load(GameStatus::Level prev_level){
         switch(prev_level){
             case GameStatus::Level::PLAY_MENU:
@@ -133,10 +139,12 @@ namespace LoginMenu{
         }
     }
 
+    //Whole Login Menu update method
     void Update(){
         UILib::ButtonUpdate(buttons, (int)LoginButtons::TOTAL_BUTTONS);
     }
 
+    //Whole Login Menu draw method
     void DrawButtons(){
         for(int i = 0; i < (int)LoginButtons::TOTAL_BUTTONS; i++){
             UILib::DrawButton(*(buttons+i));

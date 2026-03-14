@@ -16,6 +16,12 @@
 namespace UILib{
     extern const int kMaxTextLength;
 
+    enum ItemType{
+        BUTTON,
+        TEXT_INPUT,
+        CHECKBOX
+    };
+
     //UI Text structure (only aesthetic related values, not position)
     struct Text{
         Utils::Color color;
@@ -30,6 +36,31 @@ namespace UILib{
         Text button_text;
         bool is_visible;
         void (*action)();
+    };
+
+    //UI TextInput structure
+    struct TextInput{
+        Utils::Collider input_box;
+        Text input_text;
+        bool is_visible;
+        bool is_selected;
+    };
+
+    //UI Checkbox structure
+    struct Checkbox{
+        Utils::Collider input_box;
+        bool is_checked;
+        bool is_visible;
+        bool is_selected;
+    };
+
+    struct UI_Item{
+        ItemType item_type;
+        union {
+            Button btn_item;
+            TextInput text_item;
+            Checkbox chk_item;
+        };
     };
 
     //Executes the function used as parameter.

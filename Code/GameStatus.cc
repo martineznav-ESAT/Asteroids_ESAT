@@ -10,11 +10,14 @@
 
 #include "./GameStatus.h"
 
+
+//Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace GameStatus{
     GameStatus game_status;
 
+    //Debug Level switch by F1-F7 keyboard input
     void DebugUpdate(){
-        //Level switch
+
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){
             game_status.level = LOGIN_MENU;
         }

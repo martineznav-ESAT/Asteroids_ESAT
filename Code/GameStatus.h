@@ -11,8 +11,10 @@
 #ifndef GameStatus_H
 #define GameStatus_H
 
+//Holds the game information needed globally, that may be needed to save and the Level/Screen management 
 namespace GameStatus{
 
+    //Level/Screen enum 
     enum Level{
         LOGIN_MENU,
         REGISTER_MENU,
