@@ -19,7 +19,7 @@ namespace LoginMenu{
     UILib::Button *buttons = nullptr;
     UILib::TextInput *text_inputs = nullptr;
 
-    //Button Actions
+    //ACTIONS
     void LoginAction(){
         
     }
@@ -27,6 +27,8 @@ namespace LoginMenu{
     void RegisterAction(){
         
     }
+
+    //LOGIN MENU INIT
     
     //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color color, UILib::Text b_text, bool is_visible, void (*action)()){
@@ -116,6 +118,8 @@ namespace LoginMenu{
         InitButtons();
     }
 
+    //LOGIN MENU LOAD
+
     //Based on the level/screen you come from, the Login Menu will be loaded differently
     void Load(GameStatus::Level prev_level){
         switch(prev_level){
@@ -139,18 +143,22 @@ namespace LoginMenu{
         }
     }
 
+    //LOGIN MENU UPDATE
+
     //Whole Login Menu update method
     void Update(){
         UILib::ButtonUpdate(buttons, (int)LoginButtons::TOTAL_BUTTONS);
     }
 
-    //Whole Login Menu draw method
+    //LOGIN MENU DRAW
+
     void DrawButtons(){
         for(int i = 0; i < (int)LoginButtons::TOTAL_BUTTONS; i++){
             UILib::DrawButton(*(buttons+i));
         }
     }
 
+    //Whole Login Menu draw method
     void Draw(){
         DrawButtons();
     }
