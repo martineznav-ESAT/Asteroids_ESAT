@@ -100,8 +100,8 @@ namespace UILib{
                 LaunchAction(b->action);
             }
         }else{
-            b->border_color.a = 230;
-            b->fill_color.a = 230;
+            b->border_color.a = 200;
+            b->fill_color.a = 200;
         }
     }
 
@@ -223,11 +223,15 @@ namespace UILib{
     //Given a Text Input, it gets checked to manage input workability
     void UpdateTextInput(TextInput *ti){
         if(ti->is_selected){
+            ti->border_color.a = 255;
+
             if(CharInput(ti->input_text.text)){
                 UpdateTextInputPointer(ti);
             }
 
             BlinkPointer(ti);
+        }else{
+            ti->border_color.a = 200;
         }
     }
 
