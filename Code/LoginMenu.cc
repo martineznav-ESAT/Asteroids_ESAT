@@ -18,6 +18,7 @@
 namespace LoginMenu{
     //Memory block that holds all the buttons no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
+    int selected_item = -1;
 
 
     //ACTIONS
@@ -86,7 +87,7 @@ namespace LoginMenu{
             first_right_side,
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},"01234567890123456789", (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
             true
         );
 
@@ -95,7 +96,7 @@ namespace LoginMenu{
             {JMATH::Vec2Sum(first_right_side.P1, {0.0f, 75.0f}),JMATH::Vec2Sum(first_right_side.P2, {0.0f, 75.0f})},
             {255,255,255,255},
             {0,0,0,255},
-            {{255,255,255,255},"01234567890123456789", (float)Utils::kBaseFontSize},
+            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
             true
         );
     }
@@ -164,46 +165,49 @@ namespace LoginMenu{
 
     //Whole Login Menu update method
     void Update(){
-        for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
-            switch ((menu_items+i)->item_type){
-                case UILib::ItemType::BUTTON:
-                    UILib::UpdateButton(&((menu_items+i)->item.btn_item));
-                break;
-                case UILib::ItemType::TEXT_INPUT:
-                    UILib::UpdateTextInput(&((menu_items+i)->item.text_item));
-                break;
+
+        //Unselect Menu item on click
+        //Since its the first click event registered, there's no need to check for collision
+        //If later on a collision with the same input its located, the selected_item will be 
+        //overriden to the proper value
+        if(esat::MouseButtonDown(0)){
+            selected_item = -1;
+        }
+
+        //Menu Key controls
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+            if(selected_item <= 0){
+                selected_item = ((int)LoginItems::TOTAL_ITEMS) - 1;
+            }else{
+                selected_item--;
             }
+        }
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            ++selected_item %= (int)LoginItems::TOTAL_ITEMS;
+        }
+        
+        for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
+            UILib::UpdateItem(menu_items+i, &selected_item, i);
         }
     }
 
     //LOGIN MENU DRAW
 
     void DrawMenuItems(){
-        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)- 40 - (Utils::kBaseFontSize*14), 200}, {(Utils::kWindowWidth*0.5f)-40, 250}};
-        Utils::Collider aux;
-
         for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
-            switch ((menu_items+i)->item_type){
-                case UILib::ItemType::BUTTON:
-                    UILib::DrawButton((menu_items+i)->item.btn_item);
-                break;
-                case UILib::ItemType::TEXT_INPUT:
-                    aux = (menu_items+i)->item.text_item.input_box;
-
-                    //Draws Tag Text for the actual Input
-                    UILib::DrawText(
-                        first_left_side.P2.x - (strlen((menu_items+i)->item_name.text)*0.55*(menu_items+i)->item_name.font_size), 
-                        aux.P2.y - ((aux.P2.y - aux.P1.y) * 0.5) + ((menu_items+i)->item.text_item.input_text.font_size * 0.6f), 
-                        (menu_items+i)->item_name
-                    );
-                    UILib::DrawTextInput((menu_items+i)->item.text_item);
-                break;
-            }
+            UILib::DrawItem(*(menu_items+i));
         }
     }
 
     //Whole Login Menu draw method
     void Draw(){
         DrawMenuItems();
+    }
+
+    void EmptyMemory(){
+        for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
+            UILib::EmptyItemMemory(menu_items+i);
+        }
+        free(menu_items);
     }
 }

@@ -15,7 +15,7 @@
 #include "./Code/LoginMenu.h"
 
 void EmptyMemory(){
-
+    LoginMenu::EmptyMemory();
 }
 
 void CloseFiles(){
@@ -99,7 +99,7 @@ int esat::main(int argc, char **argv) {
 	esat::WindowInit(Utils::kWindowWidth, Utils::kWindowHeight);
 	WindowSetMouseVisibility(true);
 
-    esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.otf");
+    esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
 
     InitGame();
 

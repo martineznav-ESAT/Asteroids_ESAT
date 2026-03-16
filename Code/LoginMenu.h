@@ -32,6 +32,9 @@ namespace LoginMenu{
     void Update();
 
     void Draw();
+
+    
+    void EmptyMemory();
 }
 
 #endif
