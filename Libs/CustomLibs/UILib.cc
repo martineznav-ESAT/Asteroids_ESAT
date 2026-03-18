@@ -50,6 +50,14 @@ namespace UILib{
                 }
                 UILib::UpdateTextInput(&(ui_item->item.text_item));
             break;
+            case UILib::ItemType::CHECKBOX:
+                if(*selected_i == item_index){
+                    ui_item->item.chk_item.is_selected = true;
+                }else{
+                    ui_item->item.chk_item.is_selected = false;
+                }
+                UILib::UpdateCheckbox(&(ui_item->item.chk_item));
+            break;
         }
     }
     
@@ -60,6 +68,9 @@ namespace UILib{
             break;
             case UILib::ItemType::TEXT_INPUT:
                 UILib::DrawTextInput(ui_item.item.text_item, ui_item.item_name);
+            break;
+            case UILib::ItemType::CHECKBOX:
+                UILib::DrawCheckbox(ui_item.item.chk_item, ui_item.item_name);
             break;
         }
     }
@@ -77,6 +88,20 @@ namespace UILib{
         }
     }
 
+
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)()){
+        *b = {
+            coll,
+            border_color,
+            fill_color,
+            b_text,
+            is_visible,
+            action,
+            false
+        };
+    }
+
     //Changes button color in case the mouse is hovering on it
     //and grants acces to click the button if that's the case
     void OnButtonHover(Button *b){
@@ -92,19 +117,6 @@ namespace UILib{
             b->border_color.a = 200;
             b->fill_color.a = 200;
         }
-    }
-
-    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
-    void InitButton(UILib::Button *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)()){
-        *b = {
-            coll,
-            border_color,
-            fill_color,
-            b_text,
-            is_visible,
-            action,
-            false
-        };
     }
 
     //Given a button, it gets checked to manage workability
@@ -310,6 +322,91 @@ namespace UILib{
         free(text);
     }
 
+    //CHECKBOX
+
+    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    void InitCheckbox(Checkbox *chk, Utils::Collider tag_box, Utils::Collider collider, Utils::Color border_color, Utils::Color fill_color, Text chk_text, bool is_checked, bool is_visible, bool is_tag_v){
+        *chk = {
+            tag_box,
+            collider,
+            border_color,
+            fill_color,
+            chk_text,
+            is_checked,
+            is_visible,
+            false,
+            is_tag_v
+        };
+    }
+
+    //Changes Checkbox color in case the mouse is hovering on it
+    //and grants acces to click the Checkbox if that's the case
+    void OnCheckboxHover(Checkbox *chk){
+        if(chk->is_visible && Utils::MouseInCollider(chk->collider)){
+            //OnHover
+            chk->border_color.a = 255;
+            chk->fill_color.a = 255;
+            if(esat::MouseButtonDown(0)){
+                //OnClick
+                chk->is_checked = !(chk->is_checked);
+                // if(chk->is_checked){
+                //     printf("CHECKED\n");
+                // }else{
+                //     printf("UN-CHECKED\n");
+                // }
+            }
+        }else{
+            chk->border_color.a = 200;
+            chk->fill_color.a = 200;
+        }
+    }
+
+    //Given a chexkbox, it gets checked to manage workability
+    void UpdateCheckbox(Checkbox *chk){
+        if(chk->is_visible){
+            OnCheckboxHover(chk);
+            if(chk->is_selected){
+                chk->border_color.a = 255;
+                chk->fill_color.a = 255;
+                if(esat::IsSpecialKeyDown(esat::kSpecialKey_Enter)){
+                    chk->is_checked = !(chk->is_checked);
+                    // if(chk->is_checked){
+                    //     printf("CHECKED\n");
+                    // }else{
+                    //     printf("UN-CHECKED\n");
+                    // }
+                }
+            }
+        }
+    }
+
+    //Draws on screen the Checkbox given as parameter
+    void DrawCheckbox(Checkbox chk, Text tag){
+
+        if(chk.is_visible){
+
+            //Draws Tag Text for the actual Input
+            if(chk.is_tag_v){
+                UILib::DrawText(
+                    chk.tag_box.P1.x, 
+                    chk.tag_box.P2.y, 
+                    tag
+                );
+            }
+
+            Utils::DrawCollider(chk.collider, chk.border_color, chk.fill_color);
+
+            //In case the button has a text, it's drawn centered to the checkbox
+            if(chk.chk_text.text != nullptr && chk.is_checked){
+                UILib::DrawText(
+                    chk.collider.P1.x + ((chk.collider.P2.x-chk.collider.P1.x) * 0.5f) - (strlen(chk.chk_text.text) * chk.chk_text.font_size * 0.25f ), //Multiplied by 0.33 because it is the scale needed to be centered based con the custom font. The reasonable multiplication should be 0.5 (/2)
+                    chk.collider.P2.y - ((chk.collider.P2.y-chk.collider.P1.y) * 0.5f) + (chk.chk_text.font_size*0.5f), 
+                    chk.chk_text
+                );
+            }
+        }
+    }
+
     void EmptyItemMemory(UI_Item *item){
         free(item->item_name.text);
         switch (item->item_type){
@@ -321,7 +418,7 @@ namespace UILib{
                 free(item->item.text_item.pointer);
             break;
             case UILib::ItemType::CHECKBOX:
-                
+                free(item->item.chk_item.chk_text.text);
             break;
         }
     }

@@ -244,18 +244,26 @@ namespace RegisterMenu{
             true,
             2
         );
+    }
 
-        UILib::InitTextInput(
-            &((menu_items + ((int)RegisterItems::ADMIN_CHK))->item.text_item),
-            {admin_aux_P1,admin_aux_P2},
-            {JMATH::Vec2Sum(admin_aux_P1,{(menu_items->item_name.font_size)*6,0.0f}),admin_aux_P2},
-            {255,255,255,255},
-            {0,0,0,255},
-            {{255,255,255,255},nullptr, (float)Utils::kBaseFontSize},
-            true,
-            true,
-            true,
-            2
+    void InitCheckboxes(){
+        Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-250, 30}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 60},{0.0f, 4.0f})};
+        Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 30}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 60}};
+        JMATH::Vec2 margin_y = {0.0f, 50.0f};
+        float aux_input_width = first_right_side.P2.x-first_right_side.P1.x;
+
+        JMATH::Vec2 admin_aux_P1 = JMATH::Vec2Sum(first_right_side.P1, JMATH::Vec2Scale(margin_y,9));
+        JMATH::Vec2 admin_aux_P2 = JMATH::Vec2Sum(first_right_side.P2, JMATH::Vec2Scale(margin_y,9));
+
+        UILib::InitCheckbox(
+            &((menu_items + ((int)RegisterItems::ADMIN_CHK))->item.chk_item),
+            {admin_aux_P1,JMATH::Vec2Sub(admin_aux_P2,{0.0f, 4.0f})},
+            {{admin_aux_P2.x-40.0f,admin_aux_P1.y},admin_aux_P2},
+            {255,255,255,200},
+            {50,50,50,200},
+            {{255,255,255,255},"+", (float)Utils::kBaseFontSize},
+            false,
+            true
         );
     }
 
@@ -337,7 +345,7 @@ namespace RegisterMenu{
 
         UILib::InitItem(
             (menu_items + ((int)RegisterItems::ADMIN_CHK)),
-            UILib::ItemType::TEXT_INPUT,
+            UILib::ItemType::CHECKBOX,
             {{255,255,255,255},"ADMIN", Utils::kBaseFontSize*1.5f}
         );
 
@@ -358,6 +366,7 @@ namespace RegisterMenu{
         InitMenuItems();
         InitTextInputs();
         InitButtons();
+        InitCheckboxes();
     }
 
     //LOGIN MENU LOAD
