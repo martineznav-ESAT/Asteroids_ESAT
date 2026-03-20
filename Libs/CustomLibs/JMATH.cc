@@ -4,7 +4,7 @@
 #include "./JMATH.h"
 
 namespace JMATH{
-    const float kPI = 3.141592;
+    float PI = 3.141592;
 
     //VEC2
     void Vec2Print(Vec2 v){
@@ -184,19 +184,25 @@ namespace JMATH{
 
     Mat2 Mat2MultMat2(Mat2 m1, Mat2 m2){
         Mat2 result;
-        result.d[Mat2Index(0,0)] = (m1.d[Mat2Index(0,0)]*m2.d[Mat2Index(0,0)]) + (m1.d[Mat2Index(0,1)]*m2.d[Mat2Index(1,0)]);
-        result.d[Mat2Index(0,1)] = (m1.d[Mat2Index(0,0)]*m2.d[Mat2Index(0,1)]) + (m1.d[Mat2Index(0,1)]*m2.d[Mat2Index(1,1)]);
-        result.d[Mat2Index(1,0)] = (m1.d[Mat2Index(1,0)]*m2.d[Mat2Index(0,0)]) + (m1.d[Mat2Index(1,1)]*m2.d[Mat2Index(1,0)]);
-        result.d[Mat2Index(1,1)] = (m1.d[Mat2Index(1,0)]*m2.d[Mat2Index(0,1)]) + (m1.d[Mat2Index(1,1)]*m2.d[Mat2Index(1,1)]);
+        
+        for (int i = 0; i < 2; i++){
+            result.d[Mat2Index(i,0)] = 
+                (m1.d[Mat2Index(i,0)]*m2.d[Mat2Index(0,0)]) + 
+                (m1.d[Mat2Index(i,1)]*m2.d[Mat2Index(1,0)]);
+        
+            result.d[Mat2Index(i,1)] = 
+                (m1.d[Mat2Index(i,0)]*m2.d[Mat2Index(0,1)]) + 
+                (m1.d[Mat2Index(i,1)]*m2.d[Mat2Index(1,1)]);
+        }
+        
         return result;
     }
 
     Vec2 Mat2MultVec2(Mat2 m1, Vec2 v1){
         Vec2 result;
-        // result.x = (m1.d[Mat2Index(0,0)]*v1.x) + (m1.d[Mat2Index(0,1)]*v1.y);
-        // result.y = (m1.d[Mat2Index(1,0)]*v1.x) + (m1.d[Mat2Index(1,1)]*v1.y);
-        result.x = (m1.d[Mat2Index(0,0)]*v1.x) + (m1.d[Mat2Index(1,0)]*v1.y);
-        result.y = (m1.d[Mat2Index(0,1)]*v1.x) + (m1.d[Mat2Index(1,1)]*v1.y);
+
+        result.x = (m1.d[Mat2Index(0,0)]*v1.x) + (m1.d[Mat2Index(0,1)]*v1.y);
+        result.y = (m1.d[Mat2Index(1,0)]*v1.x) + (m1.d[Mat2Index(1,1)]*v1.y);
         return result;
     }
 
@@ -294,13 +300,10 @@ namespace JMATH{
 
     Vec3 Mat3MultVec3(Mat3 m1, Vec3 v1){
         Vec3 result;
-        // result.x = (m1.d[Mat3Index(0,0)]*v1.x) + (m1.d[Mat3Index(0,1)]*v1.y) + (m1.d[Mat3Index(0,2)]*v1.z);
-        // result.y = (m1.d[Mat3Index(1,0)]*v1.x) + (m1.d[Mat3Index(1,1)]*v1.y) + (m1.d[Mat3Index(1,2)]*v1.z);
-        // result.z = (m1.d[Mat3Index(2,0)]*v1.x) + (m1.d[Mat3Index(2,1)]*v1.y) + (m1.d[Mat3Index(2,2)]*v1.z);
+        result.x = (m1.d[Mat3Index(0,0)]*v1.x) + (m1.d[Mat3Index(0,1)]*v1.y) + (m1.d[Mat3Index(0,2)]*v1.z);
+        result.y = (m1.d[Mat3Index(1,0)]*v1.x) + (m1.d[Mat3Index(1,1)]*v1.y) + (m1.d[Mat3Index(1,2)]*v1.z);
+        result.z = (m1.d[Mat3Index(2,0)]*v1.x) + (m1.d[Mat3Index(2,1)]*v1.y) + (m1.d[Mat3Index(2,2)]*v1.z);
 
-        result.x = (m1.d[Mat3Index(0,0)]*v1.x) + (m1.d[Mat3Index(1,0)]*v1.y) + (m1.d[Mat3Index(2,0)]*v1.z);
-        result.y = (m1.d[Mat3Index(0,1)]*v1.x) + (m1.d[Mat3Index(1,1)]*v1.y) + (m1.d[Mat3Index(2,1)]*v1.z);
-        result.z = (m1.d[Mat3Index(0,2)]*v1.x) + (m1.d[Mat3Index(1,2)]*v1.y) + (m1.d[Mat3Index(2,2)]*v1.z);
         return result;
     }
 
@@ -312,6 +315,31 @@ namespace JMATH{
             0,0,1
         };
     }
+
+    Mat3 Mat3Scale(float sx, float sy){
+        Mat3 mat = Mat3Identity();
+        mat.d[Mat3Index(0,0)] = sx;
+        mat.d[Mat3Index(1,1)] = sy;
+        return mat;
+    }
+
+    Mat3 Mat3Rotate(float radians){
+        Mat3 mat = Mat3Identity();
+        mat.d[Mat3Index(0,0)] = cosf(radians);
+        mat.d[Mat3Index(0,1)] = sinf(radians)*-1.0f;
+        mat.d[Mat3Index(1,0)] = sinf(radians);
+        mat.d[Mat3Index(1,1)] = cosf(radians);
+        return mat;
+    }
+
+
+    Mat3 Mat3Translate(float tx, float ty){
+        Mat3 mat = Mat3Identity();
+        mat.d[Mat3Index(0,2)] = tx;
+        mat.d[Mat3Index(1,2)] = ty;
+        return mat;
+    }
+
 
     //Mat4
 
@@ -408,10 +436,11 @@ namespace JMATH{
 
     Vec4 Mat4MultVec4(Mat4 m1, Vec4 v1){
         Vec4 result;
-        result.x = (m1.d[Mat4Index(0,0)]*v1.x) + (m1.d[Mat4Index(1,0)]*v1.y) + (m1.d[Mat4Index(2,0)]*v1.z) + (m1.d[Mat4Index(3,0)]*v1.w);
-        result.y = (m1.d[Mat4Index(0,1)]*v1.x) + (m1.d[Mat4Index(1,1)]*v1.y) + (m1.d[Mat4Index(2,1)]*v1.z) + (m1.d[Mat4Index(3,1)]*v1.w);
-        result.z = (m1.d[Mat4Index(0,2)]*v1.x) + (m1.d[Mat4Index(1,2)]*v1.y) + (m1.d[Mat4Index(2,2)]*v1.z) + (m1.d[Mat4Index(3,2)]*v1.w);
-        result.w = (m1.d[Mat4Index(0,3)]*v1.x) + (m1.d[Mat4Index(1,3)]*v1.y) + (m1.d[Mat4Index(2,3)]*v1.z) + (m1.d[Mat4Index(3,3)]*v1.w);
+        result.x = (m1.d[Mat4Index(0,0)]*v1.x) + (m1.d[Mat4Index(0,1)]*v1.y) + (m1.d[Mat4Index(0,2)]*v1.z) + (m1.d[Mat4Index(0,3)]*v1.w);
+        result.y = (m1.d[Mat4Index(1,0)]*v1.x) + (m1.d[Mat4Index(1,1)]*v1.y) + (m1.d[Mat4Index(1,2)]*v1.z) + (m1.d[Mat4Index(1,3)]*v1.w);
+        result.z = (m1.d[Mat4Index(2,0)]*v1.x) + (m1.d[Mat4Index(2,1)]*v1.y) + (m1.d[Mat4Index(2,2)]*v1.z) + (m1.d[Mat4Index(2,3)]*v1.w);
+        result.w = (m1.d[Mat4Index(3,0)]*v1.x) + (m1.d[Mat4Index(3,1)]*v1.y) + (m1.d[Mat4Index(3,2)]*v1.z) + (m1.d[Mat4Index(3,3)]*v1.w);
+
         return result;
     }
 
@@ -426,10 +455,10 @@ namespace JMATH{
     }
 
     float DegreesToRadians(float degrees){
-        return (degrees/180)*kPI;
+        return (degrees/180)*PI;
     }
 
     float RadiansToDegrees(float radians){
-        return (radians/kPI)*180;
+        return (radians/PI)*180;
     }
 }
