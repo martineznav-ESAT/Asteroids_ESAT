@@ -10,7 +10,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
-#include "./GameStatus.h"
+#include "./GameManager.h"
 
 #ifndef RegisterMenu_H
 #define RegisterMenu_H
@@ -38,7 +38,7 @@ namespace RegisterMenu{
 
     void Init();
 
-    void Load(GameStatus::Level prev_level);
+    void Load(GameManager::Level prev_level);
 
     void Update();
 

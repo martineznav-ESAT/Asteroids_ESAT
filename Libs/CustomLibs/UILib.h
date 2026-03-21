@@ -131,6 +131,10 @@ namespace UILib{
 
     //Draws a text given a position and Text structure 
     void DrawText(float x, float y, Text text);
+    void DrawText(JMATH::Vec2 position, Text text);
+
+    void DrawIntToText(float x, float y, Text text, int value, int value_max_length, bool fill_left);
+    void DrawIntToText(JMATH::Vec2 position, Text text, int value, int value_max_length, bool fill_left);
 
     //Given an int value, it will draw it 
     //on screen as a text 

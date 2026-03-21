@@ -12,16 +12,13 @@
 #include "../Libs/CustomLibs/UILib.h"
 #include "./GameManager.h"
 
-#ifndef MainMenu_H
-#define MainMenu_H
+#ifndef HighscoresMenu_H
+#define HighscoresMenu_H
 
-namespace MainMenu{
+namespace HighscoresMenu{
     
-    enum MainMenuItems{
-        PLAY_BTN,
-        HIGHSCORES_BTN,
-        QUIT_BTN,
-        ADMIN_BTN,
+    enum HighscoresMenuItems{
+        BACK_BTN,
         TOTAL_ITEMS
     };
 

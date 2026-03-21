@@ -12,28 +12,28 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 
-#include "./GameStatus.h"
+#include "./GameManager.h"
 #include "./MainMenu.h"
-#include "./RegisterMenu.h"
+#include "./PlayMenu.h"
+#include "./HighscoresMenu.h"
 
 namespace MainMenu{
-    //Memory block that holds all the buttons no matter if they are visible or not.
+    //Memory block that holds all the menu items no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
-    GameStatus::Level prev_level;
     int selected_item = -1;
 
 
     //ACTIONS
     void PlayAction(){
-        printf("PLAY ACTION WIP\n");
+        PlayMenu::Load();
     }
 
     void HighScoreAction(){
-        printf("HIGHSCORE ACTION WIP\n");
+        HighscoresMenu::Load();
     }
 
     void QuitAction(){
-        printf("QUIT ACTION WIP\n");
+        GameManager::game_status.level = GameManager::Level::QUIT;
     }
 
     void AdminAction(){
@@ -174,7 +174,7 @@ namespace MainMenu{
 
     //Loads the main menu
     void Load(){
-        GameStatus::game_status.level = GameStatus::Level::MAIN_MENU;
+        GameManager::game_status.level = GameManager::Level::MAIN_MENU;
     }
 
     //MAIN MENU UPDATE

@@ -11,55 +11,49 @@
 #include "./Libs/CustomLibs/TList.h"
 #include "./Libs/CustomLibs/Utils.h"
 
-#include "./Code/GameStatus.h"
+#include "./Code/GameManager.h"
 #include "./Code/LoginMenu.h"
 #include "./Code/RegisterMenu.h"
 #include "./Code/MainMenu.h"
-
-void EmptyMemory(){
-    LoginMenu::EmptyMemory();
-    RegisterMenu::EmptyMemory();
-    MainMenu::EmptyMemory();
-}
-
-void CloseFiles(){
-}
-
+#include "./Code/PlayMenu.h"
+#include "./Code/HighscoresMenu.h"
 
 void InitGame(){
     LoginMenu::Init();
     RegisterMenu::Init();
     MainMenu::Init();
+    PlayMenu::Init();
+    HighscoresMenu::Init();
 }
 
 void UpdateGame(){
-    GameStatus::DebugUpdate();
-    switch(GameStatus::game_status.level){
-        case GameStatus::Level::LOGIN_MENU :
+    GameManager::DebugUpdate();
+    switch(GameManager::game_status.level){
+        case GameManager::Level::LOGIN_MENU :
             LoginMenu::Update();
         break;
 
-        case GameStatus::Level::REGISTER_MENU :
+        case GameManager::Level::REGISTER_MENU :
             RegisterMenu::Update();
         break;
 
-        case GameStatus::Level::MAIN_MENU :
+        case GameManager::Level::MAIN_MENU :
             MainMenu::Update();
         break;
 
-        case GameStatus::Level::HIGHSCORES :
+        case GameManager::Level::PLAY_MENU :
+            PlayMenu::Update();
+        break;
+
+        case GameManager::Level::HIGHSCORES_MENU :
+            HighscoresMenu::Update();
+        break;
+
+        case GameManager::Level::ADMIN_MENU :
 
         break;
 
-        case GameStatus::Level::ADMIN_MENU :
-
-        break;
-
-        case GameStatus::Level::PLAY_MENU :
-
-        break;
-
-        case GameStatus::Level::GAME :
+        case GameManager::Level::GAME :
 
         break;
     }
@@ -67,35 +61,55 @@ void UpdateGame(){
 
 void DrawGame(){
     esat::DrawClear(0,0,0);
-    switch(GameStatus::game_status.level){
-        case GameStatus::Level::LOGIN_MENU :
+    switch(GameManager::game_status.level){
+        case GameManager::Level::LOGIN_MENU :
             LoginMenu::Draw();
         break;
 
-        case GameStatus::Level::REGISTER_MENU :
+        case GameManager::Level::REGISTER_MENU :
             RegisterMenu::Draw();
         break;
 
-        case GameStatus::Level::MAIN_MENU :
+        case GameManager::Level::MAIN_MENU :
             MainMenu::Draw();
         break;
 
-        case GameStatus::Level::HIGHSCORES :
-            esat::DrawClear(200,100,100);
+        case GameManager::Level::PLAY_MENU :
+            PlayMenu::Draw();
         break;
 
-        case GameStatus::Level::ADMIN_MENU :
+        case GameManager::Level::HIGHSCORES_MENU :
+            HighscoresMenu::Draw();
+        break;
+
+        case GameManager::Level::ADMIN_MENU :
             esat::DrawClear(200,50,200);
         break;
 
-        case GameStatus::Level::PLAY_MENU :
-            esat::DrawClear(200,200,200);
-        break;
-
-        case GameStatus::Level::GAME :
-            esat::DrawClear(0,0,0);
+        case GameManager::Level::GAME :
+            esat::DrawClear(255,255,255);
         break;
     }
+}
+
+bool CloseGameCondition(){
+    return (
+        esat::WindowIsOpened() && 
+        !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape) && 
+        GameManager::game_status.level != GameManager::Level::QUIT
+    );
+}
+
+void EmptyMemory(){
+    LoginMenu::EmptyMemory();
+    RegisterMenu::EmptyMemory();
+    MainMenu::EmptyMemory();
+    PlayMenu::EmptyMemory();
+    HighscoresMenu::EmptyMemory();
+}
+
+void CloseFiles(){
+    
 }
 
 int esat::main(int argc, char **argv) {
@@ -108,7 +122,7 @@ int esat::main(int argc, char **argv) {
 
     InitGame();
 
-    while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {        
+    while(CloseGameCondition()) {        
         Utils::last_time = esat::Time();
 
         esat::DrawBegin();

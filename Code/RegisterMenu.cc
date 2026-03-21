@@ -12,14 +12,14 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 
-#include "./GameStatus.h"
+#include "./GameManager.h"
 #include "./LoginMenu.h"
 #include "./RegisterMenu.h"
 
 namespace RegisterMenu{
-    //Memory block that holds all the buttons no matter if they are visible or not.
+    //Memory block that holds all the menu items no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
-    GameStatus::Level prev_level;
+    GameManager::Level prev_level;
     int selected_item = -1;
 
 
@@ -29,10 +29,10 @@ namespace RegisterMenu{
     }
 
     void BackAction(){
-        if(prev_level == GameStatus::Level::ADMIN_MENU){
+        if(prev_level == GameManager::Level::ADMIN_MENU){
             //TO_DO
         }else{
-            LoginMenu::Load(GameStatus::Level::REGISTER_MENU);
+            LoginMenu::Load(GameManager::Level::REGISTER_MENU);
         }
     }
 
@@ -261,7 +261,7 @@ namespace RegisterMenu{
             {{admin_aux_P2.x-40.0f,admin_aux_P1.y},admin_aux_P2},
             {255,255,255,200},
             {50,50,50,200},
-            {{255,255,255,255},"+", (float)Utils::kBaseFontSize},
+            {{255,255,255,255},"X", (float)Utils::kBaseFontSize},
             false,
             true
         );
@@ -372,9 +372,9 @@ namespace RegisterMenu{
     //LOGIN MENU LOAD
 
     //Based on the level/screen you come from, the Login Menu will be loaded differently
-    void Load(GameStatus::Level level_p){
+    void Load(GameManager::Level level_p){
         prev_level = level_p;
-        GameStatus::game_status.level = GameStatus::Level::REGISTER_MENU;
+        GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
     }
 
     //LOGIN MENU UPDATE

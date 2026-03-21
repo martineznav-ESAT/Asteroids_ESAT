@@ -11,7 +11,7 @@
 
 #include "./Utils.h"
 #include "./UILib.h"
-#include "../../Code/GameStatus.h"
+#include "../../Code/GameManager.h"
 
 namespace UILib{
     const int kMaxTextLength = 20;
@@ -317,13 +317,33 @@ namespace UILib{
         esat::DrawText(x, y, text.text);
     }
 
-    //Draws the int value given as text on designed position 
-    void DrawIntText(float x, float y, int value){
-        char* text = (char*) malloc(sizeof(char)*3);
-        text = itoa(value,text,10);
-        esat::DrawText(x, y, text);
-        free(text);
+    //Draws a text given a position and Text structure 
+    void DrawText(JMATH::Vec2 position, Text text){
+        esat::DrawSetFillColor(text.color.r, text.color.g, text.color.b, text.color.a);
+        esat::DrawSetTextSize(text.font_size);
+        esat::DrawText(position.x, position.y, text.text);
     }
+
+    //Draws a Text struct based on an int value
+    void DrawIntToText(float x, float y, Text text, int value, int value_max_length, bool fill_left){
+        text.text = (char*) malloc(sizeof(char)*value_max_length);
+        text.text = itoa(value,text.text,10);
+        DrawText(x, y, text);
+        free(text.text);
+    }
+
+    void DrawIntToText(JMATH::Vec2 position, Text text, int value, int value_max_length, bool fill_left){
+        text.text = (char*) malloc(sizeof(char)*(value_max_length+1));
+        if(fill_left){
+            snprintf(text.text, value_max_length+1, "%0*d", (value_max_length+1), value);
+        }else{
+            text.text = itoa(value,text.text,10);
+        }
+
+        DrawText(position, text);
+        free(text.text);
+    }
+
 
     //CHECKBOX
 

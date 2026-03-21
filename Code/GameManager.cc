@@ -8,11 +8,11 @@
 #include <time.h>
 #include <math.h>
 
-#include "./GameStatus.h"
-
+#include "./GameManager.h"
+#include "./UserManager.h"
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
-namespace GameStatus{
+namespace GameManager{
     GameStatus game_status;
 
     //Debug Level switch by F1-F7 keyboard input
@@ -28,7 +28,7 @@ namespace GameStatus{
             game_status.level = MAIN_MENU;
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F4)){
-            game_status.level = HIGHSCORES;
+            game_status.level = HIGHSCORES_MENU;
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F5)){
             game_status.level = ADMIN_MENU;

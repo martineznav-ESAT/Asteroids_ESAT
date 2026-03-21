@@ -6,7 +6,6 @@
 
 namespace TList{
     
-
     TList* ListCreate(){
         return nullptr;
     }
