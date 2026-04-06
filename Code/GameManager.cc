@@ -21,7 +21,8 @@
 namespace GameManager{
     GameStatus game_status = {
         LOGIN_MENU,
-        nullptr
+        nullptr,
+        // PlayedGames::PlayedGame actual_game;
     };
 
     void LoadInitLevel(){
@@ -56,7 +57,7 @@ namespace GameManager{
             AdminMenu::Load();
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F7)){
-            game_status.level = GAME;
+            game_status.level = GAMEPLAY;
         }
     }
 

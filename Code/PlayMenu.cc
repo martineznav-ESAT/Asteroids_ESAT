@@ -16,6 +16,7 @@
 #include "./PlayMenu.h"
 #include "./LoginMenu.h"
 #include "./MainMenu.h"
+#include "./Gameplay.h"
 
 namespace PlayMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -25,7 +26,7 @@ namespace PlayMenu{
 
     //ACTIONS
     void SinglePlayerAction(){
-        printf("SINGLE_P ACTION WIP\n");
+        Gameplay::Load(PlayedGames::Gamemode::SP);
     }
 
     void MultiPlayerAction(){

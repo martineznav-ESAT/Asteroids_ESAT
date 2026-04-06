@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "../../Code/UserManager.h"
+#include "../GameplayTech/GameplayTech.h"
 
 #ifndef TList_H
 #define TList_H
@@ -12,12 +13,14 @@ namespace TList{
         INT,
         CHAR,
         USER,
+        PLAYED_GAME,
     };
 
     union ListInfo{
         int int_info;
         char char_info;
         UserManager::User user_info;
+        PlayedGames::PlayedGame game_info;
     };
 
     struct ListNode{

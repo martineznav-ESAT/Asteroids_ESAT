@@ -56,7 +56,7 @@ void UpdateGame(){
             AdminMenu::Update();
         break;
 
-        case GameManager::Level::GAME :
+        case GameManager::Level::GAMEPLAY :
 
         break;
     }
@@ -89,7 +89,7 @@ void DrawGame(){
             AdminMenu::Draw();
         break;
 
-        case GameManager::Level::GAME :
+        case GameManager::Level::GAMEPLAY :
             esat::DrawClear(255,255,255);
         break;
     }

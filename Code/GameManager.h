@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include "./UserManager.h"
+#include "../Libs/GameplayTech/GameplayTech.h"
 
 #ifndef GameManager_H
 #define GameManager_H
@@ -24,7 +25,7 @@ namespace GameManager{
         PLAY_MENU,
         HIGHSCORES_MENU,
         ADMIN_MENU,
-        GAME,
+        GAMEPLAY,
         QUIT
     };
 
@@ -35,25 +36,11 @@ namespace GameManager{
         TWO_PLAYER_VS,
     };
 
-    struct Player{
-        // Ship ship
-        int lifes;
-        int score;
-    };
-
-    struct PlayedGame{
-        int game_id = 0;
-        Gamemode gm = ONE_PLAYER;
-        UserManager::User p1_user;
-        UserManager::User p2_user;
-        Player p1;
-        Player p2;
-        bool is_ended;
-    };
 
     struct GameStatus{
         Level level = LOGIN_MENU;
         UserManager::User *logged_user;
+        PlayedGames::PlayedGame actual_game;
     };
 
     extern GameStatus game_status;

@@ -11,6 +11,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/GameplayTech/GameplayTech.h"
 
 #include "./GameManager.h"
 #include "./HighscoresMenu.h"
@@ -21,7 +22,7 @@ namespace HighscoresMenu{
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
 
-    GameManager::PlayedGame *top_games = nullptr;
+    PlayedGames::PlayedGame *top_games = nullptr;
 
     //ACTIONS
     void BackAction(){
@@ -69,7 +70,7 @@ namespace HighscoresMenu{
 
     //Initializes the values of the best 10 games ever played
     void InitTopGames(){
-        top_games = (GameManager::PlayedGame*) malloc(sizeof(GameManager::PlayedGame)*10);
+        top_games = (PlayedGames::PlayedGame*) malloc(sizeof(PlayedGames::PlayedGame)*10);
         //TO_DO
         // top_games = GameManager::FindHighScores();
     }
@@ -136,7 +137,7 @@ namespace HighscoresMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
-    void DrawHighScore(JMATH::Vec2 coord, float font_size, GameManager::PlayedGame game){
+    void DrawHighScore(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
 
         UILib::DrawText(
             coord, 

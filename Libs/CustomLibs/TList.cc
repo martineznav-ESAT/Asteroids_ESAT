@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include "./TList.h"
+#include "../../Code/UserManager.h"
+#include "../GameplayTech/GameplayTech.h"
 
 namespace TList{
 
@@ -32,6 +34,12 @@ namespace TList{
                 // printf("\n-----Searching %s in\n",info.user_info.username);
                 // PrintList(list);
                 for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) != 0; aux = aux->next);
+            break;
+
+            case ListType::PLAYED_GAME:
+                // printf("\n-----REGISTERED GAMES\n");
+                // PrintList(list);
+                for(aux = list; aux != nullptr && aux->info.game_info.game_id != info.game_info.game_id; aux = aux->next);
             break;
         }
 
@@ -79,6 +87,19 @@ namespace TList{
                 printf("|| User %s - Passwd %s ",list->info.user_info.username, list->info.user_info.password);
                 if(list->info.user_info.is_admin){
                     printf("A ");
+                }
+                printf("||\n");
+            break;
+
+            case ListType::PLAYED_GAME:
+                printf("|| Game %d - Gamemode %d - P1 %s",list->info.game_info.game_id, list->info.game_info.gamemode, list->info.game_info.p1_user->username);
+                if(strcmp(list->info.game_info.p2_user->username,"\0") != 0){
+                    printf("P2 %s ",list->info.game_info.p2_user->username);
+                }
+                if(list->info.game_info.is_finished){
+                    printf("F ");
+                }{
+                    printf("NF ");
                 }
                 printf("||\n");
             break;
@@ -194,6 +215,10 @@ namespace TList{
                 case ListType::USER:
                     UserManager::SaveUser(list->info.user_info, file);
                 break;
+
+                case ListType::PLAYED_GAME:
+                    PlayedGames::SaveGame(list->info.game_info, file);
+                break;
             }
         }
     }
@@ -236,6 +261,10 @@ namespace TList{
 
                     case ListType::USER:
                         aux_info.user_info = UserManager::LoadUser(dat_file);
+                    break;
+
+                    case ListType::PLAYED_GAME:
+                        aux_info.game_info = PlayedGames::LoadGame(dat_file);
                     break;
                 }
                 // printf("LOADED\n");

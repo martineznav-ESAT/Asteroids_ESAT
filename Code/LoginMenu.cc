@@ -19,6 +19,7 @@
 #include "./RegisterMenu.h"
 #include "./MainMenu.h"
 #include "./PlayMenu.h"
+#include "./Gameplay.h"
 
 namespace LoginMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -60,9 +61,9 @@ namespace LoginMenu{
     void LoginAction(){
         switch(prev_level){
             case GameManager::Level::PLAY_MENU:
-                // if(VerifyLogin(&(Game::actual_game.p2_user))){
-                //     // Game::Load(Multiplayer);
-                // }
+                if(VerifyLogin(&(GameManager::game_status.actual_game.p2_user))){
+                    Gameplay::Load(GameManager::game_status.actual_game.gamemode);
+                }
             break;
             default:
                 if(VerifyLogin(&(GameManager::game_status.logged_user))){
