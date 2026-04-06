@@ -14,6 +14,7 @@ namespace TList{
         CHAR,
         USER,
         PLAYED_GAME,
+        ASTEROID
     };
 
     union ListInfo{
@@ -21,6 +22,7 @@ namespace TList{
         char char_info;
         UserManager::User user_info;
         PlayedGames::PlayedGame game_info;
+        Asteroids::Asteroid asteroid_info;
     };
 
     struct ListNode{

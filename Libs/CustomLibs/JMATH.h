@@ -53,6 +53,8 @@ namespace JMATH{
 
     bool Vec3IsNorm(Vec3 v);
 
+    Vec2 Vec3ToVec2(Vec3 v);
+    
     //VEC4
     struct Vec4{
         float x, y, z, w;
@@ -131,6 +133,12 @@ namespace JMATH{
     Vec3 Mat3MultVec3(Mat3 m1, Vec3 v1);
 
     Mat3 Mat3Identity();
+
+    Mat3 Mat3Scale(float sx, float sy);
+
+    Mat3 Mat3Rotate(float radians);
+
+    Mat3 Mat3Translate(float tx, float ty);
 
     //Mat4
     struct Mat4{

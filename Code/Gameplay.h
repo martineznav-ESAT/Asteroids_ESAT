@@ -11,6 +11,8 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/TList.h"
+
 #include "../Libs/GameplayTech/GameplayTech.h"
 
 #include "./GameManager.h"
@@ -18,12 +20,13 @@
 
 
 namespace Gameplay{
+    extern TList::ListNode *asteroid_ingame;
 
     //Whole Gameplay initializer
     void Init();
 
     //Loads the Gameplay
-    void Load(PlayedGames::Gamemode gm);
+    void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr);
 
     //Whole Gameplay update method
     void Update();

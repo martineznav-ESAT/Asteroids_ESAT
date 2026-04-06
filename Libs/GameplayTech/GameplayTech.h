@@ -3,5 +3,6 @@
 
 #include "./PlayedGames.h"
 #include "./Players.h"
+#include "./Asteroids.h"
 
 #endif

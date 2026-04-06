@@ -41,6 +41,12 @@ namespace TList{
                 // PrintList(list);
                 for(aux = list; aux != nullptr && aux->info.game_info.game_id != info.game_info.game_id; aux = aux->next);
             break;
+
+            case ListType::ASTEROID:
+                // printf("\n-----REGISTERED GAMES\n");
+                // PrintList(list);
+                for(aux = list; aux != nullptr && aux->info.asteroid_info.id != info.asteroid_info.id; aux = aux->next);
+            break;
         }
 
 
@@ -101,6 +107,12 @@ namespace TList{
                 }{
                     printf("NF ");
                 }
+                printf("||\n");
+            break;
+
+            case ListType::ASTEROID:
+                printf("|| Asteroid %d - Size %d - Speed:",list->info.asteroid_info.id, list->info.asteroid_info.size_level);
+                JMATH::Vec3Print(list->info.asteroid_info.speed_v);
                 printf("||\n");
             break;
         }
@@ -195,8 +207,9 @@ namespace TList{
 
     void ClearList(ListNode **list){
         for(ListNode *act = *list; !IsEmptyList(list); act = *list){
-            ExtractFromList(list);
+            free(ExtractFromList(list));
         }
+        *list = CreateList();
     }
 
     void SaveNode(ListNode *list, FILE *file){

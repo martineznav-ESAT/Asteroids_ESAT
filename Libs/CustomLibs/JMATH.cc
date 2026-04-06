@@ -4,7 +4,7 @@
 #include "./JMATH.h"
 
 namespace JMATH{
-    float PI = 3.141592;
+    const float kPI = 3.141592;
 
     //VEC2
     void Vec2Print(Vec2 v){
@@ -84,14 +84,8 @@ namespace JMATH{
         return (vl<1.2 && vl>0.8);
     }
 
-    Vec3 Vec3Homogenize(Vec3 v){
-        if(v.z > 0){
-            v.x /= v.z;
-            v.y /= v.z;
-            v.z /= v.z;
-        }
-
-        return v;
+    Vec2 Vec3ToVec2(Vec3 v){
+        return {v.x, v.y};
     }
 
     //VEC4
@@ -128,6 +122,16 @@ namespace JMATH{
     bool Vec4IsNorm(Vec4 v){
         float vl = Vec4Length(v);
         return (vl<1.2 && vl>0.8);
+    }
+
+    float Dot(Vec2 v, Vec2 w){
+        return(v.x*w.x + v.y*w.y);
+    }
+    float Dot(Vec3 v, Vec3 w){
+        return(v.x*w.x + v.y*w.y + v.z*w.z);
+    }
+    float Dot(Vec4 v, Vec4 w){
+        return(v.x*w.x + v.y*w.y + v.z*w.z + v.w*w.w);
     }
 
     //Mat2
@@ -465,10 +469,10 @@ namespace JMATH{
     }
 
     float DegreesToRadians(float degrees){
-        return (degrees/180)*PI;
+        return (degrees/180)*kPI;
     }
 
     float RadiansToDegrees(float radians){
-        return (radians/PI)*180;
+        return (radians/kPI)*180;
     }
 }

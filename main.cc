@@ -18,6 +18,7 @@
 #include "./Code/PlayMenu.h"
 #include "./Code/HighscoresMenu.h"
 #include "./Code/AdminMenu.h"
+#include "./Code/Gameplay.h"
 
 void InitGame(){
     LoginMenu::Init();
@@ -26,6 +27,9 @@ void InitGame(){
     PlayMenu::Init();
     HighscoresMenu::Init();
     AdminMenu::Init();
+    Gameplay::Init();
+
+    Asteroids::Init();
     GameManager::LoadInitLevel();
 }
 
@@ -57,7 +61,7 @@ void UpdateGame(){
         break;
 
         case GameManager::Level::GAMEPLAY :
-
+            Gameplay::Update();
         break;
     }
 }
@@ -90,7 +94,7 @@ void DrawGame(){
         break;
 
         case GameManager::Level::GAMEPLAY :
-            esat::DrawClear(255,255,255);
+            Gameplay::Draw();
         break;
     }
 }
