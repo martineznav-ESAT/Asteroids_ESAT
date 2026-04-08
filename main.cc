@@ -27,9 +27,10 @@ void InitGame(){
     PlayMenu::Init();
     HighscoresMenu::Init();
     AdminMenu::Init();
-    Gameplay::Init();
 
     Asteroids::Init();
+    Gameplay::Init();
+    
     GameManager::LoadInitLevel();
 }
 
@@ -45,6 +46,7 @@ void UpdateGame(){
         break;
 
         case GameManager::Level::MAIN_MENU :
+            Gameplay::UpdateGameAsteroids();
             MainMenu::Update();
         break;
 
@@ -78,6 +80,7 @@ void DrawGame(){
         break;
 
         case GameManager::Level::MAIN_MENU :
+            Gameplay::DrawGameAsteroids();
             MainMenu::Draw();
         break;
 

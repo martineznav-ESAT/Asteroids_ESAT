@@ -13,6 +13,8 @@
 #include "../Libs/CustomLibs/UILib.h"
 #include "../Libs/CustomLibs/TList.h"
 
+#include "../Libs/GameplayTech/GameplayTech.h"
+
 #include "./GameManager.h"
 #include "./UserManager.h"
 #include "./AdminMenu.h"

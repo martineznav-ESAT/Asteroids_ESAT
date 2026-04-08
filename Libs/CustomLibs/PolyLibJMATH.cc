@@ -6,6 +6,9 @@
 
 #include "./JMATH.h"
 #include "./PolyLibJMATH.h"
+#include "./Utils.h"
+
+#include "../GameplayTech/GameplayTech.h"
 
 namespace PolyLibJMATH{
     void InitPoly(Poly *p, int vertices, JMATH::Vec2 scale, float rotation, JMATH::Vec2 translation, JMATH::Vec3 color, JMATH::Vec2 center_offset){
@@ -65,6 +68,32 @@ namespace PolyLibJMATH{
         return tr_aux;
     }
 
+    void MovePoly(Poly *p, JMATH::Vec3 speed_v){
+        
+
+        p->transform.translation = JMATH::Vec2Sum(
+            p->transform.translation,
+            {speed_v.x, speed_v.y}
+        );
+
+        //TO_DO Replace with border colision at Collision.h
+
+        switch (Collisions::CollisionPolyWindowBorderExit(*p)){
+            case Collisions::Border::TOP:
+                p->transform.translation.y = Utils::kWindowHeight+(p->transform.scale.y);
+            break;
+            case Collisions::Border::RIGHT:
+                p->transform.translation.x = 0-(p->transform.scale.x);
+            break;
+            case Collisions::Border::BOTTOM:
+                p->transform.translation.y = 0-(p->transform.scale.y);
+            break;
+            case Collisions::Border::LEFT:
+                p->transform.translation.x = Utils::kWindowWidth+(p->transform.scale.x);
+            break;
+        }
+    }
+
     void UpdatePoly(Poly *p){
         JMATH::Mat3 tr_aux = JMATH::Mat3Identity();
 
@@ -87,5 +116,10 @@ namespace PolyLibJMATH{
         }
         esat::DrawSetStrokeColor(p.color.x,p.color.y,p.color.z);
         esat::DrawSolidPath(&(p.draw_coords->x), p.t_vertices);
+    }
+
+    void EmptyPolyMemory(Poly *p){
+        free(p->draw_coords);
+        free(p->local_coords);
     }
 }

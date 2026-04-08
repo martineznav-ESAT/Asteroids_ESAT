@@ -6,6 +6,8 @@
 #include "./TList.h"
 #include "../../Code/UserManager.h"
 #include "../GameplayTech/GameplayTech.h"
+#include "./JMATH.h"
+#include "./PolyLibJMATH.h"
 
 namespace TList{
 
@@ -200,6 +202,16 @@ namespace TList{
                 aux = ExtractFromList(&aux);
             }
 
+            switch (aux->type){
+                case ListType::USER:
+                    UserManager::FreeUserMemory(&(aux->info.user_info));
+                break;
+
+                case ListType::ASTEROID:
+                    PolyLibJMATH::EmptyPolyMemory(&(aux->info.asteroid_info.figure));
+                break;
+            }
+            
             //Free memory
             free(aux);
         }

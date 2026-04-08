@@ -4,5 +4,6 @@
 #include "./PlayedGames.h"
 #include "./Players.h"
 #include "./Asteroids.h"
+#include "./Collisions.h"
 
 #endif

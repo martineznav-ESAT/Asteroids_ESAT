@@ -12,6 +12,8 @@
 #include "../Libs/CustomLibs/UILib.h"
 #include "./GameManager.h"
 
+#include "../Libs/GameplayTech/GameplayTech.h"
+
 #ifndef AdminMenu_H
 #define AdminMenu_H
 

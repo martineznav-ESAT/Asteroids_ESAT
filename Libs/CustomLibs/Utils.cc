@@ -24,9 +24,25 @@ namespace Utils{
     void GenerateRandomSeed(){
         srand(time(NULL)); 
     }
-    //Genera un número del 0 al límite indicado
+    
+    //Genera un número del 0 al límite indicado sin incluirlo
     int GenerateRandomNumber(int limite){
         return (rand()%limite);
+    }
+
+    //Genera un número del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
+    int GenerateRandomNumberNegative(int limite){
+        return (GenerateRandomNumber(limite)) * (GenerateRandomNumber(2) == 0 ? -1 : 1);
+    }
+
+    //Genera un número decimal (2 decimales) del 0 al límite indicado sin incluirlo
+    float GenerateRandomFloat(int limite){
+        return (GenerateRandomNumber(limite*100)/100.0f);
+    }
+
+    //Genera un número decimal (2 decimales) del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
+    float GenerateRandomFloatNegative(int limite){
+        return (GenerateRandomFloat(limite) * (GenerateRandomNumber(2) == 0 ? -1 : 1));
     }
 
     int GetPointerIndex(int row, int col_t, int col){

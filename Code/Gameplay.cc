@@ -21,42 +21,95 @@
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
 
-    //Whole Gameplay initializer
-    void Init(){
-        
-    }
-
-    //Gameplay LOAD
     void GenerateAsteroidRound(){
-        TList::ListInfo aux_asteroid_info = {NULL};
+        TList::ListInfo asteroid_aux_info = {NULL};
+        int max_asteroids = 0;
 
         TList::ClearList(&asteroid_ingame);
 
-        //TO_DO
-        aux_asteroid_info.asteroid_info = Asteroids::NewAsteroid(Asteroids::AsteroidType::A1,3);
-        TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, aux_asteroid_info);
-        asteroid_ingame->info.asteroid_info.speed_v = {
-            (float)Utils::GenerateRandomNumber(7)-3,
-            (float)Utils::GenerateRandomNumber(7)-3,
-            0.0f
-        };
-        
-        aux_asteroid_info.asteroid_info = Asteroids::NewAsteroid(Asteroids::AsteroidType::A1,2);
-        TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, aux_asteroid_info);
-        asteroid_ingame->info.asteroid_info.speed_v = {
-            (float)Utils::GenerateRandomNumber(7)-3,
-            (float)Utils::GenerateRandomNumber(7)-3,
-            0.0f
-        };
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            switch (GameManager::game_status.actual_game.round){
+                case 1:
+                    max_asteroids = 4;
+                break;
+                
+                case 2:
+                    max_asteroids = 6;
+                break;
+                
+                case 3:
+                    max_asteroids = 8;
+                break;
+            
+                default:
+                    max_asteroids = 11;
+                break;
+            }
+        }else{
+            max_asteroids = 11;
+        }
 
-        aux_asteroid_info.asteroid_info = Asteroids::NewAsteroid(Asteroids::AsteroidType::A1,1);
-        TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, aux_asteroid_info);
-        asteroid_ingame->info.asteroid_info.speed_v = {
-            (float)Utils::GenerateRandomNumber(7)-3,
-            (float)Utils::GenerateRandomNumber(7)-3,
-            0.0f
-        };
+        for (int i = 0; i < max_asteroids; i++){
+            asteroid_aux_info.asteroid_info = 
+                Asteroids::NewAsteroid(
+                    (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
+                    Utils::GenerateRandomNumber(3)+1
+                );
+                
+            PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
+            TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, asteroid_aux_info);
+        }
+}
+
+
+    //Whole Gameplay initializer
+    void Init(){
+        // printf("INIT GAMEPLAY\n");
+        GenerateAsteroidRound();
     }
+
+    void GenerateOnAsteroidDestroy(Asteroids::Asteroid asteroid){
+        TList::ListInfo asteroid_aux_info = {NULL};
+
+        if(asteroid.size_level > 1){
+            for(int i = 0; i < 2; i++){
+                asteroid_aux_info.asteroid_info = 
+                    Asteroids::NewAsteroid(
+                        (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
+                        asteroid.size_level-1
+                    );
+                    
+                asteroid_aux_info.asteroid_info.figure.transform.translation = asteroid.figure.transform.translation;
+                PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
+                TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, asteroid_aux_info);
+            }
+        }
+    }
+
+    //Gameplay UPDATE
+    void UpdateGameAsteroids(){
+        Asteroids::Asteroid *asteroid_aux;
+
+        for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
+            asteroid_aux = &(p->info.asteroid_info);
+            //TO_DO REPLACE WITH CollisionPolyPlayerShots
+            if(Collisions::CollisionPolyOnRClick(asteroid_aux->figure)){
+                GenerateOnAsteroidDestroy(*asteroid_aux);
+                TList::DeleteElement(&asteroid_ingame, p->info);
+            }else{
+                PolyLibJMATH::MovePoly(&(p->info.asteroid_info.figure), p->info.asteroid_info.speed_v);
+                PolyLibJMATH::UpdatePoly(&(p->info.asteroid_info.figure));
+            }
+        }
+    }
+
+    //Whole Gameplay update method
+    void Update(){  
+        UpdateGameAsteroids();
+    }
+
+
+    //Gameplay LOAD
 
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2){
@@ -65,47 +118,13 @@ namespace Gameplay{
         GameManager::game_status.actual_game.p2_user = p2;
 
         GenerateAsteroidRound();
+        UpdateGameAsteroids();
 
-        // TList::PrintList(asteroid_ingame);
-
-        // switch (gm){
-        //     case PlayedGames::Gamemode::SP:
-
-        //     break;
-        //     case PlayedGames::Gamemode::MP_ALT :
-            
-        //     break;
-        //     case PlayedGames::Gamemode::MP_VS :
-            
-        //     break;
-        //     case PlayedGames::Gamemode::MP_COOP :
-            
-        //     break;
-        // }
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
     }
 
-    //Gameplay UPDATE
-    void UpdateIngameAsteroids(){
-        for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
-            //MOVE
-            p->info.asteroid_info.figure.transform.translation = JMATH::Vec2Sum(
-                p->info.asteroid_info.figure.transform.translation,
-                {p->info.asteroid_info.speed_v.x, p->info.asteroid_info.speed_v.y}
-            );
-
-            PolyLibJMATH::UpdatePoly(&(p->info.asteroid_info.figure));
-        }
-    }
-
-    //Whole Gameplay update method
-    void Update(){  
-        UpdateIngameAsteroids();
-    }
-
     //Gameplay DRAW
-
-    void DrawIngameAsteroids(){
+    void DrawGameAsteroids(){
         for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
             PolyLibJMATH::DrawPoly(p->info.asteroid_info.figure,false);
         }
@@ -113,7 +132,7 @@ namespace Gameplay{
 
     //Whole Gameplay draw method
     void Draw(){
-        DrawIngameAsteroids();
+        DrawGameAsteroids();
     }
 
     void EmptyMemory(){

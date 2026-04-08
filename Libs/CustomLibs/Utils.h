@@ -33,8 +33,17 @@ namespace Utils{
     //on clock system ms 
     void GenerateRandomSeed();
 
-    //Generates a random number between 0 and limit
-    int GenerateRandomNumber(int limit);
+    //Genera un número del 0 al límite indicado sin incluirlo
+    int GenerateRandomNumber(int limite);
+
+    //Genera un número del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
+    int GenerateRandomNumberNegative(int limite);
+
+    //Genera un número decimal (2 decimales) del 0 al límite indicado sin incluirlo
+    float GenerateRandomFloat(int limite);
+
+    //Genera un número decimal (2 decimales) del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
+    float GenerateRandomFloatNegative(int limite);
 
     int GetPointerIndex(int row, int col_t, int col);
 

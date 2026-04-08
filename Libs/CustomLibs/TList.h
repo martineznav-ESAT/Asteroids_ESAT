@@ -4,6 +4,7 @@
 
 #include "../../Code/UserManager.h"
 #include "../GameplayTech/GameplayTech.h"
+#include "../GameplayTech/Asteroids.h"
 
 #ifndef TList_H
 #define TList_H

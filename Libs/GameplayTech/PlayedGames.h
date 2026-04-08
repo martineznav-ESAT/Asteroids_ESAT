@@ -21,6 +21,7 @@ namespace PlayedGames{
     struct PlayedGame{
         int game_id = 0;
         Gamemode gamemode;
+        int round = 1;
         UserManager::User *p1_user;
         UserManager::User *p2_user;
         Players::Player p1;

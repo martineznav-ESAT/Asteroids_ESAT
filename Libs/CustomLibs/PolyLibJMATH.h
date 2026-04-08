@@ -28,9 +28,13 @@ namespace PolyLibJMATH{
 
     JMATH::Mat3 GetTransformMat3(Transform tr, JMATH::Vec2 center_offset = {0,0});
 
+    void MovePoly(Poly *p, JMATH::Vec3 speed_v);
+
     void UpdatePoly(Poly *p);
     
     void DrawPoly(Poly p, bool solid);
+
+    void EmptyPolyMemory(Poly *p);
 }
 
 
