@@ -20,6 +20,8 @@
 
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
+    PolyLibJMATH::Poly p1_life_figure;
+    PolyLibJMATH::Poly p2_life_figure;
 
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
@@ -130,26 +132,10 @@ namespace Gameplay{
         }
     }
 
-    //TO_DO PLAYER CONTROL WIP 
-    void UpdatePlayerShots(Players::Player* player){
-        for(int i = 0; i < Players::max_player_shots; i++){
-            if(((player->ship.shots)+i)->is_active){
-                PolyLibJMATH::MovePoly(&(((player->ship.shots)+i)->bullet), (((player->ship.shots)+i)->speed_v));
-                PolyLibJMATH::UpdatePoly(&(((player->ship.shots)+i)->bullet));
-            }
-        }
-    }
-
-    void UpdatePlayer(Players::Player* player){
-        PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
-        PolyLibJMATH::UpdatePoly(&(player->ship.figure));
-        UpdatePlayerShots(player);
-    }
-
     void UpdatePlayers(){
-        UpdatePlayer(&(GameManager::game_status.actual_game->p1));
+        Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
         if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
-            UpdatePlayer(&(GameManager::game_status.actual_game->p2));
+            Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
         }
     }
 
@@ -177,6 +163,13 @@ namespace Gameplay{
         //LOADS NEW GAME AS THE ACTUAL GAME
         GameManager::game_status.actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
 
+        p1_life_figure = GameManager::game_status.actual_game->p1.ship.figure;
+        p1_life_figure.transform.scale = {15.0f,15.0f};
+        if(p2 != nullptr){
+            p2_life_figure = GameManager::game_status.actual_game->p2.ship.figure;
+            p2_life_figure.transform.scale = {15.0f,15.0f};
+        }
+
         //UPDATES VALUES BEFORE ITS REFLECTED ON SCREEN
         GenerateAsteroidRound();
         Update();
@@ -189,8 +182,26 @@ namespace Gameplay{
         }
     }
 
-    void DrawLifes(PlayedGames::PlayedGame actual_game){
+    void DrawP1Lifes(PlayedGames::PlayedGame actual_game){
+        float base_height = Utils::kBaseFontSize*2.0f + p1_life_figure.transform.scale.x+10.0f;
+        float base_width =  p1_life_figure.transform.scale.x+10.0f;
 
+        for(int i = 1; i <= actual_game.p1.lifes; i++){
+            p1_life_figure.transform.translation = {base_width*i, base_height};
+            PolyLibJMATH::UpdatePoly(&p1_life_figure);
+            PolyLibJMATH::DrawPoly(p1_life_figure, false);
+        }
+    }
+
+    void DrawP2Lifes(PlayedGames::PlayedGame actual_game){
+        float base_height = Utils::kBaseFontSize*2.0f + p2_life_figure.transform.scale.x+10.0f;
+        float base_width = p2_life_figure.transform.scale.x+10.0f;
+
+        for(int i = 1; i <= actual_game.p2.lifes; i++){
+            p2_life_figure.transform.translation = {Utils::kWindowWidth - (base_width*i), base_height};
+            PolyLibJMATH::UpdatePoly(&p2_life_figure);
+            PolyLibJMATH::DrawPoly(p2_life_figure, false);
+        }
     }
 
     void DrawP1UI(PlayedGames::PlayedGame actual_game){
@@ -253,8 +264,10 @@ namespace Gameplay{
 
     void DrawGameUI(PlayedGames::PlayedGame actual_game){
         DrawP1UI(actual_game);
+        DrawP1Lifes(actual_game);
         if(actual_game.gamemode != PlayedGames::Gamemode::SP){
             DrawP2UI(actual_game);
+            DrawP2Lifes(actual_game);
         }
     }
 

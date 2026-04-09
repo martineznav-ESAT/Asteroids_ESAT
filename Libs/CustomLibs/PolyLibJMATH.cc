@@ -69,13 +69,10 @@ namespace PolyLibJMATH{
 
     void MovePoly(Poly *p, JMATH::Vec3 speed_v){
         
-
         p->transform.translation = JMATH::Vec2Sum(
             p->transform.translation,
             {speed_v.x, speed_v.y}
         );
-
-        //TO_DO Replace with border colision at Collision.h
 
         switch (Collisions::CollisionPolyWindowBorderExit(*p)){
             case Collisions::Border::TOP:

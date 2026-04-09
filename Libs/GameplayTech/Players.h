@@ -43,6 +43,10 @@ namespace Players{
     Ship NewShip();
 
     Player NewPlayer();
+
+    void UpdatePlayer(Players::Player* player, bool is_p1);
+
+    void EmptyPlayerMemory(Player* player);
 }
 
 #endif

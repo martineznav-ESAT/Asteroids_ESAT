@@ -13,11 +13,11 @@ namespace Players{
 
     void Init(){
         ship_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*5);
-        *(ship_coords+0) = {0.0f,-1.0f};     // 1
-        *(ship_coords+1) = {-0.6f,1.0f};   // 2
-        *(ship_coords+2) = {-0.3f,0.6f};   // 3
-        *(ship_coords+3) = {0.3f,0.6f};    // 4
-        *(ship_coords+4) = {0.6f,1.0f};    // 5
+        *(ship_coords+0) = {1.0f, 0.0f};      // 1
+        *(ship_coords+1) = {-1.0f, -0.6f};    // 2
+        *(ship_coords+2) = {-0.6f, -0.3f};    // 3
+        *(ship_coords+3) = {-0.6f, 0.3f};     // 4
+        *(ship_coords+4) = {-1.0f, 0.6f};     // 5
     }
 
     Shot NewShot(){
@@ -32,7 +32,7 @@ namespace Players{
             {0.0f,0.0f}
         );
         new_shot.speed_v = {0.0f,0.0f};
-        new_shot.life_time = 2000; //ms
+        new_shot.life_time = 1000; //ms
         new_shot.lt_count = 0; //ms timer
         new_shot.is_active = false;
         return new_shot;
@@ -45,16 +45,16 @@ namespace Players{
             5,
             ship_coords,
             {20.0f,20.0f},
-            0.0f,
+            -90.0f,
             {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f},
             {255,255,255},
-            {0.0f,-0.4f}
+            {0.2f,0.0f}
         );
         new_ship.fwd = {0.0f,0.0f};
         new_ship.speed_v = {0.0f,0.0f};
-        new_ship.max_speed = 3.0f;
-        new_ship.accel = 0.1f;
-        new_ship.decel = 0.1f;
+        new_ship.max_speed = 5.0f;
+        new_ship.accel = 10.0f;
+        new_ship.decel = 0.995f;
         new_ship.shots = (Shot*) malloc(sizeof(Shot)*max_player_shots);
         for(int i = 0; i < max_player_shots; i++){
             *(new_ship.shots+i) = NewShot();
@@ -71,10 +71,129 @@ namespace Players{
         return new_player;
     }
 
+    void RotateShip(Ship *ship, float degreesSecond){
+        ship->figure.transform.rotation += degreesSecond/Utils::kFPS;
+    }
+
+    void AccelerateShip(Ship *ship){
+        ship->speed_v = JMATH::Vec3Sum(ship->speed_v, JMATH::Vec3Scale(ship->fwd, ship->accel/Utils::kFPS));
+        if(JMATH::Vec2Length(JMATH::Vec3ToVec2(ship->speed_v)) > ship->max_speed){
+            ship->speed_v = JMATH::Vec3Scale(JMATH::Vec3Norm(ship->speed_v), ship->max_speed);
+        }
+    }
+
+    void DecelerateShip(Ship *ship){
+        ship->speed_v = JMATH::Vec3Scale(ship->speed_v, ship->decel);
+    }
+
+    void ShipShoot(Ship *ship){
+        int i;
+        bool exists_unshot = false;
+
+        for(i = 0; i < max_player_shots && !exists_unshot; i++){
+            exists_unshot = !(ship->shots+i)->is_active;
+        }
+
+        if(exists_unshot){
+            i--;
+            ((ship->shots)+i)->is_active = true;
+            ((ship->shots)+i)->lt_count = 0;
+            ((ship->shots)+i)->speed_v = JMATH::Vec3Scale(ship->fwd, 10);
+            //Spawn bullet at Ship head based on the ship transform
+            ((ship->shots)+i)->bullet.transform.translation = JMATH::Vec2Sum(
+                ship->figure.transform.translation, 
+                JMATH::Vec3ToVec2(JMATH::Vec3Scale(ship->fwd,ship->figure.transform.scale.x))
+            );
+            ((ship->shots)+i)->bullet.transform.rotation = ship->figure.transform.rotation+45;
+        }
+    }
+
+    void PlayerInput(Player* p, bool is_p1){
+        if(is_p1){
+            //PLAYER 1 INPUT CONTROL
+
+            if(esat::IsKeyPressed('W')){
+                // printf("MOVE FORWARD\n");
+                AccelerateShip(&(p->ship));
+            }else{
+                DecelerateShip(&(p->ship));
+            }
+            
+            if(esat::IsKeyPressed('A')){
+                // printf("ROTATE LEFT\n");
+                RotateShip(&(p->ship),-360);
+            }
+
+            if(esat::IsKeyPressed('D')){
+                // printf("ROTATE RIGHT\n");
+                RotateShip(&(p->ship),360);
+            }
+
+            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space)){
+                // printf("SHOOT\n");
+                ShipShoot(&(p->ship));
+            }
+        }else{
+            //PLAYER 2 INPUT CONTROL
+
+            if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Up)){
+                // printf("MOVE FORWARD\n");
+                AccelerateShip(&(p->ship));
+            }else{
+                DecelerateShip(&(p->ship));
+            }
+
+            if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Left)){
+                // printf("ROTATE LEFT\n");
+                RotateShip(&(p->ship),-360);
+            }
+
+            if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Right)){
+                // printf("ROTATE RIGHT\n");
+                RotateShip(&(p->ship),360);
+            }
+
+            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter)){
+                // printf("SHOOT\n");
+                ShipShoot(&(p->ship));
+            }
+        }
+    }
+
+    void UpdatePlayerShots(Players::Player* player){
+        for(int i = 0; i < Players::max_player_shots; i++){
+            if(((player->ship.shots)+i)->is_active){
+                PolyLibJMATH::MovePoly(&(((player->ship.shots)+i)->bullet), (((player->ship.shots)+i)->speed_v));
+                PolyLibJMATH::UpdatePoly(&(((player->ship.shots)+i)->bullet));
+                ((player->ship.shots)+i)->lt_count += 1000/Utils::kFPS;
+                if(((player->ship.shots)+i)->lt_count >= ((player->ship.shots)+i)->life_time){
+                    ((player->ship.shots)+i)->is_active = false;
+                }
+            }
+        }
+    }
+
+    void UpdateShipFwd(Ship* ship){
+        float radianBase = JMATH::DegreesToRadians(360.0f/ship->figure.t_vertices);
+        float radianRotation = JMATH::DegreesToRadians(ship->figure.transform.rotation);
+        ship->fwd = {cosf(radianRotation), sinf(radianRotation)};
+    }
+
+    void UpdatePlayer(Players::Player* player, bool is_p1){
+        UpdateShipFwd(&(player->ship));
+
+        PlayerInput(player, is_p1);
+        PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
+        PolyLibJMATH::UpdatePoly(&(player->ship.figure));
+        UpdatePlayerShots(player);
+    }
+
+
     void EmptyPlayerMemory(Player* player){
         for(int i = 0; i < max_player_shots; i++){
             PolyLibJMATH::EmptyPolyMemory(&((player->ship.shots+i)->bullet));
         }
         PolyLibJMATH::EmptyPolyMemory(&(player->ship.figure));
     }
+    
 }
