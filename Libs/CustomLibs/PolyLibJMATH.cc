@@ -31,7 +31,6 @@ namespace PolyLibJMATH{
     }
 
     void InitPoly(Poly *p, int vertices, JMATH::Vec3 *custom_coords, JMATH::Vec2 scale, float rotation, JMATH::Vec2 translation, JMATH::Vec3 color, JMATH::Vec2 center_offset){
-        float angle = 6.28f / (float) vertices;
         p->t_vertices = vertices;
         p->local_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3) * p->t_vertices);
         p->draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * p->t_vertices);
@@ -99,7 +98,7 @@ namespace PolyLibJMATH{
 
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(p->center_offset.x, p->center_offset.y), tr_aux);
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Scale(p->transform.scale.x, p->transform.scale.y), tr_aux);
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(p->transform.rotation), tr_aux);
+        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(p->transform.rotation)), tr_aux);
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(p->transform.translation.x, p->transform.translation.y), tr_aux);
 
         for(int i = 0; i < p->t_vertices; i++){

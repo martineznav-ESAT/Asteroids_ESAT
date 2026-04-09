@@ -130,8 +130,32 @@ namespace Gameplay{
         }
     }
 
+    //TO_DO PLAYER CONTROL WIP 
+    void UpdatePlayerShots(Players::Player* player){
+        for(int i = 0; i < Players::max_player_shots; i++){
+            if(((player->ship.shots)+i)->is_active){
+                PolyLibJMATH::MovePoly(&(((player->ship.shots)+i)->bullet), (((player->ship.shots)+i)->speed_v));
+                PolyLibJMATH::UpdatePoly(&(((player->ship.shots)+i)->bullet));
+            }
+        }
+    }
+
+    void UpdatePlayer(Players::Player* player){
+        PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
+        PolyLibJMATH::UpdatePoly(&(player->ship.figure));
+        UpdatePlayerShots(player);
+    }
+
+    void UpdatePlayers(){
+        UpdatePlayer(&(GameManager::game_status.actual_game->p1));
+        if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
+            UpdatePlayer(&(GameManager::game_status.actual_game->p2));
+        }
+    }
+
     //Whole Gameplay update method
     void Update(){  
+        UpdatePlayers();
         UpdateGameAsteroids();
     }
 
@@ -153,8 +177,9 @@ namespace Gameplay{
         //LOADS NEW GAME AS THE ACTUAL GAME
         GameManager::game_status.actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
 
+        //UPDATES VALUES BEFORE ITS REFLECTED ON SCREEN
         GenerateAsteroidRound();
-        UpdateGameAsteroids();
+        Update();
     }
 
     //Gameplay DRAW
@@ -168,7 +193,7 @@ namespace Gameplay{
 
     }
 
-    void DrawP1(PlayedGames::PlayedGame actual_game){
+    void DrawP1UI(PlayedGames::PlayedGame actual_game){
         UILib::DrawText(
             {20.0f,Utils::kBaseFontSize*2.0f},
             {
@@ -188,7 +213,7 @@ namespace Gameplay{
         );
     }
 
-    void DrawP2(PlayedGames::PlayedGame actual_game){
+    void DrawP2UI(PlayedGames::PlayedGame actual_game){
         UILib::DrawText(
             {Utils::kWindowWidth - ((Utils::kBaseFontSize*2.0f)*2.5f),Utils::kBaseFontSize*2.0f},
             {
@@ -208,16 +233,35 @@ namespace Gameplay{
         );
     }
 
-    void DrawGameUI(PlayedGames::PlayedGame actual_game){
-        DrawP1(actual_game);
+    void DrawPlayerShots(Players::Player player){
+        for(int i = 0; i < Players::max_player_shots; i++){
+            if(((player.ship.shots)+i)->is_active){
+                PolyLibJMATH::DrawPoly(((player.ship.shots)+i)->bullet,true);
+            }
+        }
+    }
+
+    void DrawPlayers(PlayedGames::PlayedGame actual_game){
+        PolyLibJMATH::DrawPoly(actual_game.p1.ship.figure,false);
+        DrawPlayerShots(actual_game.p1);
+
         if(actual_game.gamemode != PlayedGames::Gamemode::SP){
-            DrawP2(actual_game);
+            PolyLibJMATH::DrawPoly(actual_game.p2.ship.figure,false);
+            DrawPlayerShots(actual_game.p2);
+        }
+    }
+
+    void DrawGameUI(PlayedGames::PlayedGame actual_game){
+        DrawP1UI(actual_game);
+        if(actual_game.gamemode != PlayedGames::Gamemode::SP){
+            DrawP2UI(actual_game);
         }
     }
 
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
+        DrawPlayers(*(GameManager::game_status.actual_game));
         DrawGameUI(*(GameManager::game_status.actual_game));
     }
 

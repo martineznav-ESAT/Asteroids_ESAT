@@ -21,6 +21,7 @@
 #include "./Code/Gameplay.h"
 
 void InitGame(){
+    Players::Init();
     
     LoginMenu::Init();
     RegisterMenu::Init();

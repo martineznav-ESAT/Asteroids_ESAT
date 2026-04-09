@@ -89,13 +89,13 @@ namespace PlayedGames{
         PlayedGame loaded_game = NewGame();
         TList::ListInfo aux_info = {NULL};
         if(dat_file != NULL){
-            printf("START LOADING\n");
+            // printf("START LOADING\n");
             fread(&(loaded_game.game_id), sizeof(int), 1, dat_file);
-            printf("game_id %d\n",loaded_game.game_id);
+            // printf("game_id %d\n",loaded_game.game_id);
             fread(&(loaded_game.gamemode), sizeof(Gamemode), 1, dat_file);
-            printf("gamemode %d\n",loaded_game.gamemode);
+            // printf("gamemode %d\n",loaded_game.gamemode);
             fread(&(loaded_game.round), sizeof(int), 1, dat_file);
-            printf("round %d\n",loaded_game.round);
+            // printf("round %d\n",loaded_game.round);
             
             aux_info.user_info = UserManager::NewUser();
 
