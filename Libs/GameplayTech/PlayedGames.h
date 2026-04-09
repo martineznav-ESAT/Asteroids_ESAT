@@ -29,15 +29,22 @@ namespace PlayedGames{
         bool is_finished;
     };
 
-    const extern FILE *game_list_dat;
-    const extern char *game_list_dat_path;
+    extern FILE *game_list_dat;
+    extern char *game_list_dat_path;
+
+    extern void *game_list; 
 
     PlayedGame NewGame();
     PlayedGame LoadBaseGameManagerGame(Gamemode gm);
 
-    void SaveGame(PlayedGame game, FILE *file);
+    void SaveGame(PlayedGame game, FILE *dat_file);
 
     PlayedGame LoadGame(FILE *dat_file);
+
+    bool LoadGameList();
+
+    //RETURNS A TListNode* list
+    void* FindHighScores();
 }
 
 #endif

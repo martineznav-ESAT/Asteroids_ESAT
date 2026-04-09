@@ -101,13 +101,13 @@ namespace TList{
 
             case ListType::PLAYED_GAME:
                 printf("|| Game %d - Gamemode %d - P1 %s",list->info.game_info.game_id, list->info.game_info.gamemode, list->info.game_info.p1_user->username);
-                if(strcmp(list->info.game_info.p2_user->username,"\0") != 0){
+                if(list->info.game_info.gamemode != PlayedGames::Gamemode::SP){
                     printf("P2 %s ",list->info.game_info.p2_user->username);
                 }
                 if(list->info.game_info.is_finished){
-                    printf("F ");
+                    printf(" F ");
                 }{
-                    printf("NF ");
+                    printf(" NF ");
                 }
                 printf("||\n");
             break;
@@ -252,6 +252,9 @@ namespace TList{
         ListNode *aux = GetLastListNode(*list);
         dat_file = fopen(dat_path, "wb");
 
+        printf("SAVING LIST:\n");
+        PrintList(*list);
+
         //Saved backwards to mantain consistency when loaded again
         for(ListNode *p = aux; p!=nullptr; p = p->prev){
             SaveNode(p, dat_file);
@@ -289,6 +292,7 @@ namespace TList{
                     break;
 
                     case ListType::PLAYED_GAME:
+                        // printf("LOAD GAME\n");
                         aux_info.game_info = PlayedGames::LoadGame(dat_file);
                     break;
                 }
@@ -300,7 +304,7 @@ namespace TList{
             if(aux_type != list_type){
                 is_loaded = false;
             }else{
-                printf("---- REGISTERED USERS LOADED LIST ----\n");
+                // printf("---- REGISTERED USERS LOADED LIST ----\n");
                 PrintList(*list_to_load);
             }
 

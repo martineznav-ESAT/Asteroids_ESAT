@@ -40,7 +40,7 @@ namespace GameManager{
     struct GameStatus{
         Level level = LOGIN_MENU;
         UserManager::User *logged_user;
-        PlayedGames::PlayedGame actual_game;
+        PlayedGames::PlayedGame *actual_game;
     };
 
     extern GameStatus game_status;

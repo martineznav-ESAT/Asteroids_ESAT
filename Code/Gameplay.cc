@@ -28,7 +28,7 @@ namespace Gameplay{
         TList::ClearList(&asteroid_ingame);
 
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
-            switch (GameManager::game_status.actual_game.round){
+            switch (GameManager::game_status.actual_game->round){
                 case 1:
                     max_asteroids = 4;
                 break;
@@ -53,7 +53,7 @@ namespace Gameplay{
             asteroid_aux_info.asteroid_info = 
                 Asteroids::NewAsteroid(
                     (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
-                    Utils::GenerateRandomNumber(3)+1
+                    GameManager::game_status.level == GameManager::Level::GAMEPLAY ? 3 : Utils::GenerateRandomNumber(3)+1
                 );
                 
             PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
@@ -87,18 +87,45 @@ namespace Gameplay{
     }
 
     //Gameplay UPDATE
+    void AdvanceRound(){
+        GameManager::game_status.actual_game->round++;
+        GenerateAsteroidRound();
+    }
+
+    void AddAsteroidPoints(int size_level, Players::Player* player){
+        switch (size_level){
+            case 1:
+                player->score+=100;
+            break;
+            case 2:
+                player->score+=50;
+            break;
+            case 3:
+                player->score+=20;
+            break;
+        }
+    }
+
     void UpdateGameAsteroids(){
         Asteroids::Asteroid *asteroid_aux;
 
-        for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
-            asteroid_aux = &(p->info.asteroid_info);
-            //TO_DO REPLACE WITH CollisionPolyPlayerShots
-            if(Collisions::CollisionPolyOnRClick(asteroid_aux->figure)){
-                GenerateOnAsteroidDestroy(*asteroid_aux);
-                TList::DeleteElement(&asteroid_ingame, p->info);
-            }else{
-                PolyLibJMATH::MovePoly(&(p->info.asteroid_info.figure), p->info.asteroid_info.speed_v);
-                PolyLibJMATH::UpdatePoly(&(p->info.asteroid_info.figure));
+        if(TList::IsEmptyList(&asteroid_ingame)){
+            AdvanceRound();
+        }else{
+            for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
+                asteroid_aux = &(p->info.asteroid_info);
+                //TO_DO REPLACE WITH CollisionPolyPlayerShots
+                if(GameManager::game_status.level == GameManager::Level::GAMEPLAY && 
+                    Collisions::CollisionPolyOnRClick(asteroid_aux->figure)){
+                    //TO_DO NOT HARDCODED TO PLAYER ONE
+                    AddAsteroidPoints(asteroid_aux->size_level, &(GameManager::game_status.actual_game->p1));
+
+                    GenerateOnAsteroidDestroy(*asteroid_aux);
+                    TList::DeleteElement(&asteroid_ingame, p->info);
+                }else{
+                    PolyLibJMATH::MovePoly(&(p->info.asteroid_info.figure), p->info.asteroid_info.speed_v);
+                    PolyLibJMATH::UpdatePoly(&(p->info.asteroid_info.figure));
+                }
             }
         }
     }
@@ -113,14 +140,21 @@ namespace Gameplay{
 
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2){
+        TList::ListInfo aux_game_info = {NULL};
+        GameManager::game_status.level = GameManager::Level::GAMEPLAY;
 
-        GameManager::game_status.actual_game = PlayedGames::LoadBaseGameManagerGame(gm);
-        GameManager::game_status.actual_game.p2_user = p2;
+        //CREATE NEW GAME
+        aux_game_info.game_info = PlayedGames::LoadBaseGameManagerGame(gm);
+        aux_game_info.game_info.p2_user = p2;
+
+        TList::InsertList(((TList::ListNode**)(&(PlayedGames::game_list))), TList::ListType::PLAYED_GAME, aux_game_info);
+        TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+
+        //LOADS NEW GAME AS THE ACTUAL GAME
+        GameManager::game_status.actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
 
         GenerateAsteroidRound();
         UpdateGameAsteroids();
-
-        GameManager::game_status.level = GameManager::Level::GAMEPLAY;
     }
 
     //Gameplay DRAW
@@ -130,9 +164,61 @@ namespace Gameplay{
         }
     }
 
+    void DrawLifes(PlayedGames::PlayedGame actual_game){
+
+    }
+
+    void DrawP1(PlayedGames::PlayedGame actual_game){
+        UILib::DrawText(
+            {20.0f,Utils::kBaseFontSize*2.0f},
+            {
+                {255,255,255,255},
+                actual_game.p1_user->alias,
+                Utils::kBaseFontSize*2.0f
+            }
+        );
+        UILib::DrawIntToText(
+            {20.0f + (Utils::kBaseFontSize*2.0f)*3,Utils::kBaseFontSize*2.0f},
+            {
+                {255,255,255,255},
+                actual_game.p1_user->alias,
+                Utils::kBaseFontSize*2.0f
+            },
+            actual_game.p1.score,6,true
+        );
+    }
+
+    void DrawP2(PlayedGames::PlayedGame actual_game){
+        UILib::DrawText(
+            {Utils::kWindowWidth - ((Utils::kBaseFontSize*2.0f)*2.5f),Utils::kBaseFontSize*2.0f},
+            {
+                {255,255,255,255},
+                actual_game.p2_user->alias,
+                Utils::kBaseFontSize*2.0f
+            }
+        );
+        UILib::DrawIntToText(
+            {Utils::kWindowWidth - ((Utils::kBaseFontSize*2.0f)*7.5f),Utils::kBaseFontSize*2.0f},
+            {
+                {255,255,255,255},
+                actual_game.p2_user->alias,
+                Utils::kBaseFontSize*2.0f
+            },
+            actual_game.p2.score,6,true
+        );
+    }
+
+    void DrawGameUI(PlayedGames::PlayedGame actual_game){
+        DrawP1(actual_game);
+        if(actual_game.gamemode != PlayedGames::Gamemode::SP){
+            DrawP2(actual_game);
+        }
+    }
+
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
+        DrawGameUI(*(GameManager::game_status.actual_game));
     }
 
     void EmptyMemory(){

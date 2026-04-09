@@ -21,17 +21,19 @@
 #include "./Code/Gameplay.h"
 
 void InitGame(){
+    
     LoginMenu::Init();
     RegisterMenu::Init();
     MainMenu::Init();
     PlayMenu::Init();
-    HighscoresMenu::Init();
     AdminMenu::Init();
 
     Asteroids::Init();
     Gameplay::Init();
-    
+
     GameManager::LoadInitLevel();
+    PlayedGames::LoadGameList();
+    HighscoresMenu::Init();
 }
 
 void UpdateGame(){
@@ -117,6 +119,8 @@ void EmptyMemory(){
     PlayMenu::EmptyMemory();
     HighscoresMenu::EmptyMemory();
     AdminMenu::EmptyMemory();
+    Gameplay::EmptyMemory();
+    Asteroids::EmptyMemory();
 }
 
 void CloseFiles(){
@@ -147,7 +151,8 @@ int esat::main(int argc, char **argv) {
 
         Utils::ControlFps();
     }
-
+        
+    TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
     CloseFiles();
     EmptyMemory();
 

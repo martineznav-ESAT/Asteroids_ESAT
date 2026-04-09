@@ -11,6 +11,8 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/TList.h"
+
 #include "../Libs/GameplayTech/GameplayTech.h"
 
 #include "./GameManager.h"
@@ -22,7 +24,7 @@ namespace HighscoresMenu{
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
 
-    PlayedGames::PlayedGame *top_games = nullptr;
+    TList::ListNode *top_games = nullptr;
 
     //ACTIONS
     void BackAction(){
@@ -68,16 +70,8 @@ namespace HighscoresMenu{
         );
     }
 
-    //Initializes the values of the best 10 games ever played
-    void InitTopGames(){
-        top_games = (PlayedGames::PlayedGame*) malloc(sizeof(PlayedGames::PlayedGame)*10);
-        //TO_DO
-        // top_games = GameManager::FindHighScores();
-    }
-
     //Whole Highscores Menu initializer
     void Init(){
-        InitTopGames();
         InitMenuItems();
         InitButtons();
     }
@@ -88,6 +82,7 @@ namespace HighscoresMenu{
     void Load(){
         selected_item = -1;
         GameManager::game_status.level = GameManager::Level::HIGHSCORES_MENU;
+        top_games = (TList::ListNode*)PlayedGames::FindHighScores();
     }
 
     //HIGHSCORES MENU UPDATE
@@ -151,7 +146,7 @@ namespace HighscoresMenu{
             JMATH::Vec2Sum(coord, {font_size*strlen("ALIAS "),0}), 
             {
                 {255,255,255,255},
-                "AAA",
+                game.p1_user->alias,
                 font_size
             }
         );
@@ -171,12 +166,13 @@ namespace HighscoresMenu{
                 nullptr,
                 font_size
             },
-            0,6,true
+            game.p1.score,6,true
         );
     }
 
     void DrawGameScores(){
         float list_font_size = Utils::kBaseFontSize * 2.0f;
+        int i = 0;
         
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) - 
@@ -185,8 +181,8 @@ namespace HighscoresMenu{
         };
         JMATH::Vec2 margin_v = {0,65};
 
-        for(int i = 0; i < 10; i++){
-            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, *(top_games+i));
+        for(TList::ListNode *p = (TList::ListNode*) top_games; p!=nullptr && i < 10; p = p->next, i++){
+            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, p->info.game_info);
         }
     }
 
@@ -208,5 +204,7 @@ namespace HighscoresMenu{
             UILib::EmptyItemMemory(menu_items+i);
         }
         free(menu_items);
+
+        TList::ClearList(&top_games);
     }
 }
