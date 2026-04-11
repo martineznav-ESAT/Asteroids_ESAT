@@ -29,6 +29,24 @@ namespace RegisterMenu{
     UserManager::User form_user;
     UserManager::User* form_user_edit;
 
+    UILib::Text error_dialog = {
+        {255,0,0,255},
+        nullptr,
+        (float)Utils::kBaseFontSize*2
+    };
+    int error_dialog_lt = 3000;
+    float error_dialog_ltc = error_dialog_lt;
+
+    void ShowErrorDialog(){
+        if(error_dialog_ltc < error_dialog_lt){
+            UILib::DrawText(
+                {(Utils::kWindowWidth*0.5f) - ((strlen(error_dialog.text)*0.30f)*error_dialog.font_size), 75.0f}, 
+                error_dialog
+            );
+            error_dialog_ltc += 1000/Utils::kFPS;
+        }
+    }
+
     //ACTIONS
     void BackAction(){
         if(prev_level == GameManager::Level::ADMIN_MENU){
@@ -67,12 +85,14 @@ namespace RegisterMenu{
             if(UserManager::RegisterNewUser(form_user)){
                 BackAction();
             }else{
-                //TO_DO GRAPHIC MODE
-                printf("USERNAME TAKEN\n");
+                // printf("USERNAME TAKEN\n");
+                strcpy(error_dialog.text, "USERNAME TAKEN");
+                error_dialog_ltc = 0;
             }
         }else{
-            //TO_DO GRAPHIC MODE
-            printf("USERNAME, PASSWORD AND ALIAS ARE MANDATORY\n");
+            // printf("USERNAME, PASSWORD AND ALIAS ARE MANDATORY\n");
+            strcpy(error_dialog.text, "USERNAME, PASSWORD AND ALIAS ARE MANDATORY");
+            error_dialog_ltc = 0;
         }
     }
 
@@ -102,8 +122,8 @@ namespace RegisterMenu{
             TList::SaveList((TList::ListNode**) &(UserManager::user_list), UserManager::user_list_dat, UserManager::user_list_dat_path);
             BackAction();
         }else{
-            //TO_DO GRAPHIC MODE
-            printf("USERNAME, PASSWORD AND ALIAS ARE MANDATORY\n");
+            strcpy(error_dialog.text, "USERNAME, PASSWORD AND ALIAS ARE MANDATORY");
+            error_dialog_ltc = 0;
         }
     }
 
@@ -469,6 +489,9 @@ namespace RegisterMenu{
 
     //Whole Register Menu initializer
     void Init(){
+        error_dialog.text = (char*) malloc(sizeof(char)*51);
+        Utils::StringFillWithChar(error_dialog.text,51,'\0', -1);
+
         form_user = UserManager::NewUser();
         InitMenuItems();
         InitTextInputs();
@@ -588,6 +611,7 @@ namespace RegisterMenu{
         
         selected_item = -1;
         prev_level = level_p;
+        error_dialog_ltc = error_dialog_lt;
 
         if(TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0){
             //First ever game execution opens ADMIN REGISTRATION 
@@ -705,6 +729,7 @@ namespace RegisterMenu{
     //Whole Register Menu draw method
     void Draw(){
         DrawMenuItems();
+        ShowErrorDialog();
     }
 
     void EmptyMemory(){
@@ -713,5 +738,6 @@ namespace RegisterMenu{
         }
         UserManager::FreeUserMemory(&form_user);
         free(menu_items);
+        free(error_dialog.text);
     }
 }

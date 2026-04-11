@@ -27,6 +27,24 @@ namespace LoginMenu{
     GameManager::Level prev_level;
     int selected_item = -1;
 
+    UILib::Text error_dialog = {
+        {255,0,0,255},
+        nullptr,
+        (float)Utils::kBaseFontSize*2
+    };
+    int error_dialog_lt = 3000;
+    float error_dialog_ltc = error_dialog_lt;
+
+    void ShowErrorDialog(){
+        if(error_dialog_ltc < error_dialog_lt){
+            UILib::DrawText(
+                {(Utils::kWindowWidth*0.5f) - ((strlen(error_dialog.text)*0.30f)*error_dialog.font_size), 75.0f}, 
+                error_dialog
+            );
+            error_dialog_ltc += 1000/Utils::kFPS;
+        }
+    }
+
     bool VerifyLogin(UserManager::User **user){
         TList::ListNode* aux_tn = nullptr;
         bool is_verified = false;
@@ -44,12 +62,14 @@ namespace LoginMenu{
             if(is_verified){
                 *user = &(aux_tn->info.user_info);
             }else{
-                //TO_DO GRAPHIC
-                printf("PASSWORD DOES NOT MATCH WITH USERNAME %s\n", aux_ti.user_info.username);
+                // printf("PASSWORD DOES NOT MATCH WITH USERNAME %s\n", aux_ti.user_info.username);
+                strcpy(error_dialog.text, "INCORRECT PASSWORD");
+                error_dialog_ltc = 0;
             }
         }else{
-            //TO_DO GRAPHIC
-            printf("USERNAME %s NOT FOUND\n", aux_ti.user_info.username);
+            // printf("USERNAME %s NOT FOUND\n", aux_ti.user_info.username);
+            strcpy(error_dialog.text, "USERNAME NOT FOUND");
+            error_dialog_ltc = 0;
         }
 
         
@@ -279,6 +299,8 @@ namespace LoginMenu{
 
     //Whole Login Menu initializer
     void Init(){
+        error_dialog.text = (char*) malloc(sizeof(char)*51);
+        Utils::StringFillWithChar(error_dialog.text,51,'\0', -1);
         InitMenuItems();
         InitTextInputs();
         InitButtons();
@@ -298,6 +320,8 @@ namespace LoginMenu{
     void Load(GameManager::Level level_p){
         prev_level = level_p;
         selected_item = -1;
+        error_dialog_ltc = error_dialog_lt;
+
         CleanForm();
         switch(level_p){
             case GameManager::Level::PLAY_MENU:
@@ -357,6 +381,8 @@ namespace LoginMenu{
     //Whole Login Menu draw method
     void Draw(){
         DrawMenuItems();
+        ShowErrorDialog();
+        
     }
 
     void EmptyMemory(){
@@ -364,5 +390,6 @@ namespace LoginMenu{
             UILib::EmptyItemMemory(menu_items+i);
         }
         free(menu_items);
+        free(error_dialog.text);
     }
 }
