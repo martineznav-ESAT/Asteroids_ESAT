@@ -119,20 +119,11 @@ namespace HighscoresMenu{
                 //TO_DO De momento se asume que son todo partidas SP en cuanto a la comparacion de SCORE
                 // printf("game->info.game_info.p1.score %d != (*highscore)->next->info.game_info.p1.score %d\n",game->info.game_info.p1.score,(*highscore)->next->info.game_info.p1.score);
                 
-                //If the score is different starts checking.
-                if(game->info.game_info.p1.score != highscore->next->info.game_info.p1.score ){
-                    //If is checking the TOP 10, and the score in that moment is bigger, then it gates replaced automatically 
-                    if(highscore->next == nullptr){
-                        highscore->info = game->info;
-                        is_comparison_end = true;
-                    }else{
-                        //If is checking any value between TOP 1 and TOP 9, and the actual score is bigger than the one getting checked
-                        //Moves the scores under the actual one, and sets the score at this current position
-                        if(game->info.game_info.p1.score > highscore->next->info.game_info.p1.score){
-                            DisplaceAndFillHighScores(highscore, game->info);
-                            is_comparison_end = true;
-                        }
-                    }
+                //If is checking any value, and the actual score is bigger or equal than the one getting checked
+                //Sets the value to the current position and displaces re rest one row underneath
+                if(game->info.game_info.p1.score >= highscore->next->info.game_info.p1.score){
+                    DisplaceAndFillHighScores(highscore, game->info);
+                    is_comparison_end = true;
                 }
             }
         }
