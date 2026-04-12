@@ -25,7 +25,11 @@ namespace PlayedGames{
         PlayedGame new_game;
         new_game.game_id = TList::ListLength(*aux_list);
         new_game.gamemode = Gamemode::SP;
+        new_game.p1_user = nullptr;
+        new_game.p2_user = nullptr;
         new_game.round = 1;
+        new_game.p1 = Players::NewPlayer();
+        new_game.p2 = Players::NewPlayer();
         new_game.is_finished = false;
 
         return new_game;
@@ -35,9 +39,6 @@ namespace PlayedGames{
         PlayedGame new_game = NewGame();
         new_game.p1_user = GameManager::game_status.logged_user;
         new_game.p2_user = nullptr;
-
-        new_game.p1 = Players::NewPlayer();
-        new_game.p2 = Players::NewPlayer();
 
         return new_game;
     }
@@ -119,18 +120,5 @@ namespace PlayedGames{
 
         // printf("%p || %p\n",*aux_list,user_list);
         return is_loaded;
-    }
-
-    //Returns a TListNode* list with the top 10 PlayedGames with highest scores registered
-    void* FindHighScores(){
-        TList::ListNode* highscores = TList::CreateList();
-        int i = 0;
-        //TO_DO Right now only reads the first 10. Need to calculate top values and order them
-
-        for(TList::ListNode *p = (TList::ListNode*) game_list; p!=nullptr && i < 10; p = p->next, i++){
-            TList::InsertList(&highscores, TList::ListType::PLAYED_GAME, p->info);
-        }
-        
-        return highscores;
     }
 }

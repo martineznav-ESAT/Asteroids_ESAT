@@ -43,8 +43,6 @@ namespace PlayedGames{
 
     bool LoadGameList();
 
-    //RETURNS A TListNode* list
-    void* FindHighScores();
 }
 
 #endif

@@ -32,6 +32,18 @@ namespace HighscoresMenu{
     }
 
     //HIGHSCORES MENU INIT
+    void InitEmptyHighscores(){
+        TList::ClearList(&top_games);
+        top_games = TList::CreateList();
+        TList::ListInfo aux_info = {NULL};
+
+        for(int i = 0; i < 10 ; i++){
+            // printf("i = %d\n",i);
+            aux_info.game_info = PlayedGames::NewGame();
+            aux_info.game_info.game_id = i-100;
+            TList::InsertList(&top_games, TList::ListType::PLAYED_GAME, aux_info);
+        }
+    }
 
     //Initializes all menu buttons
     void InitButtons(){
@@ -72,17 +84,67 @@ namespace HighscoresMenu{
 
     //Whole Highscores Menu initializer
     void Init(){
+        InitEmptyHighscores();
         InitMenuItems();
         InitButtons();
     }
 
     //HIGHSCORES MENU LOAD
 
+    //Given a ListNode* as an index, moves all the highscores underneath leaving room for the index value to fill with the second parameter
+    void DisplaceAndFillHighScores(TList::ListNode *index, TList::ListInfo info){
+        TList::ListInfo aux_anterior = {NULL};
+        
+        for(TList::ListNode *p = index; p!=nullptr; p = p->next){
+            if(p->next != nullptr){
+                if(p == index){
+                    aux_anterior = p->info;
+                    p->info = info;
+                }else{
+                    info = p->info;
+                    p->info = aux_anterior;
+                    aux_anterior = info;
+                }
+            }
+        }
+    }
+
+    //Sets the parameter list with the top 10 PlayedGames with highest scores registered
+    void FindHighScores(){
+        bool is_comparison_end = false;
+
+        //Searches for the top 10 games on the game_list
+        for(TList::ListNode *game = (TList::ListNode*) PlayedGames::game_list; game!=nullptr; game = game->next, is_comparison_end = false){
+            for(TList::ListNode *highscore = top_games; highscore!=nullptr && !is_comparison_end; highscore = highscore->next){
+                //TO_DO De momento se asume que son todo partidas SP en cuanto a la comparacion de SCORE
+                // printf("game->info.game_info.p1.score %d != (*highscore)->next->info.game_info.p1.score %d\n",game->info.game_info.p1.score,(*highscore)->next->info.game_info.p1.score);
+                
+                //If the score is different starts checking.
+                if(game->info.game_info.p1.score != highscore->next->info.game_info.p1.score ){
+                    //If is checking the TOP 10, and the score in that moment is bigger, then it gates replaced automatically 
+                    if(highscore->next == nullptr){
+                        highscore->info = game->info;
+                        is_comparison_end = true;
+                    }else{
+                        //If is checking any value between TOP 1 and TOP 9, and the actual score is bigger than the one getting checked
+                        //Moves the scores under the actual one, and sets the score at this current position
+                        if(game->info.game_info.p1.score > highscore->next->info.game_info.p1.score){
+                            DisplaceAndFillHighScores(highscore, game->info);
+                            is_comparison_end = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        TList::PrintList(top_games);
+    }
+
     //Loads the highscores menu
     void Load(){
         selected_item = -1;
         GameManager::game_status.level = GameManager::Level::HIGHSCORES_MENU;
-        top_games = (TList::ListNode*)PlayedGames::FindHighScores();
+        FindHighScores();
     }
 
     //HIGHSCORES MENU UPDATE
@@ -181,8 +243,10 @@ namespace HighscoresMenu{
         };
         JMATH::Vec2 margin_v = {0,65};
 
-        for(TList::ListNode *p = (TList::ListNode*) top_games; p!=nullptr && i < 10; p = p->next, i++){
-            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, p->info.game_info);
+        for(TList::ListNode *p = (TList::ListNode*) top_games; p!=nullptr; p = p->next, i++){
+            if(p->info.game_info.game_id >= 0){
+                DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, p->info.game_info);
+            }
         }
     }
 

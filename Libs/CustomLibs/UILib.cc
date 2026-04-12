@@ -142,7 +142,6 @@ namespace UILib{
         };
     }
 
-    //TO_DO
     // Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitButtonPA(UILib::Button_PA *b, Utils::Collider coll, Utils::Color border_color, Utils::Color fill_color, UILib::Text b_text, bool is_visible, void (*action)(void *), void * action_p){
         *b = {

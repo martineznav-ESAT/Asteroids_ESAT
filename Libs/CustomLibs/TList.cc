@@ -100,10 +100,17 @@ namespace TList{
             break;
 
             case ListType::PLAYED_GAME:
-                printf("|| Game %d - Gamemode %d - P1 %s",list->info.game_info.game_id, list->info.game_info.gamemode, list->info.game_info.p1_user->username);
-                if(list->info.game_info.gamemode != PlayedGames::Gamemode::SP){
+                printf("|| Game %d - Gamemode %d ",list->info.game_info.game_id, list->info.game_info.gamemode);
+                if(list->info.game_info.p1_user != nullptr){
+                    printf("P1 %s ",list->info.game_info.p1_user->username);
+                }
+                printf("S1 %d ",list->info.game_info.p1.score);
+                
+                if(list->info.game_info.p2_user != nullptr){
                     printf("P2 %s ",list->info.game_info.p2_user->username);
                 }
+                printf("S2 %d ",list->info.game_info.p2.score);
+
                 if(list->info.game_info.is_finished){
                     printf(" F ");
                 }{
