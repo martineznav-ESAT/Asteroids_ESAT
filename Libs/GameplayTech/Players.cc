@@ -133,6 +133,13 @@ namespace Players{
                 // printf("SHOOT\n");
                 ShipShoot(&(p->ship));
             }
+
+            //DEBUG INPUT
+            if(esat::IsKeyDown('Q')){
+                p->lifes--;
+            }
+
+
         }else{
             //PLAYER 2 INPUT CONTROL
 
@@ -156,6 +163,11 @@ namespace Players{
             if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter)){
                 // printf("SHOOT\n");
                 ShipShoot(&(p->ship));
+            }
+
+            //DEBUG INPUT
+            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
+                p->lifes--;
             }
         }
     }

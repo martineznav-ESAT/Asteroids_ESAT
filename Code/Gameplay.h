@@ -28,6 +28,7 @@ namespace Gameplay{
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr);
 
+    void GenerateAsteroidRound();
     void UpdateGameAsteroids();
 
     //Whole Gameplay update method

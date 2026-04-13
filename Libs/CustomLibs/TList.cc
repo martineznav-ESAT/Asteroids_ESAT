@@ -113,7 +113,7 @@ namespace TList{
 
                 if(list->info.game_info.is_finished){
                     printf(" F ");
-                }{
+                }else{
                     printf(" NF ");
                 }
                 printf("||\n");
@@ -264,7 +264,9 @@ namespace TList{
 
         //Saved backwards to mantain consistency when loaded again
         for(ListNode *p = aux; p!=nullptr; p = p->prev){
+            // printf("SavingNode\n");
             SaveNode(p, dat_file);
+            // printf("SavedNode\n");
         }
         fclose(dat_file);
     }

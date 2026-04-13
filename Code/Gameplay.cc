@@ -16,12 +16,16 @@
 
 #include "./GameManager.h"
 #include "./MainMenu.h"
+#include "./HighscoresMenu.h"
 
 
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
     PolyLibJMATH::Poly p1_life_figure;
     PolyLibJMATH::Poly p2_life_figure;
+
+    int gameover_title_lt = 3000;
+    int gameover_title_ltc = 3000;
 
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
@@ -67,7 +71,6 @@ namespace Gameplay{
     //Whole Gameplay initializer
     void Init(){
         // printf("INIT GAMEPLAY\n");
-        GenerateAsteroidRound();
     }
 
     void GenerateOnAsteroidDestroy(Asteroids::Asteroid asteroid){
@@ -116,7 +119,7 @@ namespace Gameplay{
         }else{
             for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
                 asteroid_aux = &(p->info.asteroid_info);
-                //TO_DO REPLACE WITH CollisionPolyPlayerShots
+                //TO_DO REPLACE WITH CollisionPolyPlayerShots and move to player shots update
                 if(GameManager::game_status.level == GameManager::Level::GAMEPLAY && 
                     Collisions::CollisionPolyOnRClick(asteroid_aux->figure)){
                     //TO_DO NOT HARDCODED TO PLAYER ONE
@@ -131,7 +134,7 @@ namespace Gameplay{
             }
         }
     }
-
+    
     void UpdatePlayers(){
         Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
         if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
@@ -139,9 +142,43 @@ namespace Gameplay{
         }
     }
 
+    void GameOver(){
+        TList::ListInfo aux_info = {NULL};
+        GameManager::game_status.actual_game->is_finished = true;
+
+        gameover_title_ltc = 0;
+        TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+
+        aux_info.game_info = *(GameManager::game_status.actual_game);
+        if(HighscoresMenu::AddHighScoreGame(aux_info)){
+            TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
+        }
+    }
+
+    void CheckGameOver(){
+        if(GameManager::game_status.actual_game->gamemode == PlayedGames::Gamemode::SP){
+            if(GameManager::game_status.actual_game->p1.lifes <= 0){
+                GameOver();
+            }
+        }else{
+            if(GameManager::game_status.actual_game->p1.lifes <= 0 && GameManager::game_status.actual_game->p2.lifes <= 0){
+                GameOver();
+            }
+        }
+    }
+
     //Whole Gameplay update method
-    void Update(){  
-        UpdatePlayers();
+    void Update(){ 
+        if(GameManager::game_status.actual_game->is_finished){
+            gameover_title_ltc += 1000/Utils::kFPS;
+            if(gameover_title_ltc >= gameover_title_lt){
+                MainMenu::Load();
+            }
+        }else{
+            UpdatePlayers();
+            CheckGameOver();
+        }
+
         UpdateGameAsteroids();
     }
 

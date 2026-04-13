@@ -10,12 +10,17 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/TList.h"
 #include "./GameManager.h"
 
 #ifndef HighscoresMenu_H
 #define HighscoresMenu_H
 
 namespace HighscoresMenu{
+    extern FILE *highscores_dat;
+    extern char *highscores_dat_path;
+
+    extern TList::ListNode *top_games; 
     
     enum HighscoresMenuItems{
         BACK_BTN,
@@ -30,6 +35,7 @@ namespace HighscoresMenu{
 
     void Draw();
 
+    bool AddHighScoreGame(TList::ListInfo game);
     
     void EmptyMemory();
 }

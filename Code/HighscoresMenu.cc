@@ -20,11 +20,15 @@
 #include "./MainMenu.h"
 
 namespace HighscoresMenu{
+    FILE *highscores_dat = nullptr;
+    char *highscores_dat_path = "./Assets/Files/Data/highscores.dat";
+    
+    TList::ListNode *top_games = nullptr;
+
     //Memory block that holds all the menu items no matter if they are visible or not.
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
 
-    TList::ListNode *top_games = nullptr;
 
     //ACTIONS
     void BackAction(){
@@ -32,16 +36,69 @@ namespace HighscoresMenu{
     }
 
     //HIGHSCORES MENU INIT
+
+    //Given a ListNode* as an index, moves all the highscores underneath leaving room for the index value to fill with the second parameter
+    void DisplaceAndFillHighScores(TList::ListNode *index, TList::ListInfo info){
+        TList::ListInfo aux = {NULL};
+        
+        for(TList::ListNode *p = index; p!=nullptr; p = p->next){
+            aux = p->info;
+            p->info = info;
+            info = aux;
+        }
+    }
+
+    //
+    bool AddHighScoreGame(TList::ListInfo game){
+        bool is_comparison_end = false;
+        for(TList::ListNode *highscore = top_games; highscore!=nullptr && !is_comparison_end; highscore = highscore->next){
+            //If is checking any value, and the actual score is bigger or equal than the one getting checked
+            //Sets the value to the current position and displaces the rest one row underneath
+            //TO_DO CHECK OTHER GAMEMODES
+            if(game.game_info.is_finished && game.game_info.p1.score >= highscore->info.game_info.p1.score){
+                // printf("%d >= %d\n",game.game_info.p1.score, highscore->info.game_info.p1.score);
+                DisplaceAndFillHighScores(highscore, game);
+                is_comparison_end = true;
+            }
+        }
+        return is_comparison_end;
+    }
+
+    //Sets the parameter list with the top 10 PlayedGames with highest scores registered based on all games played;
+    void UpdateHighScores(){
+        //Searches for the top 10 games on the game_list of all played games
+        for(TList::ListNode *game = (TList::ListNode*) PlayedGames::game_list; game!=nullptr; game = game->next){
+            //For every game, its compared with the highscore list
+            AddHighScoreGame(game->info);
+            // printf("NEXT GAME\n");
+        }
+
+        TList::PrintList(top_games);
+    }
+
     void InitEmptyHighscores(){
         TList::ClearList(&top_games);
         top_games = TList::CreateList();
         TList::ListInfo aux_info = {NULL};
+        TList::ListInfo aux_user = {NULL};
 
-        for(int i = 0; i < 10 ; i++){
-            // printf("i = %d\n",i);
-            aux_info.game_info = PlayedGames::NewGame();
-            aux_info.game_info.game_id = i-100;
-            TList::InsertList(&top_games, TList::ListType::PLAYED_GAME, aux_info);
+        if(!TList::LoadList(&top_games, TList::ListType::PLAYED_GAME, highscores_dat, highscores_dat_path)){
+            //If there is no highscores list to load, creates an empty one
+            aux_user.user_info = UserManager::NewUser();
+            for(int i = 0; i < 10 ; i++){
+                // printf("i = %d\n",i);
+                aux_info.game_info = PlayedGames::NewGame();
+                
+                aux_info.game_info.game_id = i-100;
+                aux_info.game_info.p1_user = &aux_user.user_info;
+
+                TList::InsertList(&top_games, TList::ListType::PLAYED_GAME, aux_info);
+            }
+            UpdateHighScores();
+            TList::SaveList(&top_games, highscores_dat, highscores_dat_path);
+            printf("SavedList\n");
+
+            UserManager::FreeUserMemory(&aux_user.user_info);
         }
     }
 
@@ -85,57 +142,19 @@ namespace HighscoresMenu{
     //Whole Highscores Menu initializer
     void Init(){
         InitEmptyHighscores();
+        printf("InitEmptyHighscores\n");
         InitMenuItems();
+        printf("InitMenuItems\n");
         InitButtons();
+        printf("InitButtons\n");
     }
 
     //HIGHSCORES MENU LOAD
-
-    //Given a ListNode* as an index, moves all the highscores underneath leaving room for the index value to fill with the second parameter
-    void DisplaceAndFillHighScores(TList::ListNode *index, TList::ListInfo info){
-        TList::ListInfo aux_anterior = {NULL};
-        
-        for(TList::ListNode *p = index; p!=nullptr; p = p->next){
-            if(p->next != nullptr){
-                if(p == index){
-                    aux_anterior = p->info;
-                    p->info = info;
-                }else{
-                    info = p->info;
-                    p->info = aux_anterior;
-                    aux_anterior = info;
-                }
-            }
-        }
-    }
-
-    //Sets the parameter list with the top 10 PlayedGames with highest scores registered
-    void FindHighScores(){
-        bool is_comparison_end = false;
-
-        //Searches for the top 10 games on the game_list
-        for(TList::ListNode *game = (TList::ListNode*) PlayedGames::game_list; game!=nullptr; game = game->next, is_comparison_end = false){
-            for(TList::ListNode *highscore = top_games; highscore!=nullptr && !is_comparison_end; highscore = highscore->next){
-                //TO_DO De momento se asume que son todo partidas SP en cuanto a la comparacion de SCORE
-                // printf("game->info.game_info.p1.score %d != (*highscore)->next->info.game_info.p1.score %d\n",game->info.game_info.p1.score,(*highscore)->next->info.game_info.p1.score);
-                
-                //If is checking any value, and the actual score is bigger or equal than the one getting checked
-                //Sets the value to the current position and displaces re rest one row underneath
-                if(game->info.game_info.p1.score >= highscore->next->info.game_info.p1.score){
-                    DisplaceAndFillHighScores(highscore, game->info);
-                    is_comparison_end = true;
-                }
-            }
-        }
-
-        TList::PrintList(top_games);
-    }
 
     //Loads the highscores menu
     void Load(){
         selected_item = -1;
         GameManager::game_status.level = GameManager::Level::HIGHSCORES_MENU;
-        FindHighScores();
     }
 
     //HIGHSCORES MENU UPDATE

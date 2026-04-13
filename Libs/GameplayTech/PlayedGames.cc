@@ -77,7 +77,9 @@ namespace PlayedGames{
             SaveGamePlayer(game.p1, dat_file);
             SaveGamePlayer(game.p2, dat_file);
             
+            // printf("Saving is_finished\n");
             fwrite(&(game.is_finished), sizeof(bool), 1, dat_file);
+            // printf("Saved is_finished\n");
         }
     }
 

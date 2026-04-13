@@ -19,6 +19,7 @@
 #include "./HighscoresMenu.h"
 #include "./LoginMenu.h"
 #include "./AdminMenu.h"
+#include "./Gameplay.h"
 
 namespace MainMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -214,7 +215,9 @@ namespace MainMenu{
         //Changes button text and adjusts button size (changing collider.P2) based on username length
         (menu_items+MainMenuItems::USER_BTN)->item.btn_item.button_text.text = GameManager::game_status.logged_user->username;
         (menu_items+MainMenuItems::USER_BTN)->item.btn_item.collider.P2 = {strlen(GameManager::game_status.logged_user->username)*(float)Utils::kBaseFontSize+50.0f, Utils::kWindowHeight-30.0f};
+        
         GameManager::game_status.level = GameManager::Level::MAIN_MENU;
+        Gameplay::GenerateAsteroidRound();
     }
 
     //MAIN MENU UPDATE
