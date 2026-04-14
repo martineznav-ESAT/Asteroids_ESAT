@@ -34,25 +34,10 @@ namespace Gameplay{
         TList::ClearList(&asteroid_ingame);
 
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
-            switch (GameManager::game_status.actual_game->round){
-                case 1:
-                    max_asteroids = 4;
-                break;
-                
-                case 2:
-                    max_asteroids = 6;
-                break;
-                
-                case 3:
-                    max_asteroids = 8;
-                break;
-            
-                default:
-                    max_asteroids = 11;
-                break;
-            }
+            max_asteroids = 4+((GameManager::game_status.actual_game->round-1)*2);
+            max_asteroids = max_asteroids > 12 ? 12 : max_asteroids;
         }else{
-            max_asteroids = 11;
+            max_asteroids = 12;
         }
 
         for (int i = 0; i < max_asteroids; i++){
