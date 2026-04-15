@@ -224,9 +224,38 @@ namespace TList{
         }
     }
 
+    void DeleteElement(ListNode **list, ListNode *delete_node){
+        // printf("DeleteFromList\n");
+
+        //Check if exists
+        if(IsEmptyList(&delete_node)){
+            printf(" >>> Not found in list\n");
+        }else{
+            //If exists, extract it
+            if(delete_node == *list){
+                delete_node = ExtractFromList(list);
+            }else{
+                delete_node = ExtractFromList(&delete_node);
+            }
+
+            switch (delete_node->type){
+                case ListType::USER:
+                    UserManager::FreeUserMemory(&(delete_node->info.user_info));
+                break;
+
+                case ListType::ASTEROID:
+                    PolyLibJMATH::EmptyPolyMemory(&(delete_node->info.asteroid_info.figure));
+                break;
+            }
+            
+            //Free memory
+            free(delete_node);
+        }
+    }
+
     void ClearList(ListNode **list){
         for(ListNode *act = *list; !IsEmptyList(list); act = *list){
-            free(ExtractFromList(list));
+            DeleteElement(list, act);
         }
         *list = CreateList();
     }

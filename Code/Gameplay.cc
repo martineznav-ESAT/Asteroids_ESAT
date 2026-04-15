@@ -21,6 +21,7 @@
 
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
+    Ufo::UfoShip ufo;
     PolyLibJMATH::Poly p1_life_figure;
     PolyLibJMATH::Poly p2_life_figure;
 
@@ -56,6 +57,7 @@ namespace Gameplay{
     //Whole Gameplay initializer
     void Init(){
         // printf("INIT GAMEPLAY\n");
+        ufo = Ufo::NewUfo();
     }
 
     void GenerateOnAsteroidDestroy(Asteroids::Asteroid asteroid){
@@ -154,17 +156,21 @@ namespace Gameplay{
 
     //Whole Gameplay update method
     void Update(){ 
-        if(GameManager::game_status.actual_game->is_finished){
-            gameover_title_ltc += 1000/Utils::kFPS;
-            if(gameover_title_ltc >= gameover_title_lt){
-                MainMenu::Load();
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            if(GameManager::game_status.actual_game->is_finished){
+                gameover_title_ltc += 1000/Utils::kFPS;
+                if(gameover_title_ltc >= gameover_title_lt){
+                    MainMenu::Load();
+                }
+            }else{
+                UpdatePlayers();
+                CheckGameOver();
             }
-        }else{
-            UpdatePlayers();
-            CheckGameOver();
         }
+        
 
         UpdateGameAsteroids();
+        Ufo::UpdateUfo(&ufo);
     }
 
 
@@ -296,11 +302,15 @@ namespace Gameplay{
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
-        DrawPlayers(*(GameManager::game_status.actual_game));
-        DrawGameUI(*(GameManager::game_status.actual_game));
+        Ufo::DrawUfo(ufo);
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            DrawPlayers(*(GameManager::game_status.actual_game));
+            DrawGameUI(*(GameManager::game_status.actual_game));
+        }
     }
 
     void EmptyMemory(){
-        
+        Ufo::EmptyUfoMemory(&ufo);
+        TList::ClearList(&asteroid_ingame);
     }
 }

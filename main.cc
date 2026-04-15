@@ -22,6 +22,8 @@
 
 void InitGame(){
     Players::Init();
+    Asteroids::Init();
+    Ufo::Init();
     
     LoginMenu::Init();
     RegisterMenu::Init();
@@ -29,7 +31,6 @@ void InitGame(){
     PlayMenu::Init();
     AdminMenu::Init();
 
-    Asteroids::Init();
     Gameplay::Init();
 
     GameManager::LoadInitLevel();
@@ -49,7 +50,7 @@ void UpdateGame(){
         break;
 
         case GameManager::Level::MAIN_MENU :
-            Gameplay::UpdateGameAsteroids();
+            Gameplay::Update();
             MainMenu::Update();
         break;
 
@@ -83,7 +84,7 @@ void DrawGame(){
         break;
 
         case GameManager::Level::MAIN_MENU :
-            Gameplay::DrawGameAsteroids();
+            Gameplay::Draw();
             MainMenu::Draw();
         break;
 

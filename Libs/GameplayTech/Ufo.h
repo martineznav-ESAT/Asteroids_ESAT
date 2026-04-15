@@ -9,11 +9,24 @@
 #define Ufo_H
 
 namespace Ufo{
+    enum Orientation{
+        LEFT = -1,
+        RIGHT = 1
+    };
+
+    enum UfoType{
+        SMALL,
+        BIG
+    };
 
     struct UfoShip{
         PolyLibJMATH::Poly figure;
         JMATH::Vec3 fwd;
-        JMATH::Vec3 speed_v;
+        float speed;
+        UfoType type;
+        Orientation orientation;
+        int direction_change_lt = 1000;
+        int direction_change_ltc = 0;
         // Shot shot;
     };
 
@@ -26,6 +39,10 @@ namespace Ufo{
     void UpdateUfoShot(UfoShip* ufo);
 
     void UpdateUfoFwd(UfoShip* ufo);
+
+    void UpdateUfo(UfoShip* ufo);
+
+    void DrawUfo(UfoShip ufo);
 
     void EmptyUfoMemory(UfoShip* ufo);
 }
