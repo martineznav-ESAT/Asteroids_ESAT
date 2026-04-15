@@ -44,17 +44,17 @@ namespace Players{
             &new_ship.figure,
             5,
             ship_coords,
-            {20.0f,20.0f},
+            {25.0f,25.0f},
             -90.0f,
             {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f},
             {255,255,255},
-            {0.2f,0.0f}
+            {0.1f,0.0f}
         );
         new_ship.fwd = {0.0f,0.0f};
         new_ship.speed_v = {0.0f,0.0f};
-        new_ship.max_speed = 5.0f;
-        new_ship.accel = 10.0f;
-        new_ship.decel = 0.995f;
+        new_ship.max_speed = 7.0f;
+        new_ship.accel = 15.0f;
+        new_ship.decel = 0.99f;
         new_ship.shots = (Shot*) malloc(sizeof(Shot)*max_player_shots);
         for(int i = 0; i < max_player_shots; i++){
             *(new_ship.shots+i) = NewShot();
@@ -115,8 +115,6 @@ namespace Players{
             if(esat::IsKeyPressed('W')){
                 // printf("MOVE FORWARD\n");
                 AccelerateShip(&(p->ship));
-            }else{
-                DecelerateShip(&(p->ship));
             }
             
             if(esat::IsKeyPressed('A')){
@@ -146,9 +144,8 @@ namespace Players{
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Up)){
                 // printf("MOVE FORWARD\n");
                 AccelerateShip(&(p->ship));
-            }else{
-                DecelerateShip(&(p->ship));
             }
+            DecelerateShip(&(p->ship));
 
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Left)){
                 // printf("ROTATE LEFT\n");
@@ -195,7 +192,12 @@ namespace Players{
         UpdateShipFwd(&(player->ship));
 
         PlayerInput(player, is_p1);
+        DecelerateShip(&(player->ship));
+        printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
+        JMATH::Vec3Print(player->ship.speed_v);
         PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
+        // PolyLibJMATH::MovePoly(&(player->ship.figure), JMATH::Vec3Norm(player->ship.speed_v));
+
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));
         UpdatePlayerShots(player);
     }
