@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../CustomLibs/PolyLibJMATH.h"
+#include "./Shots.h"
 
 #ifndef Ufo_H
 #define Ufo_H
@@ -27,7 +28,7 @@ namespace Ufo{
         Orientation orientation;
         int direction_change_lt = 1000;
         int direction_change_ltc = 0;
-        // Shot shot;
+        Shots::Shot shot;
     };
 
     void Init();

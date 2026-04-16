@@ -5,6 +5,7 @@
 #include "./Players.h"
 #include "./Asteroids.h"
 #include "./Collisions.h"
+#include "./Shots.h"
 #include "./Ufo.h"
 
 #endif

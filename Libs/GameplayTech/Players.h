@@ -8,18 +8,13 @@
 #include "../CustomLibs/PolyLibJMATH.h"
 #include "../CustomLibs/JMATH.h"
 
+#include "./Shots.h"
+
 #ifndef Players_H
 #define Players_H
 
 namespace Players{
     const int max_player_shots = 5;
-
-    struct Shot{
-        PolyLibJMATH::Poly bullet;
-        JMATH::Vec3 speed_v;
-        float life_time, lt_count;
-        bool is_active;
-    };
 
     struct Ship{
         PolyLibJMATH::Poly figure;
@@ -27,7 +22,7 @@ namespace Players{
         JMATH::Vec3 speed_v;
         float max_speed;
         float accel, decel;
-        Shot* shots;
+        Shots::Shot* shots;
     };
 
     struct Player{
@@ -37,8 +32,6 @@ namespace Players{
     };
 
     void Init();
-
-    Shot NewShot();
 
     Ship NewShip();
 

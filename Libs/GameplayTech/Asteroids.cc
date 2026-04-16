@@ -106,7 +106,7 @@ namespace Asteroids{
             &new_ast.figure,
             GetAsteroidTypeVertices(type),
             *(asteroids_coords+((int)type)),
-            {new_ast.size_level*20.0f, new_ast.size_level*20.0f},
+            {new_ast.size_level*22.5f, new_ast.size_level*22.5f},
             (float)Utils::GenerateRandomNumber(361),
             {(float)Utils::GenerateRandomNumber(Utils::kWindowWidth), (float)Utils::GenerateRandomNumber(Utils::kWindowHeight)},
             {255,255,255}
