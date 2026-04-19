@@ -145,6 +145,12 @@ int esat::main(int argc, char **argv) {
         esat::DrawBegin();
         esat::DrawClear(0,0,0);
         
+        //DEBUGGING CONTROLS
+        if(esat::IsSpecialKeyDown(esat::kSpecialKey_Alt)){
+            printf("TOGGLE COLLIDERS\n");
+            Collisions::show_colliders = !(Collisions::show_colliders);
+        }
+
         UpdateGame();
         DrawGame();
 

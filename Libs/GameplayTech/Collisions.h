@@ -9,6 +9,7 @@
 #include "./Ufo.h"
 
 namespace Collisions{
+
     enum Border{
         TOP,
         RIGHT,
@@ -17,16 +18,26 @@ namespace Collisions{
         NONE
     };
 
+    extern bool show_colliders;
+
     Border CollisionPolyWindowBorderExit(PolyLibJMATH::Poly poly);
     void BorderExitRellocation(PolyLibJMATH::Poly *poly);
 
     bool CollisionPolyPoly(PolyLibJMATH::Poly p1, PolyLibJMATH::Poly p2);
 
     bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list ,Asteroids::Asteroid *asteroid, Players::Player *player);
+    
+    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player);
 
     bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
     
     bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
+
+    bool CollisionUfoPlayer(Ufo::UfoShip *ufo, Players::Player *player);
+    
+    bool CollisionUfoPlayerShots(Ufo::UfoShip *ufo, Players::Player *player);
+    
+    bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player);
 
     //DEBUG COLLISIONS
     //CREATED FOR TESTING PURPOSES

@@ -28,6 +28,7 @@ namespace PlayedGames{
         new_game.p1_user = nullptr;
         new_game.p2_user = nullptr;
         new_game.round = 1;
+        new_game.is_player1_turn = true;
         new_game.p1 = Players::NewPlayer();
         new_game.p2 = Players::NewPlayer();
         new_game.is_finished = false;

@@ -49,8 +49,12 @@ namespace Players{
     Player NewPlayer(){
         Player new_player;
         new_player.ship = NewShip();
-        new_player.lifes = 3;
+        new_player.lifes = 4;
         new_player.score = 0;
+        new_player.dead_lt = 3000;
+        new_player.dead_ltc = 3000;
+        new_player.inmunity_lt = 2000;
+        new_player.inmunity_ltc = 2000;
 
         return new_player;
     }
@@ -91,6 +95,26 @@ namespace Players{
         }
     }
 
+    void RespawnPlayer(Player* player){
+        player->inmunity_ltc = 0;
+
+        player->ship.figure.transform.rotation = -90.0f;
+        player->ship.figure.transform.translation = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
+
+        player->ship.fwd = {0.0f,0.0f};
+        player->ship.speed_v = {0.0f,0.0f};
+        player->ship.max_speed = 7.0f;
+        player->ship.accel = 15.0f;
+        player->ship.decel = 0.99f;
+    }
+
+    void KillPlayer(Player* player){
+        player->is_active = false;
+        player->dead_ltc = 0;
+        player->lifes--;
+        RespawnPlayer(player);
+    }
+
     void PlayerInput(Player* p, bool is_p1){
         if(is_p1){
             //PLAYER 1 INPUT CONTROL
@@ -122,7 +146,7 @@ namespace Players{
 
             //DEBUG INPUT
             if(esat::IsKeyDown('Q')){
-                p->lifes--;
+                KillPlayer(p);
             }
 
 
@@ -156,7 +180,7 @@ namespace Players{
 
             //DEBUG INPUT
             if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
-                p->lifes--;
+                KillPlayer(p);
             }
         }
     }
@@ -173,18 +197,38 @@ namespace Players{
         ship->fwd = {cosf(radianRotation), sinf(radianRotation)};
     }
 
-    void UpdatePlayer(Players::Player* player, bool is_p1){
-        UpdateShipFwd(&(player->ship));
+    bool IsPlayerDead(Players::Player player){
+        return player.dead_ltc < player.dead_lt;
+    }
 
-        PlayerInput(player, is_p1);
-        DecelerateShip(&(player->ship));
-        // printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
-        // JMATH::Vec3Print(player->ship.speed_v);
-        PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
-        Collisions::BorderExitRellocation(&(player->ship.figure));
-        PolyLibJMATH::UpdatePoly(&(player->ship.figure));
+    bool IsPlayerInmune(Players::Player player){
+        return player.inmunity_ltc < player.inmunity_lt;
+    }
+
+    void UpdatePlayer(Players::Player* player, bool is_p1){
+        if(player->is_active){
+            if(IsPlayerInmune(*player)){
+                player->inmunity_ltc += 1000/Utils::kFPS;
+            }
+            UpdateShipFwd(&(player->ship));
+
+            PlayerInput(player, is_p1);
+            DecelerateShip(&(player->ship));
+            // printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
+            // JMATH::Vec3Print(player->ship.speed_v);
+            PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
+            Collisions::BorderExitRellocation(&(player->ship.figure));
+            PolyLibJMATH::UpdatePoly(&(player->ship.figure));
+        }else{
+            if(player->lifes > 0){
+                player->dead_ltc += 1000/Utils::kFPS;
+                player->is_active = !IsPlayerDead(*player);
+            }
+        }
+
         UpdatePlayerShots(player);
     }
+    
 
     void DrawPlayerShots(Players::Player player){
         for(int i = 0; i < Players::max_player_shots; i++){
@@ -193,7 +237,11 @@ namespace Players{
     }
 
     void DrawPlayer(Player player){
-        PolyLibJMATH::DrawPoly(player.ship.figure,false);
+        if(player.is_active){
+            if(!IsPlayerInmune(player) || (player.inmunity_ltc % 500) < 250){
+                PolyLibJMATH::DrawPoly(player.ship.figure,false);
+            }
+        }
         DrawPlayerShots(player);
     }
 

@@ -15,6 +15,7 @@
 
 namespace Players{
     const int max_player_shots = 5;
+    extern JMATH::Vec3 *ship_coords;
 
     struct Ship{
         PolyLibJMATH::Poly figure;
@@ -27,8 +28,13 @@ namespace Players{
 
     struct Player{
         Ship ship;
+        bool is_active;
         int lifes;
         int score;
+        int dead_lt;
+        int dead_ltc;
+        int inmunity_lt;
+        int inmunity_ltc;
     };
 
     void Init();
@@ -37,8 +43,14 @@ namespace Players{
 
     Player NewPlayer();
 
-    void UpdatePlayer(Players::Player* player, bool is_p1);
+    void KillPlayer(Player* player);
 
+    bool IsPlayerDead(Players::Player player);
+
+    bool IsPlayerInmune(Players::Player player);
+
+    void UpdatePlayer(Players::Player* player, bool is_p1);
+    
     void DrawPlayerShots(Players::Player player);
 
     void DrawPlayer(Player player);

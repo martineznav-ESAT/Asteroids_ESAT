@@ -25,8 +25,8 @@ namespace Gameplay{
     PolyLibJMATH::Poly p1_life_figure;
     PolyLibJMATH::Poly p2_life_figure;
 
-    int gameover_title_lt = 3000;
-    int gameover_title_ltc = 3000;
+    int gameover_title_lt = 5000;
+    int gameover_title_ltc = gameover_title_lt;
 
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
@@ -58,6 +58,16 @@ namespace Gameplay{
     void Init(){
         // printf("INIT GAMEPLAY\n");
         ufo = Ufo::NewUfo();
+        PolyLibJMATH::InitPoly(
+            &p1_life_figure,
+            5,
+            Players::ship_coords,
+            {15.0f,15.0f},
+            -90.0f,
+            {0.0f, 0.0f},
+            {255,255,255},
+            {0.1f,0.0f}
+        );
     }
 
     //Gameplay UPDATE
@@ -80,26 +90,36 @@ namespace Gameplay{
                 is_collided = false;
                 
                 if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
-                    //Player 1 Collisions
-                    is_collided = Collisions::CollisionAsteroidPlayerShots(
-                        &asteroid_ingame,
-                        asteroid_aux,
-                        &(GameManager::game_status.actual_game->p1)
-                    );
+                    
 
                     //Ufo Collisions
-                    if(!is_collided){
-                        is_collided = Collisions::CollisionAsteroidUfoShot(
-                            &asteroid_ingame,
-                            asteroid_aux,
-                            &ufo
-                        );
-                    }
+                    is_collided = Collisions::CollisionAsteroidUfoShot(
+                        &asteroid_ingame,
+                        asteroid_aux,
+                        &ufo
+                    );
                     if(!is_collided){
                         is_collided = Collisions::CollisionAsteroidUfo(
                             &asteroid_ingame,
                             asteroid_aux,
                             &ufo
+                        );
+                    }
+
+                    //Player 1 Collisions
+                    if(!is_collided){
+                        is_collided = Collisions::CollisionAsteroidPlayerShots(
+                            &asteroid_ingame,
+                            asteroid_aux,
+                            &(GameManager::game_status.actual_game->p1)
+                        );
+                    }
+
+                    if(!is_collided){
+                        is_collided = Collisions::CollisionAsteroidPlayer(
+                            &asteroid_ingame,
+                            asteroid_aux,
+                            &(GameManager::game_status.actual_game->p1)
                         );
                     }
 
@@ -164,6 +184,7 @@ namespace Gameplay{
             if(GameManager::game_status.actual_game->is_finished){
                 gameover_title_ltc += 1000/Utils::kFPS;
                 if(gameover_title_ltc >= gameover_title_lt){
+                    ufo.type = Ufo::UfoType::NONE;
                     MainMenu::Load();
                 }
             }else{
@@ -185,6 +206,9 @@ namespace Gameplay{
 
     //Gameplay LOAD
     void LoadGameplayLevel(){
+        GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
+        GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
+        
         GenerateAsteroidRound();
         ufo.type = Ufo::UfoType::NONE;
 
@@ -207,12 +231,10 @@ namespace Gameplay{
         //LOADS NEW GAME AS THE ACTUAL GAME
         GameManager::game_status.actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
 
-        p1_life_figure = GameManager::game_status.actual_game->p1.ship.figure;
-        p1_life_figure.transform.scale = {15.0f,15.0f};
-        
+        p1_life_figure.color = GameManager::game_status.actual_game->p2.ship.figure.color;
+
         if(p2 != nullptr){
-            p2_life_figure = GameManager::game_status.actual_game->p2.ship.figure;
-            p2_life_figure.transform.scale = {15.0f,15.0f};
+            p2_life_figure.color = GameManager::game_status.actual_game->p2.ship.figure.color;
         }
 
         LoadGameplayLevel();
@@ -229,7 +251,7 @@ namespace Gameplay{
         float base_height = Utils::kBaseFontSize*2.0f + p1_life_figure.transform.scale.x+10.0f;
         float base_width =  p1_life_figure.transform.scale.x+10.0f;
 
-        for(int i = 1; i <= actual_game.p1.lifes; i++){
+        for(int i = 1; i <= actual_game.p1.lifes-1; i++){
             p1_life_figure.transform.translation = {base_width*i, base_height};
             PolyLibJMATH::UpdatePoly(&p1_life_figure);
             PolyLibJMATH::DrawPoly(p1_life_figure, false);
@@ -240,7 +262,7 @@ namespace Gameplay{
         float base_height = Utils::kBaseFontSize*2.0f + p2_life_figure.transform.scale.x+10.0f;
         float base_width = p2_life_figure.transform.scale.x+10.0f;
 
-        for(int i = 1; i <= actual_game.p2.lifes; i++){
+        for(int i = 1; i <= actual_game.p2.lifes-1; i++){
             p2_life_figure.transform.translation = {Utils::kWindowWidth - (base_width*i), base_height};
             PolyLibJMATH::UpdatePoly(&p2_life_figure);
             PolyLibJMATH::DrawPoly(p2_life_figure, false);
@@ -333,5 +355,7 @@ namespace Gameplay{
     void EmptyMemory(){
         Ufo::EmptyUfoMemory(&ufo);
         TList::ClearList(&asteroid_ingame);
+        PolyLibJMATH::EmptyPolyMemory(&p1_life_figure);
+        PolyLibJMATH::EmptyPolyMemory(&p2_life_figure);
     }
 }

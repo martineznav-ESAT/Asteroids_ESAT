@@ -11,6 +11,8 @@
 #include "../CustomLibs/Utils.h"
 
 namespace Collisions{
+    bool show_colliders = false;
+
     Border CollisionPolyWindowBorderExit(PolyLibJMATH::Poly poly){
         Border collided = Border::NONE;
         float aux_position_x = 0;
@@ -43,9 +45,7 @@ namespace Collisions{
     void BorderExitRellocation(PolyLibJMATH::Poly *poly){
         Border collided_border = Collisions::CollisionPolyWindowBorderExit(*poly);
         if(collided_border != Border::NONE){
-
             //Saves coords before usual Update to prevent collision bug when rellocating
-            PolyLibJMATH::SaveDrawCoords(poly);
             switch (collided_border){
                 case Collisions::Border::TOP:
                     poly->transform.translation.y = Utils::kWindowHeight+(poly->transform.scale.y);
@@ -60,6 +60,8 @@ namespace Collisions{
                     poly->transform.translation.x = Utils::kWindowWidth+(poly->transform.scale.x);
                 break;
             }
+
+            PolyLibJMATH::SaveDrawCoords(poly);
         }
         
     }
@@ -102,8 +104,10 @@ namespace Collisions{
                     //of p1 against p2.
                     if(!is_colliding && p1.prev_draw_coords != nullptr){
                         // printf("PREV COL DETECTOR\n");
-                        esat::DrawSetStrokeColor(0,255,0);
-                        esat::DrawLine((p1.draw_coords+p1_i)->x, (p1.draw_coords+p1_i)->y, (p1.prev_draw_coords+p1_i)->x, (p1.prev_draw_coords+p1_i)->y);
+                        if(show_colliders){
+                            esat::DrawSetStrokeColor(0,255,0);
+                            esat::DrawLine((p1.draw_coords+p1_i)->x, (p1.draw_coords+p1_i)->y, (p1.prev_draw_coords+p1_i)->x, (p1.prev_draw_coords+p1_i)->y);
+                        }
                         interpolation_res = JMATH::CalcInterpolation(
                             *(p1.draw_coords+p1_i), JMATH::Vec2Sub(
                                 *(p1.prev_draw_coords+p1_i),
@@ -149,14 +153,21 @@ namespace Collisions{
         return collision;
     }
 
+    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(!Players::IsPlayerDead(*player) && !Players::IsPlayerInmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
+            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, player);
+            Players::KillPlayer(player);
+        }
+        
+        return collision;
+    }
+
     bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->shot.is_active && CollisionPolyPoly(ufo->shot.bullet, asteroid->figure)){
-            // printf("ACTIVE AND COLLIDED\n");
-            // printf("LIST %p\n",*asteroid_list);
-            // printf("Asteroid %d\n",asteroid->id);
-            // printf("Bullet %d\n\n",i);
             Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
             ufo->shot.is_active = false;
         }
@@ -168,12 +179,61 @@ namespace Collisions{
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
-            // printf("ACTIVE AND COLLIDED\n");
-            // printf("LIST %p\n",*asteroid_list);
-            // printf("Asteroid %d\n",asteroid->id);
-            // printf("Bullet %d\n\n",i);
             Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
             ufo->type = Ufo::UfoType::NONE;
+        }
+        
+        return collision;
+    }
+
+    bool CollisionUfoPlayer(Ufo::UfoShip *ufo, Players::Player *player){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(ufo->type != Ufo::UfoType::NONE && 
+            !Players::IsPlayerDead(*player) && 
+            !Players::IsPlayerInmune(*player) && 
+            CollisionPolyPoly(ufo->figure, player->ship.figure)
+        ){
+            Players::KillPlayer(player);
+        }
+        
+        return collision;
+    }
+
+    bool CollisionUfoPlayerShots(Ufo::UfoShip *ufo, Players::Player *player){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(ufo->type != Ufo::UfoType::NONE){
+            for (int i = 0; i < Players::max_player_shots && !collision; i++){
+                if((player->ship.shots+i)->is_active && CollisionPolyPoly((player->ship.shots+i)->bullet, ufo->figure)){
+                    switch (ufo->type){
+                        case Ufo::UfoType::BIG:
+                            player->score += 200;
+                        break;
+                        case Ufo::UfoType::SMALL:
+                            player->score += 1000;
+                        break;
+                    }
+
+                    ufo->type = Ufo::UfoType::NONE;
+                    (player->ship.shots+i)->is_active = false;
+                }
+            }
+        }
+        
+        return collision;
+    }
+
+    bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(ufo->shot.is_active && 
+            !Players::IsPlayerDead(*player) && 
+            !Players::IsPlayerInmune(*player) && 
+            CollisionPolyPoly(ufo->shot.bullet, player->ship.figure)
+        ){
+            ufo->shot.is_active = false;
+            Players::KillPlayer(player);
         }
         
         return collision;
