@@ -6,7 +6,7 @@
 #include "../../Code/UserManager.h"
 #include "../CustomLibs/Utils.h"
 
-#include "./Players.h"
+#include "./GameplayTech.h"
 
 namespace Players{
     JMATH::Vec3 *ship_coords = nullptr;
@@ -176,6 +176,7 @@ namespace Players{
         for(int i = 0; i < Players::max_player_shots; i++){
             if(((player->ship.shots)+i)->is_active){
                 PolyLibJMATH::MovePoly(&(((player->ship.shots)+i)->bullet), (((player->ship.shots)+i)->speed_v));
+                Collisions::BorderExitRellocation(&(((player->ship.shots)+i)->bullet));
                 PolyLibJMATH::UpdatePoly(&(((player->ship.shots)+i)->bullet));
                 ((player->ship.shots)+i)->lt_count += 1000/Utils::kFPS;
                 if(((player->ship.shots)+i)->lt_count >= ((player->ship.shots)+i)->life_time){
@@ -196,6 +197,7 @@ namespace Players{
 
         PlayerInput(player, is_p1);
         PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
+        Collisions::BorderExitRellocation(&(player->ship.figure));
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));
         UpdatePlayerShots(player);
     }

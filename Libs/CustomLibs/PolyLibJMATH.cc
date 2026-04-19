@@ -73,21 +73,6 @@ namespace PolyLibJMATH{
             p->transform.translation,
             {speed_v.x, speed_v.y}
         );
-
-        switch (Collisions::CollisionPolyWindowBorderExit(*p)){
-            case Collisions::Border::TOP:
-                p->transform.translation.y = Utils::kWindowHeight+(p->transform.scale.y);
-            break;
-            case Collisions::Border::RIGHT:
-                p->transform.translation.x = 0-(p->transform.scale.x);
-            break;
-            case Collisions::Border::BOTTOM:
-                p->transform.translation.y = 0-(p->transform.scale.y);
-            break;
-            case Collisions::Border::LEFT:
-                p->transform.translation.x = Utils::kWindowWidth+(p->transform.scale.x);
-            break;
-        }
     }
 
     void UpdatePoly(Poly *p){

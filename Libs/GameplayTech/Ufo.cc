@@ -80,6 +80,7 @@ namespace Ufo{
         // JMATH::Vec3Print(ufo->fwd);
 
         PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
+        Collisions::BorderExitRellocation(&(ufo->figure));
         PolyLibJMATH::UpdatePoly(&(ufo->figure));
     }
 

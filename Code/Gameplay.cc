@@ -51,7 +51,7 @@ namespace Gameplay{
             PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
             TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, asteroid_aux_info);
         }
-}
+    }
 
 
     //Whole Gameplay initializer
@@ -60,62 +60,49 @@ namespace Gameplay{
         ufo = Ufo::NewUfo();
     }
 
-    void GenerateOnAsteroidDestroy(Asteroids::Asteroid asteroid){
-        TList::ListInfo asteroid_aux_info = {NULL};
-
-        if(asteroid.size_level > 1){
-            for(int i = 0; i < 2; i++){
-                asteroid_aux_info.asteroid_info = 
-                    Asteroids::NewAsteroid(
-                        (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
-                        asteroid.size_level-1
-                    );
-                    
-                asteroid_aux_info.asteroid_info.figure.transform.translation = asteroid.figure.transform.translation;
-                PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
-                TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, asteroid_aux_info);
-            }
-        }
-    }
-
     //Gameplay UPDATE
     void AdvanceRound(){
         GameManager::game_status.actual_game->round++;
         GenerateAsteroidRound();
     }
 
-    void AddAsteroidPoints(int size_level, Players::Player* player){
-        switch (size_level){
-            case 1:
-                player->score+=100;
-            break;
-            case 2:
-                player->score+=50;
-            break;
-            case 3:
-                player->score+=20;
-            break;
-        }
-    }
 
     void UpdateGameAsteroids(){
         Asteroids::Asteroid *asteroid_aux;
+        bool is_collided;
 
         if(TList::IsEmptyList(&asteroid_ingame)){
             AdvanceRound();
         }else{
             for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
+                //Check All Asteroids collisions
                 asteroid_aux = &(p->info.asteroid_info);
-                //TO_DO REPLACE WITH CollisionPolyPlayerShots and move to player shots update
-                if(GameManager::game_status.level == GameManager::Level::GAMEPLAY && 
-                    Collisions::CollisionPolyOnRClick(asteroid_aux->figure)){
-                    //TO_DO NOT HARDCODED TO PLAYER ONE
-                    AddAsteroidPoints(asteroid_aux->size_level, &(GameManager::game_status.actual_game->p1));
+                is_collided = false;
+                
+                if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+                    //Player 1 Collisions
+                    is_collided = Collisions::CollisionAsteroidPlayerShots(
+                        &asteroid_ingame,
+                        asteroid_aux,
+                        &(GameManager::game_status.actual_game->p1)
+                    );
+                    //TO_DO OTHER COLLISIONS
 
-                    GenerateOnAsteroidDestroy(*asteroid_aux);
-                    TList::DeleteElement(&asteroid_ingame, p->info);
-                }else{
+                    if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
+                        //Player 2 Collisions
+                        if(!is_collided){
+                            is_collided = Collisions::CollisionAsteroidPlayerShots(
+                                &asteroid_ingame,
+                                asteroid_aux,
+                                &(GameManager::game_status.actual_game->p2)
+                            );
+                        }
+                    }
+                }
+
+                if(!is_collided){
                     PolyLibJMATH::MovePoly(&(p->info.asteroid_info.figure), p->info.asteroid_info.speed_v);
+                    Collisions::BorderExitRellocation(&(p->info.asteroid_info.figure));
                     PolyLibJMATH::UpdatePoly(&(p->info.asteroid_info.figure));
                 }
             }

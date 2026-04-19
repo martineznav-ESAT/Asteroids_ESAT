@@ -475,4 +475,73 @@ namespace JMATH{
     float RadiansToDegrees(float radians){
         return (radians/kPI)*180;
     }
+
+    //Equations
+    void PrintLineEquation(LineEquation line){
+        printf("%6.2fx %6.2fy = %6.2f\n",line.cx,line.cy,line.ci);
+    }
+    void PrintLineEqSystem(LineEquationSystem system){
+        printf("Equation System 2x2\n");
+        for(unsigned char i = 0; i < 2; i++){   
+            PrintLineEquation(system.eq[i]);
+        }
+    }
+
+    float NegateX(LineEquationSystem system){
+        LineEquationSystem system_aux;
+
+        system_aux.eq[0] = {system.eq[0].cx*system.eq[1].cx, system.eq[0].cy*system.eq[1].cx, system.eq[0].ci*system.eq[1].cx};
+        system_aux.eq[1] = {system.eq[1].cx*system.eq[0].cx, system.eq[1].cy*system.eq[0].cx, system.eq[1].ci*system.eq[0].cx};
+
+        // PrintLineEqSystem(system_aux);
+
+        if(system_aux.eq[0].cx == system_aux.eq[1].cx){
+            system_aux.eq[0].cx *= -1;
+            system_aux.eq[0].cy *= -1;
+            system_aux.eq[0].ci *= -1;
+        }
+
+        system_aux.eq[0].cx += system_aux.eq[1].cx;
+        system_aux.eq[0].cy += system_aux.eq[1].cy;
+        system_aux.eq[0].ci += system_aux.eq[1].ci;
+
+        if(system_aux.eq[0].cy == 0){
+            return 0;
+        }else{
+            return system_aux.eq[0].ci/system_aux.eq[0].cy;
+        }
+    }
+
+    float ReplaceY(LineEquation line, float y){
+        return ((line.ci-(line.cy*y))/line.cx);
+    }
+
+    Vec2 CalcLineEqSystem(LineEquationSystem system){
+        Vec2 res;
+        res.y = NegateX(system);
+        res.x = ReplaceY(system.eq[0],res.y);
+
+        return res;
+    }
+
+    //Interpolation
+
+    Vec2 CalcInterpolation(Vec2 p1, Vec2 v1, Vec2 p2, Vec2 v2){
+        LineEquationSystem system = {
+            {
+                {v1.x, -v2.x, p2.x-p1.x},
+                {v1.y, -v2.y, p2.y-p1.y}
+            }
+        };
+        return CalcLineEqSystem(system);
+    }
+
+    Vec2 CalcInterpolation(Vec3 p1, Vec3 v1, Vec3 p2, Vec3 v2){
+        if(p1.z == 1 && p2.z == 1 && v1.z == 0 && v2.z == 0){
+            return CalcInterpolation(Vec3ToVec2(p1),Vec3ToVec2(v1),Vec3ToVec2(p2),Vec3ToVec2(v2));
+        }else{
+            printf("CalcInterpolation ERROR. Check for unhomogenaized and unproper values");
+            return {0,0};
+        }
+    }
 }

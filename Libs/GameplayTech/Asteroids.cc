@@ -11,6 +11,7 @@
 
 namespace Asteroids{
     JMATH::Vec3 **asteroids_coords = nullptr;
+    int last_asteroid_id = -1;
 
     int GetAsteroidTypeVertices(AsteroidType type){
         int res = 0;
@@ -93,7 +94,7 @@ namespace Asteroids{
 
     Asteroid NewAsteroid(AsteroidType type, int size_level){
         Asteroid new_ast;
-        new_ast.id = TList::ListLength(Gameplay::asteroid_ingame) == 0 ? 0 : (Gameplay::asteroid_ingame->info.asteroid_info.id + 1);
+        new_ast.id = ++last_asteroid_id;
         new_ast.type = type;
         new_ast.size_level = size_level;
         new_ast.speed_v = {
@@ -112,6 +113,59 @@ namespace Asteroids{
             {255,255,255}
         );
         return new_ast;
+    }
+
+    void AddAsteroidPoints(int size_level, Players::Player* player){
+        switch (size_level){
+            case 1:
+                player->score+=100;
+            break;
+            case 2:
+                player->score+=50;
+            break;
+            case 3:
+                player->score+=20;
+            break;
+        }
+    }
+
+    void GenerateOnAsteroidDestroy(TList::ListNode **asteroid_list, Asteroids::Asteroid *asteroid){
+        TList::ListInfo asteroid_aux_info = {NULL};
+        // printf("LIST 3 %p\n",*asteroid_list);
+
+        // printf("\n");
+        // TList::PrintList(*asteroid_list);
+        if(asteroid->size_level > 1){
+            for(int i = 0; i < 2; i++){
+                asteroid_aux_info.asteroid_info = 
+                    Asteroids::NewAsteroid(
+                        (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
+                        asteroid->size_level-1
+                    );
+                    
+                asteroid_aux_info.asteroid_info.figure.transform.translation = asteroid->figure.transform.translation;
+                PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
+                
+                TList::InsertList(asteroid_list, TList::ListType::ASTEROID, asteroid_aux_info);
+                
+            }
+        }
+        // printf("\n");
+        // TList::PrintList(*asteroid_list);
+    }
+
+    void DestroyAsteroid(void **asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player = nullptr){
+        TList::ListNode** asteroid_list_aux = (TList::ListNode**) asteroid_list;
+        // printf("LIST 2 %p\n",*asteroid_list_aux);
+        TList::ListInfo aux_asteroid_info = {NULL};
+        aux_asteroid_info.asteroid_info = *asteroid; 
+        // printf("ASTEROID TO DELETE ID %d\n",aux_asteroid_info.asteroid_info.id);
+
+        if(player != nullptr){
+            AddAsteroidPoints(asteroid->size_level, player);
+        }
+        GenerateOnAsteroidDestroy(asteroid_list_aux, asteroid);
+        TList::DeleteElement(asteroid_list_aux, aux_asteroid_info);
     }
     
     void EmptyMemory(){

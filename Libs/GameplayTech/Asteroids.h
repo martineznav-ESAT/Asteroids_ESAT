@@ -5,11 +5,16 @@
 
 #include "../CustomLibs/JMATH.h"
 #include "../CustomLibs/PolyLibJMATH.h"
+// #include "../CustomLibs/TList.h"
+
+#include "./GameplayTech.h"
 
 #ifndef Asteroids_H
 #define Asteroids_H
 
 namespace Asteroids{
+    extern int last_asteroid_id;
+    
     enum AsteroidType{
         A1,
         A2,
@@ -38,6 +43,8 @@ namespace Asteroids{
     int GetAsteroidTypeVertices(AsteroidType type);
 
     Asteroid NewAsteroid(AsteroidType type, int size_level);
+
+    void DestroyAsteroid(void **asteroid_list, Asteroid *asteroid, Players::Player *player);
 
     void EmptyMemory();
 }

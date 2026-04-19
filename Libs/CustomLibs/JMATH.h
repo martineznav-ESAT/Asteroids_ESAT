@@ -76,6 +76,10 @@ namespace JMATH{
 
     bool Vec4IsNorm(Vec4 v);
 
+    float Dot(Vec2 v, Vec2 w);
+    float Dot(Vec3 v, Vec3 w);
+    float Dot(Vec4 v, Vec4 w);
+
     //Mat2
     struct Mat2{
         float d[4] = {0,0,0,0};
@@ -175,6 +179,23 @@ namespace JMATH{
     float DegreesToRadians(float degrees);
 
     float RadiansToDegrees(float radians);
+
+    struct LineEquation{
+        float cx, cy, ci;
+    };
+
+    struct LineEquationSystem{
+        LineEquation eq[2];
+    };
+
+    void PrintLineEquation(LineEquation line);
+
+    void PrintLineEqSystem(LineEquationSystem system);
+
+    Vec2 CalcLineEqSystem(LineEquationSystem system);
+
+    Vec2 CalcInterpolation(Vec2 p1, Vec2 v1, Vec2 p2, Vec2 v2);
+    Vec2 CalcInterpolation(Vec3 p1, Vec3 v1, Vec3 p2, Vec3 v2);
 }
 
 #endif
