@@ -20,23 +20,6 @@ namespace Players{
         *(ship_coords+4) = {-1.0f, 0.6f};     // 5
     }
 
-    Shot NewShot(){
-        Shot new_shot;
-        PolyLibJMATH::InitPoly(
-            &new_shot.bullet,
-            4,
-            {2.0f,2.0f},
-            45.0f,
-            {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f},
-            {255,255,255},
-            {0.0f,0.0f}
-        );
-        new_shot.speed_v = {0.0f,0.0f};
-        new_shot.life_time = 1000; //ms
-        new_shot.lt_count = 0; //ms timer
-        new_shot.is_active = false;
-        return new_shot;
-    }
 
     Ship NewShip(){
         Ship new_ship;
@@ -44,20 +27,20 @@ namespace Players{
             &new_ship.figure,
             5,
             ship_coords,
-            {20.0f,20.0f},
+            {25.0f,25.0f},
             -90.0f,
             {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f},
             {255,255,255},
-            {0.2f,0.0f}
+            {0.1f,0.0f}
         );
         new_ship.fwd = {0.0f,0.0f};
         new_ship.speed_v = {0.0f,0.0f};
-        new_ship.max_speed = 5.0f;
-        new_ship.accel = 10.0f;
-        new_ship.decel = 0.995f;
-        new_ship.shots = (Shot*) malloc(sizeof(Shot)*max_player_shots);
+        new_ship.max_speed = 7.0f;
+        new_ship.accel = 15.0f;
+        new_ship.decel = 0.99f;
+        new_ship.shots = (Shots::Shot*) malloc(sizeof(Shots::Shot)*max_player_shots);
         for(int i = 0; i < max_player_shots; i++){
-            *(new_ship.shots+i) = NewShot();
+            *(new_ship.shots+i) = Shots::NewShot();
         }
         return new_ship;
     }
@@ -86,6 +69,13 @@ namespace Players{
         ship->speed_v = JMATH::Vec3Scale(ship->speed_v, ship->decel);
     }
 
+    JMATH::Vec2 GetShipHeadPoint(Ship *ship){
+        return JMATH::Vec2Sum(
+            ship->figure.transform.translation, 
+            JMATH::Vec3ToVec2(JMATH::Vec3Scale(ship->fwd,ship->figure.transform.scale.x))
+        );
+    }
+
     void ShipShoot(Ship *ship){
         int i;
         bool exists_unshot = false;
@@ -96,15 +86,7 @@ namespace Players{
 
         if(exists_unshot){
             i--;
-            ((ship->shots)+i)->is_active = true;
-            ((ship->shots)+i)->lt_count = 0;
-            ((ship->shots)+i)->speed_v = JMATH::Vec3Scale(ship->fwd, 10);
-            //Spawn bullet at Ship head based on the ship transform
-            ((ship->shots)+i)->bullet.transform.translation = JMATH::Vec2Sum(
-                ship->figure.transform.translation, 
-                JMATH::Vec3ToVec2(JMATH::Vec3Scale(ship->fwd,ship->figure.transform.scale.x))
-            );
-            ((ship->shots)+i)->bullet.transform.rotation = ship->figure.transform.rotation+45;
+            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, 10);
         }
     }
 
@@ -115,8 +97,6 @@ namespace Players{
             if(esat::IsKeyPressed('W')){
                 // printf("MOVE FORWARD\n");
                 AccelerateShip(&(p->ship));
-            }else{
-                DecelerateShip(&(p->ship));
             }
             
             if(esat::IsKeyPressed('A')){
@@ -146,9 +126,8 @@ namespace Players{
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Up)){
                 // printf("MOVE FORWARD\n");
                 AccelerateShip(&(p->ship));
-            }else{
-                DecelerateShip(&(p->ship));
             }
+            DecelerateShip(&(p->ship));
 
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Left)){
                 // printf("ROTATE LEFT\n");
@@ -196,6 +175,9 @@ namespace Players{
         UpdateShipFwd(&(player->ship));
 
         PlayerInput(player, is_p1);
+        DecelerateShip(&(player->ship));
+        // printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
+        // JMATH::Vec3Print(player->ship.speed_v);
         PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
         Collisions::BorderExitRellocation(&(player->ship.figure));
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));

@@ -261,9 +261,7 @@ namespace Gameplay{
 
     void DrawPlayerShots(Players::Player player){
         for(int i = 0; i < Players::max_player_shots; i++){
-            if(((player.ship.shots)+i)->is_active){
-                PolyLibJMATH::DrawPoly(((player.ship.shots)+i)->bullet,true);
-            }
+            Shots::DrawShot(((player.ship.shots)+i));
         }
     }
 

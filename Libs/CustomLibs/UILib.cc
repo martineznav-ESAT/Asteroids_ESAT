@@ -460,9 +460,14 @@ namespace UILib{
 
     //Draws a Text struct based on an int value
     void DrawIntToText(float x, float y, Text text, int value, int value_max_length, bool fill_left){
-        text.text = (char*) malloc(sizeof(char)*value_max_length);
-        text.text = itoa(value,text.text,10);
-        DrawText(x, y, text);
+        text.text = (char*) malloc(sizeof(char)*(value_max_length+1));
+        if(fill_left){
+            snprintf(text.text, value_max_length+1, "%0*d", value_max_length, value);
+        }else{
+            text.text = itoa(value,text.text,10);
+        }
+
+        DrawText({x,y}, text);
         free(text.text);
     }
 

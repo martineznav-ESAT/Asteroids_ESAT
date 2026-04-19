@@ -42,18 +42,26 @@ namespace Ufo{
         new_ufo.fwd = {new_ufo.speed,0.0f,0.0f};
        
         Ufo::UfoType::BIG;
-        // new_ufo.shot = NewShot();
+        new_ufo.shot = Shots::NewShot();
 
         return new_ufo;
     }
 
 
-    void UfoShoot(UfoShip *ufo){
-        
-    }
-
     void UpdateUfoShot(UfoShip* ufo){
-        
+        // printf("UPDATE UFO SHOT\n");
+        if(!(ufo->shot.is_active)){
+            // printf("FireShot\n");
+            FireShot(
+                &(ufo->shot),
+                ufo->figure.transform.translation,
+                ufo->figure.transform.rotation,
+                {Utils::GenerateRandomFloatNegative(2),Utils::GenerateRandomFloatNegative(2),0.0f},
+                5
+            );
+        }else{
+            Shots::UpdateShot(&(ufo->shot));
+        }
     }
 
     void RandomDirection(UfoShip* ufo){
@@ -75,6 +83,7 @@ namespace Ufo{
 
     void UpdateUfo(UfoShip *ufo){
         // printf("UpdateUfo\n");
+        UpdateUfoShot(ufo);
 
         RandomDirection(ufo);
         // JMATH::Vec3Print(ufo->fwd);
@@ -85,10 +94,13 @@ namespace Ufo{
     }
 
     void DrawUfo(UfoShip ufo){
+        Shots::DrawShot(&(ufo.shot));
+
         // printf("DrawUfo\n");
         // for (int i = 0; i < 8; i++){
         //     JMATH::Vec2Print(*(ufo.figure.draw_coords+i));
         // }
+
         
         PolyLibJMATH::DrawPoly(ufo.figure, false);
         esat::DrawLine(
