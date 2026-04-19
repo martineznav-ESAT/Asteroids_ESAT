@@ -86,7 +86,7 @@ namespace Players{
 
         if(exists_unshot){
             i--;
-            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, 10);
+            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, 20);
         }
     }
 
@@ -113,6 +113,11 @@ namespace Players{
                 // printf("SHOOT\n");
                 ShipShoot(&(p->ship));
             }
+
+            if(esat::IsKeyPressed('G')){
+                // printf("HYPERSPACE\n");
+            }
+
 
             //DEBUG INPUT
             if(esat::IsKeyDown('Q')){

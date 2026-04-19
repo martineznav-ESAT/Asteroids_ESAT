@@ -62,7 +62,7 @@ namespace UserManager{
         new_user.province = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
         *(new_user.username) = '\0';
 
-        new_user.credits = 3;
+        new_user.credits = 10;
         new_user.is_admin = false;
 
         return new_user;

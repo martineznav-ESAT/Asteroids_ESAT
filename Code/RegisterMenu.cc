@@ -550,7 +550,7 @@ namespace RegisterMenu{
         strcpy((menu_items + RegisterItems::PROVINCE_TI)->item.text_item.input_text.text, "\0");
         UILib::AdjustPointerLength(&((menu_items + RegisterItems::PROVINCE_TI)->item.text_item));
 
-        strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "3\0");
+        strcpy((menu_items + RegisterItems::CREDITS_TI)->item.text_item.input_text.text, "10\0");
         UILib::AdjustPointerLength(&((menu_items + RegisterItems::CREDITS_TI)->item.text_item));
         
         (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
