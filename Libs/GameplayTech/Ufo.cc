@@ -38,30 +38,55 @@ namespace Ufo{
             {0.0f,0.0f}
         );
         new_ufo.speed = 1.0f;
-        new_ufo.orientation = Orientation::LEFT;
+        new_ufo.orientation = (Orientation)(Utils::GenerateRandomNumber(2) == 0 ? -1 : 1);
         new_ufo.fwd = {new_ufo.speed,0.0f,0.0f};
        
-        Ufo::UfoType::BIG;
+        new_ufo.type = UfoType::NONE;
         new_ufo.shot = Shots::NewShot();
 
         return new_ufo;
+    }
+
+    void SpawnUfo(UfoShip* ufo){
+        //TO_DO
+        ufo->figure.transform.translation = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
+        ufo->orientation = (Orientation)(Utils::GenerateRandomNumber(2) == 0 ? -1 : 1);
+        ufo->type = (UfoType) Utils::GenerateRandomNumber(UfoType::NONE); //Since NONE is the last enum value, it will generate a random number that determines if is a SMALL or BIG UFO
+        PolyLibJMATH::SaveDrawCoords(&(ufo->figure));
     }
 
 
     void UpdateUfoShot(UfoShip* ufo){
         // printf("UPDATE UFO SHOT\n");
         if(!(ufo->shot.is_active)){
+            switch (ufo->type){
+                case UfoType::BIG:
+                    FireShot(
+                        &(ufo->shot),
+                        ufo->figure.transform.translation,
+                        ufo->figure.transform.rotation,
+                        {Utils::GenerateRandomFloatNegative(2),Utils::GenerateRandomFloatNegative(2),0.0f},
+                        5
+                    );
+                break;
+
+                case UfoType::SMALL:
+                    FireShot(
+                        &(ufo->shot),
+                        ufo->figure.transform.translation,
+                        ufo->figure.transform.rotation,
+                        {Utils::GenerateRandomFloatNegative(2),Utils::GenerateRandomFloatNegative(2),0.0f},
+                        10
+                    );
+                break;
+                
+                case UfoType::NONE:
+                break;
+            }
             // printf("FireShot\n");
-            FireShot(
-                &(ufo->shot),
-                ufo->figure.transform.translation,
-                ufo->figure.transform.rotation,
-                {Utils::GenerateRandomFloatNegative(2),Utils::GenerateRandomFloatNegative(2),0.0f},
-                5
-            );
-        }else{
-            Shots::UpdateShot(&(ufo->shot));
+            
         }
+        Shots::UpdateShot(&(ufo->shot));
     }
 
     void RandomDirection(UfoShip* ufo){
@@ -85,12 +110,32 @@ namespace Ufo{
         // printf("UpdateUfo\n");
         UpdateUfoShot(ufo);
 
-        RandomDirection(ufo);
-        // JMATH::Vec3Print(ufo->fwd);
+        // printf("UPDATE UFO %d\n", ufo->type);
+        switch (ufo->type){
+            case UfoType::BIG:
+                // printf("UPDATE BIG\n");
+                RandomDirection(ufo);
+                // JMATH::Vec3Print(ufo->fwd);
 
-        PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
-        Collisions::BorderExitRellocation(&(ufo->figure));
-        PolyLibJMATH::UpdatePoly(&(ufo->figure));
+                PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
+                Collisions::BorderExitRellocation(&(ufo->figure));
+                PolyLibJMATH::UpdatePoly(&(ufo->figure));
+            break;
+
+            case UfoType::SMALL:
+                // printf("UPDATE SMALL\n");
+                // RandomDirection(ufo);
+                // // JMATH::Vec3Print(ufo->fwd);
+
+                // PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
+                // Collisions::BorderExitRellocation(&(ufo->figure));
+                PolyLibJMATH::UpdatePoly(&(ufo->figure));
+            break;
+            
+            case UfoType::NONE:
+            break;
+        }
+        
     }
 
     void DrawUfo(UfoShip ufo){
@@ -101,16 +146,18 @@ namespace Ufo{
         //     JMATH::Vec2Print(*(ufo.figure.draw_coords+i));
         // }
 
-        
-        PolyLibJMATH::DrawPoly(ufo.figure, false);
-        esat::DrawLine(
-            (ufo.figure.draw_coords+0)->x,(ufo.figure.draw_coords+0)->y,
-            (ufo.figure.draw_coords+5)->x,(ufo.figure.draw_coords+5)->y
-        );
-        esat::DrawLine(
-            (ufo.figure.draw_coords+1)->x,(ufo.figure.draw_coords+1)->y,
-            (ufo.figure.draw_coords+4)->x,(ufo.figure.draw_coords+4)->y
-        );
+        if(ufo.type != UfoType::NONE){
+            // printf("DRAWUFO\n");
+            PolyLibJMATH::DrawPoly(ufo.figure, false);
+            esat::DrawLine(
+                (ufo.figure.draw_coords+0)->x,(ufo.figure.draw_coords+0)->y,
+                (ufo.figure.draw_coords+5)->x,(ufo.figure.draw_coords+5)->y
+            );
+            esat::DrawLine(
+                (ufo.figure.draw_coords+1)->x,(ufo.figure.draw_coords+1)->y,
+                (ufo.figure.draw_coords+4)->x,(ufo.figure.draw_coords+4)->y
+            );
+        }
     }
 
 

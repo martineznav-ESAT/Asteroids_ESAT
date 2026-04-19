@@ -17,6 +17,7 @@ namespace PolyLibJMATH{
         int t_vertices;
         JMATH::Vec3 *local_coords;
         JMATH::Vec2 *draw_coords;
+        JMATH::Vec2 *prev_draw_coords;
         Transform transform;
         JMATH::Vec2 center_offset;
         JMATH::Vec3 color;
@@ -29,6 +30,12 @@ namespace PolyLibJMATH{
     JMATH::Mat3 GetTransformMat3(Transform tr, JMATH::Vec2 center_offset = {0,0});
 
     void MovePoly(Poly *p, JMATH::Vec3 speed_v);
+
+    //Updates only the prev draw coords based on the actual draw coords 
+    void SavePrevDrawCoords(Poly *p);
+
+    //Updates the draw coords based on the poly data. Also saves the actual draw coords as previous draw coords
+    void SaveDrawCoords(Poly *p);
 
     void UpdatePoly(Poly *p);
     

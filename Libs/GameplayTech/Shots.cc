@@ -34,17 +34,19 @@ namespace Shots{
     }
 
     void FireShot(Shot *shot, JMATH::Vec2 spawn_point, float rotation, JMATH::Vec3 direction_v, float speed){
-        printf("DISPARAR\n");
+        // printf("DISPARAR\n");
         shot->is_active = true;
         shot->lt_count = 0;
         shot->speed_v = JMATH::Vec3Scale(JMATH::Vec3Norm(direction_v), speed);
         shot->bullet.transform.translation = spawn_point;
         shot->bullet.transform.rotation = rotation+45;
+        PolyLibJMATH::SaveDrawCoords(&(shot->bullet));
     }
 
     void UpdateShot(Shot *shot){
         if(shot->is_active){
             PolyLibJMATH::MovePoly(&(shot->bullet), (shot->speed_v));
+            Collisions::BorderExitRellocation(&(shot->bullet));
             PolyLibJMATH::UpdatePoly(&(shot->bullet));
             shot->lt_count += 1000/Utils::kFPS;
             if(shot->lt_count >= shot->life_time){

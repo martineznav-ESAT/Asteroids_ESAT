@@ -86,7 +86,22 @@ namespace Gameplay{
                         asteroid_aux,
                         &(GameManager::game_status.actual_game->p1)
                     );
-                    //TO_DO OTHER COLLISIONS
+
+                    //Ufo Collisions
+                    if(!is_collided){
+                        is_collided = Collisions::CollisionAsteroidUfoShot(
+                            &asteroid_ingame,
+                            asteroid_aux,
+                            &ufo
+                        );
+                    }
+                    if(!is_collided){
+                        is_collided = Collisions::CollisionAsteroidUfo(
+                            &asteroid_ingame,
+                            asteroid_aux,
+                            &ufo
+                        );
+                    }
 
                     if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
                         //Player 2 Collisions
@@ -142,7 +157,9 @@ namespace Gameplay{
     }
 
     //Whole Gameplay update method
-    void Update(){ 
+    void Update(){
+
+        //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             if(GameManager::game_status.actual_game->is_finished){
                 gameover_title_ltc += 1000/Utils::kFPS;
@@ -157,11 +174,23 @@ namespace Gameplay{
         
 
         UpdateGameAsteroids();
+
+        //DEBUG
+        if(esat::IsKeyDown('U')){
+            Ufo::SpawnUfo(&ufo);
+        }
         Ufo::UpdateUfo(&ufo);
     }
 
 
     //Gameplay LOAD
+    void LoadGameplayLevel(){
+        GenerateAsteroidRound();
+        ufo.type = Ufo::UfoType::NONE;
+
+        //UPDATES VALUES BEFORE ITS REFLECTED ON SCREEN
+        Update();
+    }
 
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2){
@@ -180,14 +209,13 @@ namespace Gameplay{
 
         p1_life_figure = GameManager::game_status.actual_game->p1.ship.figure;
         p1_life_figure.transform.scale = {15.0f,15.0f};
+        
         if(p2 != nullptr){
             p2_life_figure = GameManager::game_status.actual_game->p2.ship.figure;
             p2_life_figure.transform.scale = {15.0f,15.0f};
         }
 
-        //UPDATES VALUES BEFORE ITS REFLECTED ON SCREEN
-        GenerateAsteroidRound();
-        Update();
+        LoadGameplayLevel();
     }
 
     //Gameplay DRAW
@@ -259,28 +287,36 @@ namespace Gameplay{
         );
     }
 
-    void DrawPlayerShots(Players::Player player){
-        for(int i = 0; i < Players::max_player_shots; i++){
-            Shots::DrawShot(((player.ship.shots)+i));
-        }
-    }
+    
 
     void DrawPlayers(PlayedGames::PlayedGame actual_game){
-        PolyLibJMATH::DrawPoly(actual_game.p1.ship.figure,false);
-        DrawPlayerShots(actual_game.p1);
 
-        if(actual_game.gamemode != PlayedGames::Gamemode::SP){
-            PolyLibJMATH::DrawPoly(actual_game.p2.ship.figure,false);
-            DrawPlayerShots(actual_game.p2);
+        switch (actual_game.gamemode){
+            case PlayedGames::Gamemode::SP:
+                Players::DrawPlayer(actual_game.p1);
+            break;
+        
+            default:
+                Players::DrawPlayer(actual_game.p1);
+                Players::DrawPlayer(actual_game.p2);
+            break;
         }
     }
 
     void DrawGameUI(PlayedGames::PlayedGame actual_game){
-        DrawP1UI(actual_game);
-        DrawP1Lifes(actual_game);
-        if(actual_game.gamemode != PlayedGames::Gamemode::SP){
-            DrawP2UI(actual_game);
-            DrawP2Lifes(actual_game);
+        switch (actual_game.gamemode){
+            case PlayedGames::Gamemode::SP:
+                DrawP1UI(actual_game);
+                DrawP1Lifes(actual_game);
+            break;
+        
+            default:
+                DrawP1UI(actual_game);
+                DrawP1Lifes(actual_game);
+
+                DrawP2UI(actual_game);
+                DrawP2Lifes(actual_game);
+            break;
         }
     }
 

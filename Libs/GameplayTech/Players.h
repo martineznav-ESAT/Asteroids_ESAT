@@ -39,6 +39,10 @@ namespace Players{
 
     void UpdatePlayer(Players::Player* player, bool is_p1);
 
+    void DrawPlayerShots(Players::Player player);
+
+    void DrawPlayer(Player player);
+
     void EmptyPlayerMemory(Player* player);
 }
 

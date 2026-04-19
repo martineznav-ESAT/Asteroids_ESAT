@@ -17,7 +17,8 @@ namespace Ufo{
 
     enum UfoType{
         SMALL,
-        BIG
+        BIG,
+        NONE
     };
 
     struct UfoShip{
@@ -34,6 +35,8 @@ namespace Ufo{
     void Init();
 
     UfoShip NewUfo();
+
+    void SpawnUfo(UfoShip* ufo);
 
     void UfoShoot(UfoShip *ufo);
 

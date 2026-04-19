@@ -41,20 +41,27 @@ namespace Collisions{
     }
 
     void BorderExitRellocation(PolyLibJMATH::Poly *poly){
-        switch (Collisions::CollisionPolyWindowBorderExit(*poly)){
-            case Collisions::Border::TOP:
-                poly->transform.translation.y = Utils::kWindowHeight+(poly->transform.scale.y);
-            break;
-            case Collisions::Border::RIGHT:
-                poly->transform.translation.x = 0-(poly->transform.scale.x);
-            break;
-            case Collisions::Border::BOTTOM:
-                poly->transform.translation.y = 0-(poly->transform.scale.y);
-            break;
-            case Collisions::Border::LEFT:
-                poly->transform.translation.x = Utils::kWindowWidth+(poly->transform.scale.x);
-            break;
+        Border collided_border = Collisions::CollisionPolyWindowBorderExit(*poly);
+        if(collided_border != Border::NONE){
+
+            //Saves coords before usual Update to prevent collision bug when rellocating
+            PolyLibJMATH::SaveDrawCoords(poly);
+            switch (collided_border){
+                case Collisions::Border::TOP:
+                    poly->transform.translation.y = Utils::kWindowHeight+(poly->transform.scale.y);
+                break;
+                case Collisions::Border::RIGHT:
+                    poly->transform.translation.x = 0-(poly->transform.scale.x);
+                break;
+                case Collisions::Border::BOTTOM:
+                    poly->transform.translation.y = 0-(poly->transform.scale.y);
+                break;
+                case Collisions::Border::LEFT:
+                    poly->transform.translation.x = Utils::kWindowWidth+(poly->transform.scale.x);
+                break;
+            }
         }
+        
     }
 
     //TO_DO COLLISIONS
@@ -89,6 +96,36 @@ namespace Collisions{
                         interpolation_res.y <= 1 && 
                         interpolation_res.y >= 0
                     );
+
+                    //In case there's no actual collision, checks if is a "ghost collision"
+                    //by looking for interpolation on the space between actual and previous position
+                    //of p1 against p2.
+                    if(!is_colliding && p1.prev_draw_coords != nullptr){
+                        // printf("PREV COL DETECTOR\n");
+                        esat::DrawSetStrokeColor(0,255,0);
+                        esat::DrawLine((p1.draw_coords+p1_i)->x, (p1.draw_coords+p1_i)->y, (p1.prev_draw_coords+p1_i)->x, (p1.prev_draw_coords+p1_i)->y);
+                        interpolation_res = JMATH::CalcInterpolation(
+                            *(p1.draw_coords+p1_i), JMATH::Vec2Sub(
+                                *(p1.prev_draw_coords+p1_i),
+                                *(p1.draw_coords+p1_i)
+                            ),
+                            *(p2.draw_coords+p2_i), JMATH::Vec2Sub(
+                                *(p2.draw_coords+(p2_i+1 == p2.t_vertices ? 0 : p2_i+1)),
+                                *(p2.draw_coords+p2_i)
+                            )
+                        );
+
+                        // printf("p1_i %d | p2_i %d\n",p1_i,p2_i);
+                        // JMATH::Vec2Print(interpolation_res);
+                        // printf("\n");
+
+                        is_colliding = (
+                            interpolation_res.x <= 1 && 
+                            interpolation_res.x >= 0 &&
+                            interpolation_res.y <= 1 && 
+                            interpolation_res.y >= 0
+                        );
+                    }
                 }
             }
 
@@ -100,13 +137,43 @@ namespace Collisions{
         // printf("CollisionAsteroidPlayerShots\n");
         for (int i = 0; i < Players::max_player_shots && !collision; i++){
             if((player->ship.shots+i)->is_active && CollisionPolyPoly((player->ship.shots+i)->bullet, asteroid->figure)){
-                printf("ACTIVE AND COLLIDED\n");
-                printf("LIST %p\n",*asteroid_list);
-                printf("Asteroid %d\n",asteroid->id);
-                printf("Bullet %d\n\n",i);
+                // printf("ACTIVE AND COLLIDED\n");
+                // printf("LIST %p\n",*asteroid_list);
+                // printf("Asteroid %d\n",asteroid->id);
+                // printf("Bullet %d\n\n",i);
                 Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, player);
                 (player->ship.shots+i)->is_active = false;
             }
+        }
+        
+        return collision;
+    }
+
+    bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(ufo->shot.is_active && CollisionPolyPoly(ufo->shot.bullet, asteroid->figure)){
+            // printf("ACTIVE AND COLLIDED\n");
+            // printf("LIST %p\n",*asteroid_list);
+            // printf("Asteroid %d\n",asteroid->id);
+            // printf("Bullet %d\n\n",i);
+            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
+            ufo->shot.is_active = false;
+        }
+        
+        return collision;
+    }
+
+    bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
+            // printf("ACTIVE AND COLLIDED\n");
+            // printf("LIST %p\n",*asteroid_list);
+            // printf("Asteroid %d\n",asteroid->id);
+            // printf("Bullet %d\n\n",i);
+            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
+            ufo->type = Ufo::UfoType::NONE;
         }
         
         return collision;

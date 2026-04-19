@@ -16,6 +16,7 @@ namespace PolyLibJMATH{
         p->t_vertices = vertices;
         p->local_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3) * p->t_vertices);
         p->draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * p->t_vertices);
+        p->prev_draw_coords = nullptr;
 
         //Por defecto almacena un círculo
         for(int i = 0; i < p->t_vertices; i++){
@@ -34,6 +35,7 @@ namespace PolyLibJMATH{
         p->t_vertices = vertices;
         p->local_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3) * p->t_vertices);
         p->draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * p->t_vertices);
+        p->prev_draw_coords = nullptr;
 
         //Por defecto almacena un círculo
         for(int i = 0; i < p->t_vertices; i++){
@@ -51,15 +53,16 @@ namespace PolyLibJMATH{
     JMATH::Mat3 GetTransformMat3(Transform tr, JMATH::Vec2 center_offset){
         JMATH::Mat3 tr_aux = JMATH::Mat3Identity();
 
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(center_offset.x, center_offset.y), tr_aux);
         // printf("Mat3Translate\n");
+        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(center_offset.x, center_offset.y), tr_aux);
         // JMATH::Mat3Print(JMATH::Mat3Translate(center_offset.x, center_offset.y));
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Scale(tr.scale.x, tr.scale.y), tr_aux);
         // printf("Mat3Scale\n");
+        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Scale(tr.scale.x, tr.scale.y), tr_aux);
         // JMATH::Mat3Print(JMATH::Mat3Scale(tr.scale.x, tr.scale.y));
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(tr.rotation), tr_aux);
         // printf("Mat3Rotate\n");
+        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(tr.rotation)), tr_aux);
         // JMATH::Mat3Print(JMATH::Mat3Rotate(tr.rotation));
+
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(tr.translation.x, tr.translation.y), tr_aux);
 
         // printf("GETTRANSFORM\n");
@@ -75,17 +78,34 @@ namespace PolyLibJMATH{
         );
     }
 
-    void UpdatePoly(Poly *p){
-        JMATH::Mat3 tr_aux = JMATH::Mat3Identity();
+    //Updates only the prev draw coords based on the actual draw coords 
+    void SavePrevDrawCoords(Poly *p){
+        for(int i = 0; i < p->t_vertices; i++){
+            if(p->prev_draw_coords != nullptr){
+                *((p->prev_draw_coords)+i) = *((p->draw_coords)+i);
+            }
+        }
+    }
 
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(p->center_offset.x, p->center_offset.y), tr_aux);
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Scale(p->transform.scale.x, p->transform.scale.y), tr_aux);
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(p->transform.rotation)), tr_aux);
-        tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(p->transform.translation.x, p->transform.translation.y), tr_aux);
+    //Updates the draw coords based on the poly data. Also saves the actual draw coords as previous draw coords
+    void SaveDrawCoords(Poly *p){
+        JMATH::Mat3 tr_aux = GetTransformMat3(p->transform, p->center_offset);
 
         for(int i = 0; i < p->t_vertices; i++){
+            if(p->prev_draw_coords != nullptr){
+                *((p->prev_draw_coords)+i) = *((p->draw_coords)+i);
+            }
             *((p->draw_coords)+i) = JMATH::Vec3ToVec2(JMATH::Mat3MultVec3(tr_aux, {((p->local_coords)+i)->x, ((p->local_coords)+i)->y, 1.0f}));
             // printf("Coord Update %d: %f - %f\n",i, (*(p->draw_coords+i)).x, (*(p->draw_coords+i)).y);
+        }
+    }
+
+    void UpdatePoly(Poly *p){
+        
+        SaveDrawCoords(p);
+
+        if(p->prev_draw_coords == nullptr){
+            p->prev_draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * p->t_vertices);
         }
     }
 
@@ -97,10 +117,18 @@ namespace PolyLibJMATH{
         }
         esat::DrawSetStrokeColor(p.color.x,p.color.y,p.color.z);
         esat::DrawSolidPath(&(p.draw_coords->x), p.t_vertices);
+
+        // DEBUG);
+        // for (int i = 0; i < p.t_vertices; i++){
+        //     esat::DrawSetStrokeColor(0,255,0);
+        //     esat::DrawLine((p.draw_coords+i)->x, (p.draw_coords+i)->y, (p.prev_draw_coords+i)->x, (p.prev_draw_coords+i)->y);
+        // }
+        
     }
 
     void EmptyPolyMemory(Poly *p){
-        free(p->draw_coords);
         free(p->local_coords);
+        free(p->draw_coords);
+        free(p->prev_draw_coords);
     }
 }

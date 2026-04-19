@@ -41,6 +41,7 @@ namespace Players{
         new_ship.shots = (Shots::Shot*) malloc(sizeof(Shots::Shot)*max_player_shots);
         for(int i = 0; i < max_player_shots; i++){
             *(new_ship.shots+i) = Shots::NewShot();
+            PolyLibJMATH::UpdatePoly(&((new_ship.shots+i)->bullet));
         }
         return new_ship;
     }
@@ -149,6 +150,10 @@ namespace Players{
                 ShipShoot(&(p->ship));
             }
 
+            if(esat::IsKeyPressed('L')){
+                // printf("HYPERSPACE\n");
+            }
+
             //DEBUG INPUT
             if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
                 p->lifes--;
@@ -158,15 +163,7 @@ namespace Players{
 
     void UpdatePlayerShots(Players::Player* player){
         for(int i = 0; i < Players::max_player_shots; i++){
-            if(((player->ship.shots)+i)->is_active){
-                PolyLibJMATH::MovePoly(&(((player->ship.shots)+i)->bullet), (((player->ship.shots)+i)->speed_v));
-                Collisions::BorderExitRellocation(&(((player->ship.shots)+i)->bullet));
-                PolyLibJMATH::UpdatePoly(&(((player->ship.shots)+i)->bullet));
-                ((player->ship.shots)+i)->lt_count += 1000/Utils::kFPS;
-                if(((player->ship.shots)+i)->lt_count >= ((player->ship.shots)+i)->life_time){
-                    ((player->ship.shots)+i)->is_active = false;
-                }
-            }
+            Shots::UpdateShot(((player->ship.shots)+i));
         }
     }
 
@@ -187,6 +184,17 @@ namespace Players{
         Collisions::BorderExitRellocation(&(player->ship.figure));
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));
         UpdatePlayerShots(player);
+    }
+
+    void DrawPlayerShots(Players::Player player){
+        for(int i = 0; i < Players::max_player_shots; i++){
+            Shots::DrawShot(((player.ship.shots)+i));
+        }
+    }
+
+    void DrawPlayer(Player player){
+        PolyLibJMATH::DrawPoly(player.ship.figure,false);
+        DrawPlayerShots(player);
     }
 
 
