@@ -29,12 +29,16 @@ namespace Ufo{
         Orientation orientation;
         int direction_change_lt = 1000;
         int direction_change_ltc = 0;
+        int spawn_lt = 15000;
+        int spawn_ltc = 0;
         Shots::Shot shot;
     };
 
     void Init();
 
     UfoShip NewUfo();
+
+    void DestroyUfo(UfoShip* ufo);
 
     void SpawnUfo(UfoShip* ufo);
 

@@ -71,9 +71,20 @@ namespace Gameplay{
     }
 
     //Gameplay UPDATE
+
+    void LoadGameplayLevel(){
+        GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
+        GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
+        
+        GenerateAsteroidRound();
+        ufo.type = Ufo::UfoType::NONE;
+        ufo.spawn_ltc = 0;
+
+    }
+
     void AdvanceRound(){
         GameManager::game_status.actual_game->round++;
-        GenerateAsteroidRound();
+        LoadGameplayLevel();
     }
 
 
@@ -176,45 +187,35 @@ namespace Gameplay{
         }
     }
 
+    void GameOverScreen(){
+        gameover_title_ltc += 1000/Utils::kFPS;
+        if(gameover_title_ltc >= gameover_title_lt){
+            Ufo::DestroyUfo(&ufo);
+            MainMenu::Load();
+        }
+    }
+
     //Whole Gameplay update method
     void Update(){
 
         //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            UpdatePlayers();
+            Ufo::UpdateUfo(&ufo);
+    
             if(GameManager::game_status.actual_game->is_finished){
-                gameover_title_ltc += 1000/Utils::kFPS;
-                if(gameover_title_ltc >= gameover_title_lt){
-                    ufo.type = Ufo::UfoType::NONE;
-                    MainMenu::Load();
-                }
+                GameOverScreen();
             }else{
-                UpdatePlayers();
                 CheckGameOver();
             }
         }
         
-
         UpdateGameAsteroids();
-
-        //DEBUG
-        if(esat::IsKeyDown('U')){
-            Ufo::SpawnUfo(&ufo);
-        }
-        Ufo::UpdateUfo(&ufo);
     }
 
 
     //Gameplay LOAD
-    void LoadGameplayLevel(){
-        GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
-        GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
-        
-        GenerateAsteroidRound();
-        ufo.type = Ufo::UfoType::NONE;
-
-        //UPDATES VALUES BEFORE ITS REFLECTED ON SCREEN
-        Update();
-    }
+    
 
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2){

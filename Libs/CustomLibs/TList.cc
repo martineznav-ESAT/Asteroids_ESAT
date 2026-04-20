@@ -147,6 +147,14 @@ namespace TList{
         return aux;
     }
 
+    ListNode* GetRandomListNode(ListNode *list){
+        ListNode *aux = nullptr;
+        int random_i = rand()%ListLength(list);
+        int i = 0;
+        for(aux = list; aux != nullptr && i != random_i; aux = aux->next, i++);
+        return aux;
+    }
+
     //Prints the values of the list in reverse order
     void ReverseShowList(ListNode *list){
         ListNode *aux = GetLastListNode(list);

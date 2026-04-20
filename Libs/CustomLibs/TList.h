@@ -46,6 +46,8 @@ namespace TList{
 
     ListNode* GetIndexListNode(ListNode *list, int index);
 
+    ListNode* GetRandomListNode(ListNode *list);
+
     //Prints the values of the list in reverse order
     void ReverseShowList(ListNode *list);
 

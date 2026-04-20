@@ -180,7 +180,7 @@ namespace Collisions{
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
-            ufo->type = Ufo::UfoType::NONE;
+            Ufo::DestroyUfo(ufo);
         }
         
         return collision;
@@ -215,7 +215,7 @@ namespace Collisions{
                         break;
                     }
 
-                    ufo->type = Ufo::UfoType::NONE;
+                    Ufo::DestroyUfo(ufo);
                     (player->ship.shots+i)->is_active = false;
                 }
             }

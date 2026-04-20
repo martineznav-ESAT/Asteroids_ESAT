@@ -6,6 +6,7 @@
 #include "./Ufo.h"
 
 #include "../CustomLibs/PolyLibJMATH.h"
+#include "../CustomLibs/TList.h"
 
 #include "../../Code/Gameplay.h"
 
@@ -45,6 +46,11 @@ namespace Ufo{
         new_ufo.shot = Shots::NewShot();
 
         return new_ufo;
+    }
+
+    void DestroyUfo(UfoShip* ufo){
+        ufo->type = UfoType::NONE;
+        ufo->spawn_ltc = 10000; 
     }
 
     void UfoCollisions(UfoShip* ufo){
@@ -192,26 +198,39 @@ namespace Ufo{
         }
     }
 
-    void UpdateUfo(UfoShip *ufo){
-        // printf("UPDATE UFO %d\n", ufo->type);
-        UfoCollisions(ufo);
-
-        UpdateUfoShot(ufo);
-
-        RandomDirection(ufo);
-        // JMATH::Vec3Print(ufo->fwd);
-        PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
-        Collisions::BorderExitRellocation(&(ufo->figure));
-        PolyLibJMATH::UpdatePoly(&(ufo->figure));
-        
+    bool IsUfoSpawned(UfoShip *ufo){
+        return ufo->spawn_ltc >= ufo->spawn_lt;
     }
 
     void SpawnUfo(UfoShip* ufo){
+        Asteroids::Asteroid aux_asteroid;
         JMATH::Vec2 spawn_position = {0.0f,0.0f};
 
-        //TO_DO
-        ufo->type = (UfoType) Utils::GenerateRandomNumber(UfoType::NONE); //Since NONE is the last enum value, it will generate a random number that determines if is a SMALL or BIG UFO
-        ufo->orientation = (Orientation)(Utils::GenerateRandomNumber(2) == 0 ? -1 : 1);
+        if(TList::ListLength(Gameplay::asteroid_ingame) <= 3){
+            aux_asteroid = GetRandomListNode(Gameplay::asteroid_ingame)->info.asteroid_info;
+            spawn_position.y = aux_asteroid.figure.transform.translation.y;
+            ufo->type = UfoType::SMALL;
+            if(aux_asteroid.figure.transform.translation.x < Utils::kWindowWidth*0.5){
+                ufo->orientation = Orientation::LEFT;
+            }else{
+                ufo->orientation = Orientation::RIGHT;
+            }
+            ufo->orientation = (Orientation)(Utils::GenerateRandomNumber(2) == 0 ? -1 : 1);
+        }else{
+            spawn_position.y = Utils::GenerateRandomNumber(Utils::kWindowHeight+1);
+            switch(Utils::GenerateRandomNumber(3)){
+                case 0:
+                case 1:
+                    ufo->type = UfoType::BIG;
+                break;
+
+                case 2:
+                    ufo->type = UfoType::SMALL;
+                break;
+            }
+            ufo->orientation = (Orientation)(Utils::GenerateRandomNumber(2) == 0 ? -1 : 1);
+        }
+
 
         switch (ufo->type){
             case UfoType::BIG:
@@ -225,13 +244,39 @@ namespace Ufo{
             break;
         }
 
-        spawn_position.x = ufo->orientation == Orientation::LEFT ? Utils::kWindowWidth : 0;
-        spawn_position.y = Utils::GenerateRandomNumber(Utils::kWindowHeight+1);
+        spawn_position.x = ufo->orientation == Orientation::LEFT ? 
+                Utils::kWindowWidth+(ufo->figure.transform.scale.x) : 
+                0-(ufo->figure.transform.scale.x);
+
         ufo->figure.transform.translation = spawn_position;
         ufo->fwd = {ufo->orientation*ufo->speed, 0.0f, 0.0f}; //Straight
         PolyLibJMATH::SaveDrawCoords(&(ufo->figure));
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->figure));
         
+    }
+
+    void UpdateUfo(UfoShip *ufo){
+        if(IsUfoSpawned(ufo) && ufo->type == UfoType::NONE){
+            SpawnUfo(ufo);
+        }else{
+            if(!IsUfoSpawned(ufo)){
+                ufo->spawn_ltc += 1000/Utils::kFPS;
+            }
+        }
+
+        // printf("UPDATE UFO %d\n", ufo->type);
+        UpdateUfoShot(ufo);
+
+        if(ufo->type != UfoType::NONE){
+            UfoCollisions(ufo);
+
+            RandomDirection(ufo);
+            // JMATH::Vec3Print(ufo->fwd);
+            PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
+            Collisions::BorderExitRellocation(&(ufo->figure));
+            PolyLibJMATH::UpdatePoly(&(ufo->figure));
+            // printf("UPDATE UFO\n");
+        }
     }
 
     void DrawUfo(UfoShip ufo){
