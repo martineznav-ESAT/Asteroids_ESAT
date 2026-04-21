@@ -58,6 +58,8 @@ namespace Shots{
     void DrawShot(Shot *shot){
         if(shot->is_active){
             PolyLibJMATH::DrawPoly(shot->bullet,true);
+            // esat::DrawSetStrokeColor(255,0,0);
+            // esat::DrawLine(shot->speed_v.x, shot->speed_v.y, JMATH::Vec3Scale(shot->speed_v,10).x, JMATH::Vec3Scale(shot->speed_v,10).y);
         }
     }
 }

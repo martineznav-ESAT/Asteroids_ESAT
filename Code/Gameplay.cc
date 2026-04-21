@@ -187,7 +187,7 @@ namespace Gameplay{
         }
     }
 
-    void GameOverScreen(){
+    void UpdateGameOverScreen(){
         gameover_title_ltc += 1000/Utils::kFPS;
         if(gameover_title_ltc >= gameover_title_lt){
             Ufo::DestroyUfo(&ufo);
@@ -201,15 +201,15 @@ namespace Gameplay{
         //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             UpdatePlayers();
-            Ufo::UpdateUfo(&ufo);
     
             if(GameManager::game_status.actual_game->is_finished){
-                GameOverScreen();
+                UpdateGameOverScreen();
             }else{
                 CheckGameOver();
             }
         }
         
+        Ufo::UpdateUfo(&ufo);
         UpdateGameAsteroids();
     }
 
@@ -343,6 +343,22 @@ namespace Gameplay{
         }
     }
 
+    void DrawGameOverScreen(){
+        UILib::Text game_over_txt = {
+            {255,255,255,255},
+            "GAME OVER",
+            Utils::kBaseFontSize*3.0f
+        };
+        
+        UILib::DrawText(
+            {
+                Utils::kWindowWidth*0.5f - (game_over_txt.font_size*2.5f), 
+                Utils::kWindowHeight*0.5f - (game_over_txt.font_size*0.5f)
+            }, 
+            game_over_txt
+        );
+    }
+
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
@@ -350,6 +366,11 @@ namespace Gameplay{
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             DrawPlayers(*(GameManager::game_status.actual_game));
             DrawGameUI(*(GameManager::game_status.actual_game));
+            if(gameover_title_ltc < gameover_title_lt){
+                if((gameover_title_ltc % 1000) < 750){
+                    DrawGameOverScreen();
+                }
+            }
         }
     }
 

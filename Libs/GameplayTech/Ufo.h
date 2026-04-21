@@ -32,6 +32,7 @@ namespace Ufo{
         int spawn_lt = 15000;
         int spawn_ltc = 0;
         Shots::Shot shot;
+        bool is_first_shot = true;
     };
 
     void Init();

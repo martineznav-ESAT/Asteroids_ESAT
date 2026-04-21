@@ -91,7 +91,7 @@ namespace Players{
 
         if(exists_unshot){
             i--;
-            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, 20);
+            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, ship->max_speed*3);
         }
     }
 

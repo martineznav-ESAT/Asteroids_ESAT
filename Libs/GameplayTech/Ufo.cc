@@ -44,6 +44,8 @@ namespace Ufo{
        
         new_ufo.type = UfoType::NONE;
         new_ufo.shot = Shots::NewShot();
+        new_ufo.shot.life_time = 2000;
+        new_ufo.is_first_shot = true;
 
         return new_ufo;
     }
@@ -144,6 +146,16 @@ namespace Ufo{
             break;
         }
 
+        if(ufo->is_first_shot){
+            //First shot is a warning, so is deviated 45º
+            aim_v = JMATH::Vec3ToVec2(
+                JMATH::Mat3MultVec3(
+                    JMATH::Mat3Rotate(JMATH::DegreesToRadians(Utils::GenerateRandomNumber(2) == 0 ? -20 : 20)), 
+                    {aim_v.x, aim_v.y, 0.0f}
+                )
+            );
+        }
+
         FireShot(
             &(ufo->shot),
             ufo->figure.transform.translation,
@@ -164,7 +176,7 @@ namespace Ufo{
                         ufo->figure.transform.translation,
                         ufo->figure.transform.rotation,
                         {Utils::GenerateRandomFloatNegative(2),Utils::GenerateRandomFloatNegative(2),0.0f},
-                        5
+                        8
                     );
                 break;
 
@@ -175,6 +187,8 @@ namespace Ufo{
                 case UfoType::NONE:
                 break;
             }
+
+            ufo->is_first_shot = false;
         }
 
         Shots::UpdateShot(&(ufo->shot));
@@ -250,32 +264,37 @@ namespace Ufo{
 
         ufo->figure.transform.translation = spawn_position;
         ufo->fwd = {ufo->orientation*ufo->speed, 0.0f, 0.0f}; //Straight
+        ufo->is_first_shot = true;
+
         PolyLibJMATH::SaveDrawCoords(&(ufo->figure));
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->figure));
         
     }
 
     void UpdateUfo(UfoShip *ufo){
-        if(IsUfoSpawned(ufo) && ufo->type == UfoType::NONE){
-            SpawnUfo(ufo);
-        }else{
-            if(!IsUfoSpawned(ufo)){
-                ufo->spawn_ltc += 1000/Utils::kFPS;
-            }
-        }
 
         // printf("UPDATE UFO %d\n", ufo->type);
         UpdateUfoShot(ufo);
+        
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            if(IsUfoSpawned(ufo) && ufo->type == UfoType::NONE){
+                SpawnUfo(ufo);
+            }else{
+                if(!IsUfoSpawned(ufo)){
+                    ufo->spawn_ltc += 1000/Utils::kFPS;
+                }
+            }
 
-        if(ufo->type != UfoType::NONE){
-            UfoCollisions(ufo);
+            if(ufo->type != UfoType::NONE){
+                UfoCollisions(ufo);
 
-            RandomDirection(ufo);
-            // JMATH::Vec3Print(ufo->fwd);
-            PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
-            Collisions::BorderExitRellocation(&(ufo->figure));
-            PolyLibJMATH::UpdatePoly(&(ufo->figure));
-            // printf("UPDATE UFO\n");
+                RandomDirection(ufo);
+                // JMATH::Vec3Print(ufo->fwd);
+                PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
+                Collisions::BorderExitRellocation(&(ufo->figure));
+                PolyLibJMATH::UpdatePoly(&(ufo->figure));
+                // printf("UPDATE UFO\n");
+            }
         }
     }
 
