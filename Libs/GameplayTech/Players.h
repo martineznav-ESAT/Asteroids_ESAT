@@ -29,6 +29,7 @@ namespace Players{
     struct Player{
         Ship ship;
         bool is_active;
+        bool is_moving;
         int lifes;
         int score;
         int dead_lt;

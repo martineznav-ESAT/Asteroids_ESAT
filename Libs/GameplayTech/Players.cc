@@ -49,6 +49,8 @@ namespace Players{
     Player NewPlayer(){
         Player new_player;
         new_player.ship = NewShip();
+        new_player.is_active = true;
+        new_player.is_moving = false;
         new_player.lifes = 4;
         new_player.score = 0;
         new_player.dead_lt = 3000;
@@ -121,7 +123,10 @@ namespace Players{
 
             if(esat::IsKeyPressed('W')){
                 // printf("MOVE FORWARD\n");
+                p->is_moving = true;
                 AccelerateShip(&(p->ship));
+            }else{
+                p->is_moving = false;
             }
             
             if(esat::IsKeyPressed('A')){
@@ -155,9 +160,11 @@ namespace Players{
 
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Up)){
                 // printf("MOVE FORWARD\n");
+                p->is_moving = true;
                 AccelerateShip(&(p->ship));
+            }else{
+                p->is_moving = false;
             }
-            DecelerateShip(&(p->ship));
 
             if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Left)){
                 // printf("ROTATE LEFT\n");
@@ -235,11 +242,32 @@ namespace Players{
             Shots::DrawShot(((player.ship.shots)+i));
         }
     }
+    
+    void DrawPlayerPropeller(Player player){
+        JMATH::Vec2 line1_P1, line2_P1, lines_P2;
+        JMATH::Vec2 aux_v;
+        if(player.is_moving && ((int)esat::Time()%150) < 75){
+            line1_P1 = *(player.ship.figure.draw_coords+2);
+            line2_P1 = *(player.ship.figure.draw_coords+3);
+            aux_v = JMATH::Vec2Scale(JMATH::Vec2Sub(line2_P1,line1_P1),0.5f);
+            lines_P2 = JMATH::Vec2Sum(line1_P1,aux_v);
+            aux_v = JMATH::Vec2Scale(JMATH::Vec2Sub(lines_P2,*(player.ship.figure.draw_coords+0)),0.5f);
+            lines_P2 = JMATH::Vec2Sum(lines_P2,aux_v);
+
+            esat::DrawLine(
+                line1_P1.x, line1_P1.y, lines_P2.x, lines_P2.y
+            );
+            esat::DrawLine(
+                line2_P1.x, line2_P1.y, lines_P2.x, lines_P2.y
+            );
+        }
+    }
 
     void DrawPlayer(Player player){
         if(player.is_active){
             if(!IsPlayerInmune(player) || (player.inmunity_ltc % 500) < 250){
                 PolyLibJMATH::DrawPoly(player.ship.figure,false);
+                DrawPlayerPropeller(player);
             }
         }
         DrawPlayerShots(player);

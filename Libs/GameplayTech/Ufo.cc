@@ -266,9 +266,8 @@ namespace Ufo{
         ufo->fwd = {ufo->orientation*ufo->speed, 0.0f, 0.0f}; //Straight
         ufo->is_first_shot = true;
 
-        PolyLibJMATH::SaveDrawCoords(&(ufo->figure));
+        PolyLibJMATH::UpdatePoly(&(ufo->figure));
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->figure));
-        
     }
 
     void UpdateUfo(UfoShip *ufo){

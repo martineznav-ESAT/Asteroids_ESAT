@@ -107,6 +107,7 @@ namespace Collisions{
                         if(show_colliders){
                             esat::DrawSetStrokeColor(0,255,0);
                             esat::DrawLine((p1.draw_coords+p1_i)->x, (p1.draw_coords+p1_i)->y, (p1.prev_draw_coords+p1_i)->x, (p1.prev_draw_coords+p1_i)->y);
+                            esat::DrawLine((p2.draw_coords+p2_i)->x, (p2.draw_coords+p2_i)->y, (p2.draw_coords+p2_i)->x+1, (p2.draw_coords+p2_i)->y+1);
                         }
                         interpolation_res = JMATH::CalcInterpolation(
                             *(p1.draw_coords+p1_i), JMATH::Vec2Sub(
