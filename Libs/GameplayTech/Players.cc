@@ -43,6 +43,11 @@ namespace Players{
             *(new_ship.shots+i) = Shots::NewShot();
             PolyLibJMATH::UpdatePoly(&((new_ship.shots+i)->bullet));
         }
+        new_ship.death_particles = (Particles::Particle*) malloc(sizeof(Particles::Particle)*4);
+        for(int i = 0; i < 4; i++){
+            *(new_ship.death_particles+i) = Particles::NewParticle(Particles::PLAYER_DEATH);
+            PolyLibJMATH::UpdatePoly(&((new_ship.death_particles+i)->figure));
+        }
         return new_ship;
     }
 
@@ -108,9 +113,16 @@ namespace Players{
         player->ship.max_speed = 7.0f;
         player->ship.accel = 15.0f;
         player->ship.decel = 0.99f;
+        PolyLibJMATH::UpdatePoly(&(player->ship.figure));
     }
 
     void KillPlayer(Player* player){
+        for(int i = 0; i < 4; i++){
+            Particles::LoadParticle(
+                (player->ship.death_particles+i),
+                player->ship.figure.transform.translation
+            );
+        }
         player->is_active = false;
         player->dead_ltc = 0;
         player->lifes--;
@@ -198,6 +210,12 @@ namespace Players{
         }
     }
 
+    void UpdatePlayerParticles(Players::Player* player){
+        for(int i = 0; i < 4; i++){
+            Particles::UpdateParticle((player->ship.death_particles+i));
+        }
+    }
+
     void UpdateShipFwd(Ship* ship){
         float radianBase = JMATH::DegreesToRadians(360.0f/ship->figure.t_vertices);
         float radianRotation = JMATH::DegreesToRadians(ship->figure.transform.rotation);
@@ -234,12 +252,19 @@ namespace Players{
         }
 
         UpdatePlayerShots(player);
+        UpdatePlayerParticles(player);
     }
     
 
     void DrawPlayerShots(Players::Player player){
         for(int i = 0; i < Players::max_player_shots; i++){
             Shots::DrawShot(((player.ship.shots)+i));
+        }
+    }
+
+    void DrawPlayerParticles(Players::Player player){
+        for(int i = 0; i < 4; i++){
+            Particles::DrawParticle((player.ship.death_particles+i));
         }
     }
     
@@ -271,6 +296,7 @@ namespace Players{
             }
         }
         DrawPlayerShots(player);
+        DrawPlayerParticles(player);
     }
 
 
@@ -278,6 +304,11 @@ namespace Players{
         for(int i = 0; i < max_player_shots; i++){
             PolyLibJMATH::EmptyPolyMemory(&((player->ship.shots+i)->bullet));
         }
+        
+        for(int i = 0; i < 4; i++){
+            Particles::EmptyParticleMemory((player->ship.death_particles+i));
+        }
+
         PolyLibJMATH::EmptyPolyMemory(&(player->ship.figure));
     }
     

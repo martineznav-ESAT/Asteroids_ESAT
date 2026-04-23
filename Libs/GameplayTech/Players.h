@@ -9,6 +9,7 @@
 #include "../CustomLibs/JMATH.h"
 
 #include "./Shots.h"
+#include "./Particles.h"
 
 #ifndef Players_H
 #define Players_H
@@ -24,6 +25,7 @@ namespace Players{
         float max_speed;
         float accel, decel;
         Shots::Shot* shots;
+        Particles::Particle* death_particles;
     };
 
     struct Player{

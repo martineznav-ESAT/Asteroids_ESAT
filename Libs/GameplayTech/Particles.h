@@ -12,7 +12,7 @@ namespace Particles{
     enum ParticleType{
         PLAYER_DEATH,
         ENEMY_DEATH
-    }
+    };
 
     struct Particle{
         PolyLibJMATH::Poly figure;
@@ -24,11 +24,15 @@ namespace Particles{
         bool is_active;
     };
 
-    Particle NewParticle();
+    Particle NewParticle(ParticleType type);
+
+    void LoadParticle(Particle *particle, JMATH::Vec2 position);
 
     void UpdateParticle(Particle *particle);
 
     void DrawParticle(Particle *particle);
+
+    void EmptyParticleMemory(Particle* particle);
 }
 
 #endif

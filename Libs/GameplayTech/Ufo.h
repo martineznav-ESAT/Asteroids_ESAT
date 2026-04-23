@@ -32,6 +32,7 @@ namespace Ufo{
         int spawn_lt = 15000;
         int spawn_ltc = 0;
         Shots::Shot shot;
+        Particles::Particle* death_particles;
         bool is_first_shot = true;
     };
 

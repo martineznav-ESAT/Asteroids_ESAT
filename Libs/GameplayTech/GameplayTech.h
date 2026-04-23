@@ -7,5 +7,6 @@
 #include "./Collisions.h"
 #include "./Shots.h"
 #include "./Ufo.h"
+#include "./Particles.h"
 
 #endif

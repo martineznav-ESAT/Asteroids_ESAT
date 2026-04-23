@@ -4,8 +4,10 @@
 #include <string.h>
 
 #include "./Particles.h"
+#include "./Collisions.h"
 
 #include "../CustomLibs/PolyLibJMATH.h"
+#include "../CustomLibs/Utils.h"
 
 namespace Particles{
 
@@ -28,8 +30,8 @@ namespace Particles{
                 );
                 
                 new_particle.life_time = 2000; //ms
-                new_particle.max_speed = 2;
-                new_particle.accel = new_particle.max_speed;
+                new_particle.max_speed = 1.0f;
+                new_particle.accel = new_particle.max_speed*Utils::kFPS;
                 new_particle.decel = 0.99;
             break;
 
@@ -43,10 +45,10 @@ namespace Particles{
                     {255,255,255},
                     {0.0f,0.0f}
                 );
-                new_particle.life_time = 3000; //ms
-                new_particle.max_speed = 5;
-                new_particle.accel = new_particle.max_speed;
-                new_particle.decel = 0.985;
+                new_particle.life_time = 2000; //ms
+                new_particle.max_speed = 2;
+                new_particle.accel = new_particle.max_speed*Utils::kFPS;
+                new_particle.decel = 0.97;
             break;
         }
         
@@ -71,7 +73,6 @@ namespace Particles{
     }
 
     void LoadParticle(Particle *particle, JMATH::Vec2 position){
-        
         switch(particle->type){
             case ParticleType::PLAYER_DEATH:
             case ParticleType::ENEMY_DEATH:
@@ -79,10 +80,13 @@ namespace Particles{
                     Utils::GenerateRandomFloatNegative(2),
                     Utils::GenerateRandomFloatNegative(2)
                 };
+                particle->accel = (particle->max_speed-Utils::GenerateRandomFloat(2))*Utils::kFPS;
                 AccelerateParticle(particle);
-                particle->lt_count = 0; //ms timer
                 particle->figure.transform.translation = position;
+                particle->figure.transform.rotation = Utils::GenerateRandomNumber(180);
+                particle->lt_count = Utils::GenerateRandomNumber(((particle->life_time)/5)); //ms timer
                 particle->is_active = true;
+                PolyLibJMATH::UpdatePoly(&(particle->figure));
             break;
         }
     }
@@ -93,9 +97,12 @@ namespace Particles{
                 case ParticleType::PLAYER_DEATH:
                 case ParticleType::ENEMY_DEATH:
                     DecelerateParticle(particle);
+                    PolyLibJMATH::MovePoly(&(particle->figure), (particle->speed_v));
+                    Collisions::BorderExitRellocation(&(particle->figure));
+                    PolyLibJMATH::UpdatePoly(&(particle->figure));
                     particle->lt_count += 1000/Utils::kFPS;
                     if(particle->lt_count >= particle->life_time){
-                        
+                        particle->is_active = false;
                     }
                 break;
             }
@@ -107,4 +114,9 @@ namespace Particles{
             PolyLibJMATH::DrawPoly(particle->figure,true);
         }
     }
+
+    void EmptyParticleMemory(Particle* particle){
+        PolyLibJMATH::EmptyPolyMemory(&(particle->figure));
+    }
+
 }

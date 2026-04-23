@@ -8,6 +8,9 @@
 
 #include "./Ufo.h"
 
+#ifndef Collisions_H
+#define Collisions_H
+
 namespace Collisions{
 
     enum Border{
@@ -44,3 +47,5 @@ namespace Collisions{
     bool CollisionPolyOnRClick(PolyLibJMATH::Poly p1);
 
 }
+
+#endif

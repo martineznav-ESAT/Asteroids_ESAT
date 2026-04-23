@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./Ufo.h"
+#include "./GameplayTech.h"
 
 #include "../CustomLibs/PolyLibJMATH.h"
 #include "../CustomLibs/TList.h"
@@ -45,12 +45,23 @@ namespace Ufo{
         new_ufo.type = UfoType::NONE;
         new_ufo.shot = Shots::NewShot();
         new_ufo.shot.life_time = 2000;
+        new_ufo.death_particles = (Particles::Particle*) malloc(sizeof(Particles::Particle)*8);
+        for(int i = 0; i < 8; i++){
+            *(new_ufo.death_particles+i) = Particles::NewParticle(Particles::ENEMY_DEATH);
+            PolyLibJMATH::UpdatePoly(&((new_ufo.death_particles+i)->figure));
+        }
         new_ufo.is_first_shot = true;
 
         return new_ufo;
     }
 
     void DestroyUfo(UfoShip* ufo){
+        for(int i = 0; i < 8; i++){
+            Particles::LoadParticle(
+                (ufo->death_particles+i),
+                ufo->figure.transform.translation
+            );
+        }
         ufo->type = UfoType::NONE;
         ufo->spawn_ltc = 10000; 
     }
@@ -270,10 +281,17 @@ namespace Ufo{
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->figure));
     }
 
+    void UpdateUfoParticles(UfoShip *ufo){
+        for(int i = 0; i < 8; i++){
+            Particles::UpdateParticle((ufo->death_particles+i));
+        }
+    }
+
     void UpdateUfo(UfoShip *ufo){
 
         // printf("UPDATE UFO %d\n", ufo->type);
         UpdateUfoShot(ufo);
+        UpdateUfoParticles(ufo);
         
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             if(IsUfoSpawned(ufo) && ufo->type == UfoType::NONE){
@@ -297,8 +315,15 @@ namespace Ufo{
         }
     }
 
+    void DrawUfoParticles(UfoShip ufo){
+        for(int i = 0; i < 8; i++){
+            Particles::DrawParticle((ufo.death_particles+i));
+        }
+    }
+
     void DrawUfo(UfoShip ufo){
         Shots::DrawShot(&(ufo.shot));
+        DrawUfoParticles(ufo);
 
         // printf("DrawUfo\n");
         // for (int i = 0; i < 8; i++){
@@ -322,5 +347,8 @@ namespace Ufo{
 
     void EmptyUfoMemory(UfoShip* ufo){
         PolyLibJMATH::EmptyPolyMemory(&(ufo->figure));
+        for(int i = 0; i < 8; i++){
+            Particles::EmptyParticleMemory((ufo->death_particles+i));
+        }
     }
 }
