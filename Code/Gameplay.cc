@@ -21,6 +21,7 @@
 
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
+    TList::ListNode *asteroid_particles = TList::CreateList();
     Ufo::UfoShip ufo;
     PolyLibJMATH::Poly p1_life_figure;
     PolyLibJMATH::Poly p2_life_figure;
@@ -30,9 +31,11 @@ namespace Gameplay{
 
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
+        TList::ListInfo particle_aux_info = {NULL};
         int max_asteroids = 0;
 
         TList::ClearList(&asteroid_ingame);
+        TList::ClearList(&asteroid_particles);
 
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             max_asteroids = 4+((GameManager::game_status.actual_game->round-1)*2);
@@ -50,6 +53,10 @@ namespace Gameplay{
                 
             PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
             TList::InsertList(&asteroid_ingame, TList::ListType::ASTEROID, asteroid_aux_info);
+            for(int i = 0; i < 8; i++){
+                particle_aux_info.particle_info = (asteroid_aux_info.asteroid_info.destroy_particles+i);
+                TList::InsertList(&asteroid_particles, TList::ListType::PARTICLE, particle_aux_info);
+            }
         }
     }
 
@@ -106,12 +113,14 @@ namespace Gameplay{
                     //Ufo Collisions
                     is_collided = Collisions::CollisionAsteroidUfoShot(
                         &asteroid_ingame,
+                        &asteroid_particles,
                         asteroid_aux,
                         &ufo
                     );
                     if(!is_collided){
                         is_collided = Collisions::CollisionAsteroidUfo(
                             &asteroid_ingame,
+                            &asteroid_particles,
                             asteroid_aux,
                             &ufo
                         );
@@ -121,6 +130,7 @@ namespace Gameplay{
                     if(!is_collided){
                         is_collided = Collisions::CollisionAsteroidPlayerShots(
                             &asteroid_ingame,
+                            &asteroid_particles,
                             asteroid_aux,
                             &(GameManager::game_status.actual_game->p1)
                         );
@@ -129,6 +139,7 @@ namespace Gameplay{
                     if(!is_collided){
                         is_collided = Collisions::CollisionAsteroidPlayer(
                             &asteroid_ingame,
+                            &asteroid_particles,
                             asteroid_aux,
                             &(GameManager::game_status.actual_game->p1)
                         );
@@ -139,6 +150,7 @@ namespace Gameplay{
                         if(!is_collided){
                             is_collided = Collisions::CollisionAsteroidPlayerShots(
                                 &asteroid_ingame,
+                                &asteroid_particles,
                                 asteroid_aux,
                                 &(GameManager::game_status.actual_game->p2)
                             );
@@ -155,6 +167,14 @@ namespace Gameplay{
         }
     }
     
+
+    void UpdateGameAsteroidsParticles(){
+        for(TList::ListNode *p = asteroid_particles; p!=nullptr; p = p->next){
+            Particles::UpdateParticle(p->info.particle_info);
+        }
+    }
+    
+
     void UpdatePlayers(){
         Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
         if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
@@ -211,6 +231,7 @@ namespace Gameplay{
         
         Ufo::UpdateUfo(&ufo);
         UpdateGameAsteroids();
+        UpdateGameAsteroidsParticles();
     }
 
 
@@ -245,6 +266,12 @@ namespace Gameplay{
     void DrawGameAsteroids(){
         for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
             PolyLibJMATH::DrawPoly(p->info.asteroid_info.figure,false);
+        }
+    }
+
+    void DrawGameAsteroidsParticles(){
+        for(TList::ListNode *p = asteroid_particles; p!=nullptr; p = p->next){
+            Particles::DrawParticle(p->info.particle_info);
         }
     }
 
@@ -362,6 +389,7 @@ namespace Gameplay{
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
+        DrawGameAsteroidsParticles();
         Ufo::DrawUfo(ufo);
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             DrawPlayers(*(GameManager::game_status.actual_game));

@@ -137,7 +137,7 @@ namespace Collisions{
         return is_colliding;
     }
 
-    bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player){
+    bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         for (int i = 0; i < Players::max_player_shots && !collision; i++){
@@ -146,7 +146,7 @@ namespace Collisions{
                 // printf("LIST %p\n",*asteroid_list);
                 // printf("Asteroid %d\n",asteroid->id);
                 // printf("Bullet %d\n\n",i);
-                Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, player);
+                Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
                 (player->ship.shots+i)->is_active = false;
             }
         }
@@ -154,33 +154,33 @@ namespace Collisions{
         return collision;
     }
 
-    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player){
+    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         if(!Players::IsPlayerDead(*player) && !Players::IsPlayerInmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
-            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, player);
+            Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
             Players::KillPlayer(player);
         }
         
         return collision;
     }
 
-    bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
+    bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->shot.is_active && CollisionPolyPoly(ufo->shot.bullet, asteroid->figure)){
-            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
+            Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
             ufo->shot.is_active = false;
         }
         
         return collision;
     }
 
-    bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
+    bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
-            Asteroids::DestroyAsteroid((void**)asteroid_list, asteroid, nullptr);
+            Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
             Ufo::DestroyUfo(ufo);
         }
         

@@ -35,6 +35,7 @@ namespace Asteroids{
         AsteroidType type;
         PolyLibJMATH::Poly figure;
         JMATH::Vec3 speed_v;
+        Particles::Particle* destroy_particles;
         int size_level = 1;
     };
 
@@ -44,7 +45,7 @@ namespace Asteroids{
 
     Asteroid NewAsteroid(AsteroidType type, int size_level);
 
-    void DestroyAsteroid(void **asteroid_list, Asteroid *asteroid, Players::Player *player);
+    void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroid *asteroid, Players::Player *player);
 
     void EmptyMemory();
 }

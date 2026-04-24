@@ -11,12 +11,11 @@
 
 namespace Particles{
 
-    void Init(){
-
-    }
+    int last_particle_id = -1;
 
     Particle NewParticle(ParticleType type){
         Particle new_particle;
+        new_particle.id = ++last_particle_id;
         switch(type){
             case ParticleType::PLAYER_DEATH:
                 PolyLibJMATH::InitPoly(

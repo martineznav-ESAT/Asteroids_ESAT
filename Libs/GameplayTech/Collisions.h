@@ -28,13 +28,13 @@ namespace Collisions{
 
     bool CollisionPolyPoly(PolyLibJMATH::Poly p1, PolyLibJMATH::Poly p2);
 
-    bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list ,Asteroids::Asteroid *asteroid, Players::Player *player);
+    bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list, TList::ListNode** particle_list ,Asteroids::Asteroid *asteroid, Players::Player *player);
     
-    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player);
+    bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player);
 
-    bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
+    bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
     
-    bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
+    bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo);
 
     bool CollisionUfoPlayer(Ufo::UfoShip *ufo, Players::Player *player);
     

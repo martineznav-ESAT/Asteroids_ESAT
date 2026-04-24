@@ -9,12 +9,15 @@
 #define Particles_H
 
 namespace Particles{
+    extern int last_particle_id;
+
     enum ParticleType{
         PLAYER_DEATH,
         ENEMY_DEATH
     };
 
     struct Particle{
+        int id;
         PolyLibJMATH::Poly figure;
         JMATH::Vec3 fwd;
         JMATH::Vec3 speed_v;

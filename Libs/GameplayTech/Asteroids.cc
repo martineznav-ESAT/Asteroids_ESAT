@@ -112,6 +112,12 @@ namespace Asteroids{
             {(float)Utils::GenerateRandomNumber(Utils::kWindowWidth), (float)Utils::GenerateRandomNumber(Utils::kWindowHeight)},
             {255,255,255}
         );
+
+        new_ast.destroy_particles = (Particles::Particle*) malloc(sizeof(Particles::Particle)*8);
+        for(int i = 0; i < 8; i++){
+            *(new_ast.destroy_particles+i) = Particles::NewParticle(Particles::ENEMY_DEATH);
+            PolyLibJMATH::UpdatePoly(&((new_ast.destroy_particles+i)->figure));
+        }
         return new_ast;
     }
 
@@ -129,8 +135,9 @@ namespace Asteroids{
         }
     }
 
-    void GenerateOnAsteroidDestroy(TList::ListNode **asteroid_list, Asteroids::Asteroid *asteroid){
+    void GenerateOnAsteroidDestroy(TList::ListNode **asteroid_list, TList::ListNode **particle_list, Asteroids::Asteroid *asteroid){
         TList::ListInfo asteroid_aux_info = {NULL};
+        TList::ListInfo particle_aux_info = {NULL};
         // printf("LIST 3 %p\n",*asteroid_list);
 
         // printf("\n");
@@ -147,15 +154,19 @@ namespace Asteroids{
                 PolyLibJMATH::UpdatePoly(&(asteroid_aux_info.asteroid_info.figure));
                 
                 TList::InsertList(asteroid_list, TList::ListType::ASTEROID, asteroid_aux_info);
-                
+                for(int i = 0; i < 8; i++){
+                    particle_aux_info.particle_info = (asteroid_aux_info.asteroid_info.destroy_particles+i);
+                    TList::InsertList(particle_list, TList::ListType::PARTICLE, particle_aux_info);
+                }
             }
         }
         // printf("\n");
         // TList::PrintList(*asteroid_list);
     }
 
-    void DestroyAsteroid(void **asteroid_list, Asteroids::Asteroid *asteroid, Players::Player *player = nullptr){
+    void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroids::Asteroid *asteroid, Players::Player *player = nullptr){
         TList::ListNode** asteroid_list_aux = (TList::ListNode**) asteroid_list;
+        TList::ListNode** particle_list_aux = (TList::ListNode**) particle_list;
         // printf("LIST 2 %p\n",*asteroid_list_aux);
         TList::ListInfo aux_asteroid_info = {NULL};
         aux_asteroid_info.asteroid_info = *asteroid; 
@@ -164,7 +175,13 @@ namespace Asteroids{
         if(player != nullptr){
             AddAsteroidPoints(asteroid->size_level, player);
         }
-        GenerateOnAsteroidDestroy(asteroid_list_aux, asteroid);
+        GenerateOnAsteroidDestroy(asteroid_list_aux, particle_list_aux, asteroid);
+        for(int i = 0; i < 8; i++){
+            Particles::LoadParticle(
+                (asteroid->destroy_particles+i),
+                asteroid->figure.transform.translation
+            );
+        }
         TList::DeleteElement(asteroid_list_aux, aux_asteroid_info);
     }
     

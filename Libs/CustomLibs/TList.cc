@@ -49,6 +49,12 @@ namespace TList{
                 // PrintList(list);
                 for(aux = list; aux != nullptr && aux->info.asteroid_info.id != info.asteroid_info.id; aux = aux->next);
             break;
+
+            case ListType::PARTICLE:
+                // printf("\n-----REGISTERED GAMES\n");
+                // PrintList(list);
+                for(aux = list; aux != nullptr && aux->info.particle_info->id != info.particle_info->id; aux = aux->next);
+            break;
         }
 
 
@@ -123,6 +129,12 @@ namespace TList{
                 printf("|| Asteroid %d - Size %d - Speed:",list->info.asteroid_info.id, list->info.asteroid_info.size_level);
                 JMATH::Vec3Print(list->info.asteroid_info.speed_v);
                 printf("||\n");
+            break;
+
+            case ListType::PARTICLE:
+                // printf("\n-----REGISTERED GAMES\n");
+                // PrintList(list);
+                printf("|| Particle %d - Type %d ||\n",list->info.particle_info->id, list->info.particle_info->type);
             break;
         }
     }
@@ -253,6 +265,10 @@ namespace TList{
 
                 case ListType::ASTEROID:
                     PolyLibJMATH::EmptyPolyMemory(&(delete_node->info.asteroid_info.figure));
+                break;
+
+                case ListType::PARTICLE:
+                    Particles::EmptyParticleMemory((delete_node->info.particle_info));
                 break;
             }
             
