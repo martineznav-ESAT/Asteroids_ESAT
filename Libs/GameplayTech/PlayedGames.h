@@ -21,7 +21,6 @@ namespace PlayedGames{
     struct PlayedGame{
         int game_id = 0;
         Gamemode gamemode;
-        int round = 1;
         bool is_player1_turn = true;
         UserManager::User *p1_user;
         UserManager::User *p2_user;
@@ -36,7 +35,7 @@ namespace PlayedGames{
     extern void *game_list; 
 
     PlayedGame NewGame();
-    PlayedGame LoadBaseGameManagerGame(Gamemode gm);
+    PlayedGame LoadBaseGameManagerGame(Gamemode gm, UserManager::User* p2);
 
     void SaveGame(PlayedGame game, FILE *dat_file);
 

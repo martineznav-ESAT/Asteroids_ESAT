@@ -66,11 +66,6 @@ namespace Collisions{
         
     }
 
-    //TO_DO COLLISIONS
-    // bool CollisionPolyPoint(PolyLibJMATH::Poly poly, JMATH::Vec2 point){
-    //     return false;
-    // }
-
     bool CollisionPolyPoly(PolyLibJMATH::Poly p1, PolyLibJMATH::Poly p2){
         bool is_colliding = false;
         int p1_i, p2_i;
@@ -209,10 +204,10 @@ namespace Collisions{
                 if((player->ship.shots+i)->is_active && CollisionPolyPoly((player->ship.shots+i)->bullet, ufo->figure)){
                     switch (ufo->type){
                         case Ufo::UfoType::BIG:
-                            player->score += 200;
+                            Players::AddPoints(player,200);
                         break;
                         case Ufo::UfoType::SMALL:
-                            player->score += 1000;
+                            Players::AddPoints(player,1000);
                         break;
                     }
 

@@ -83,8 +83,8 @@ namespace LoginMenu{
         switch(prev_level){
             case GameManager::Level::PLAY_MENU:
                 if(VerifyLogin(&(aux_p2))){
-                    printf("LOGGED P2 -> %s %s \n", GameManager::game_status.logged_user->username, GameManager::game_status.logged_user->alias);
-                    Gameplay::Load(GameManager::game_status.actual_game->gamemode, aux_p2);
+                    printf("LOGGED P2 -> %s %s \n", aux_p2->username, aux_p2->alias);
+                    Gameplay::Load(GameManager::game_status.load_game_aux_gamemode, aux_p2);
                 }
             break;
             default:

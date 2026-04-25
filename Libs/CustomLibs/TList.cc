@@ -312,7 +312,7 @@ namespace TList{
         ListNode *aux = GetLastListNode(*list);
         dat_file = fopen(dat_path, "wb");
 
-        printf("SAVING LIST:\n");
+        // printf("SAVING LIST:\n");
         PrintList(*list);
 
         //Saved backwards to mantain consistency when loaded again
@@ -322,6 +322,7 @@ namespace TList{
             // printf("SavedNode\n");
         }
         fclose(dat_file);
+        // printf("LIST SAVED CORRECTLY\n");
     }
 
     bool LoadList(ListNode **list_to_load, ListType list_type, FILE *dat_file, char* dat_path){

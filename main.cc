@@ -84,7 +84,7 @@ void DrawGame(){
         break;
 
         case GameManager::Level::MAIN_MENU :
-            Gameplay::Draw();
+            Gameplay::Draw(); //Asteroids moving background
             MainMenu::Draw();
         break;
 

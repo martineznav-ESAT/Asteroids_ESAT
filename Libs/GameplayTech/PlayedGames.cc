@@ -27,7 +27,6 @@ namespace PlayedGames{
         new_game.gamemode = Gamemode::SP;
         new_game.p1_user = nullptr;
         new_game.p2_user = nullptr;
-        new_game.round = 1;
         new_game.is_player1_turn = true;
         new_game.p1 = Players::NewPlayer();
         new_game.p2 = Players::NewPlayer();
@@ -36,11 +35,12 @@ namespace PlayedGames{
         return new_game;
     }
 
-    PlayedGame LoadBaseGameManagerGame(Gamemode gm){
+    PlayedGame LoadBaseGameManagerGame(Gamemode gm, UserManager::User* p2 = nullptr){
         PlayedGame new_game = NewGame();
+        new_game.gamemode = gm;
         new_game.p1_user = GameManager::game_status.logged_user;
-        new_game.p2_user = nullptr;
-
+        new_game.p2_user = p2;
+        
         return new_game;
     }
 
@@ -48,17 +48,31 @@ namespace PlayedGames{
         UserManager::User aux_p2_user = UserManager::NewUser();
 
         if(game.p2_user == nullptr){
+            //printf("Saving aux_p2_user.username\n");
             fwrite(aux_p2_user.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+            //printf("Saved aux_p2_user.username\n");
         }else{
+            //printf("Saving game.p2_user->username\n");
             fwrite(game.p2_user->username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+            //printf("Saved game.p2_user->username\n");
         }
 
         UserManager::FreeUserMemory(&aux_p2_user);
     }
 
     void SaveGamePlayer(Players::Player player, FILE *dat_file){
+        //printf("Saving player.lifes\n");
         fwrite(&(player.lifes), sizeof(int), 1, dat_file);
+        //printf("Saved player.lifes\n");
+
+        //printf("Saving player.score\n");
         fwrite(&(player.score), sizeof(int), 1, dat_file);
+        //printf("Saved player.score\n");
+        
+        //printf("Saving player.score\n");
+        fwrite(&(player.round), sizeof(int), 1, dat_file);
+        //printf("Saved player.score\n");
+        
     }
 
     void SaveGame(PlayedGame game, FILE *dat_file){
@@ -67,26 +81,39 @@ namespace PlayedGames{
         //Saved separately because User values are memory pointers, therefore the only needed value is de username (id value)
         //Player values only register lifes and score since their ship will get generated on game load
         if(dat_file != NULL){
-            fwrite(&(game.game_id), sizeof(int), 1, dat_file);
-            fwrite(&(game.gamemode), sizeof(Gamemode), 1, dat_file);
-            fwrite(&(game.round), sizeof(int), 1, dat_file);
             
+            //printf("Saving game.game_id\n");
+            fwrite(&(game.game_id), sizeof(int), 1, dat_file);
+            //printf("Saved game.game_id\n");
+            
+            //printf("Saving game.gamemode\n");
+            fwrite(&(game.gamemode), sizeof(Gamemode), 1, dat_file);
+            //printf("Saved game.gamemode\n");
+            
+            
+            //printf("Saving game.p1_user->username\n");
             fwrite(game.p1_user->username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+            //printf("Saved game.p1_user->username\n");
 
             SaveGameP2User(game, dat_file);
             
+            //printf("Saving game.is_player1_turn\n");
+            fwrite(&(game.is_player1_turn), sizeof(bool), 1, dat_file);
+            //printf("Saved game.is_player1_turn\n");
+
             SaveGamePlayer(game.p1, dat_file);
             SaveGamePlayer(game.p2, dat_file);
             
-            // printf("Saving is_finished\n");
+            //printf("Saving game.is_finished\n");
             fwrite(&(game.is_finished), sizeof(bool), 1, dat_file);
-            // printf("Saved is_finished\n");
+            //printf("Saved game.is_finished\n");
         }
     }
 
     void LoadGamePlayer(Players::Player *player, FILE *dat_file){
         fread(&(player->lifes), sizeof(int), 1, dat_file);
         fread(&(player->score), sizeof(int), 1, dat_file);
+        fread(&(player->round), sizeof(int), 1, dat_file);
     }
 
     PlayedGame LoadGame(FILE *dat_file){
@@ -98,8 +125,6 @@ namespace PlayedGames{
             // printf("game_id %d\n",loaded_game.game_id);
             fread(&(loaded_game.gamemode), sizeof(Gamemode), 1, dat_file);
             // printf("gamemode %d\n",loaded_game.gamemode);
-            fread(&(loaded_game.round), sizeof(int), 1, dat_file);
-            // printf("round %d\n",loaded_game.round);
             
             aux_info.user_info = UserManager::NewUser();
 
@@ -108,6 +133,8 @@ namespace PlayedGames{
 
             fread(aux_info.user_info.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
             loaded_game.p2_user = &(TList::FindInList((TList::ListNode*)UserManager::user_list, aux_info)->info.user_info);
+
+            fread(&(loaded_game.is_player1_turn), sizeof(bool), 1, dat_file);
 
             LoadGamePlayer(&(loaded_game.p1), dat_file);
             LoadGamePlayer(&(loaded_game.p2), dat_file);

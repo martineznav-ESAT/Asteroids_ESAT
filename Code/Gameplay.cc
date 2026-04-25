@@ -38,7 +38,23 @@ namespace Gameplay{
         TList::ClearList(&asteroid_particles);
 
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
-            max_asteroids = 4+((GameManager::game_status.actual_game->round-1)*2);
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::SP:
+                case PlayedGames::Gamemode::MP_COOP:
+                case PlayedGames::Gamemode::MP_VS:
+                    max_asteroids = 4+((GameManager::game_status.actual_game->p1.round)*2);
+                break;
+
+                case PlayedGames::Gamemode::MP_ALT:
+                    if(GameManager::game_status.actual_game->is_player1_turn){
+                        max_asteroids = 4+((GameManager::game_status.actual_game->p1.round)*2);
+                    }else{
+                        max_asteroids = 4+((GameManager::game_status.actual_game->p2.round)*2);
+                    }
+                break;
+
+                break;
+            }
             max_asteroids = max_asteroids > 12 ? 12 : max_asteroids;
         }else{
             max_asteroids = 12;
@@ -75,6 +91,16 @@ namespace Gameplay{
             {255,255,255},
             {0.1f,0.0f}
         );
+        PolyLibJMATH::InitPoly(
+            &p2_life_figure,
+            5,
+            Players::ship_coords,
+            {15.0f,15.0f},
+            -90.0f,
+            {0.0f, 0.0f},
+            {255,255,255},
+            {0.1f,0.0f}
+        );
     }
 
     //Gameplay UPDATE
@@ -86,14 +112,51 @@ namespace Gameplay{
         GenerateAsteroidRound();
         ufo.type = Ufo::UfoType::NONE;
         ufo.spawn_ltc = 0;
-
     }
 
     void AdvanceRound(){
-        GameManager::game_status.actual_game->round++;
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP:
+                GameManager::game_status.actual_game->p1.round++;
+            break;
+
+            case PlayedGames::Gamemode::MP_ALT:
+                if(GameManager::game_status.actual_game->is_player1_turn){
+                    GameManager::game_status.actual_game->p1.round++;
+                }else{
+                    GameManager::game_status.actual_game->p2.round++;
+                }
+            break;
+
+            case PlayedGames::Gamemode::MP_COOP:
+            case PlayedGames::Gamemode::MP_VS:
+                GameManager::game_status.actual_game->p1.round++;
+                GameManager::game_status.actual_game->p2.round++;
+            break;
+        }
         LoadGameplayLevel();
     }
 
+    bool AsteroidPlayerCollisions(Asteroids::Asteroid *asteroid, Players::Player *p){
+        bool is_collided = false;
+        is_collided = Collisions::CollisionAsteroidPlayerShots(
+            &asteroid_ingame,
+            &asteroid_particles,
+            asteroid,
+            p
+        );
+
+        if(!is_collided){
+            is_collided = Collisions::CollisionAsteroidPlayer(
+                &asteroid_ingame,
+                &asteroid_particles,
+                asteroid,
+                p
+            );
+        }
+
+        return is_collided;
+    }
 
     void UpdateGameAsteroids(){
         Asteroids::Asteroid *asteroid_aux;
@@ -109,7 +172,6 @@ namespace Gameplay{
                 
                 if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
                     
-
                     //Ufo Collisions
                     is_collided = Collisions::CollisionAsteroidUfoShot(
                         &asteroid_ingame,
@@ -126,35 +188,42 @@ namespace Gameplay{
                         );
                     }
 
-                    //Player 1 Collisions
-                    if(!is_collided){
-                        is_collided = Collisions::CollisionAsteroidPlayerShots(
-                            &asteroid_ingame,
-                            &asteroid_particles,
-                            asteroid_aux,
-                            &(GameManager::game_status.actual_game->p1)
-                        );
-                    }
+                    
+                    //Players Collisions
+                    switch (GameManager::game_status.actual_game->gamemode){
+                        case PlayedGames::Gamemode::SP:
+                            //Player 1 Collisions
+                            if(!is_collided){
+                                is_collided = AsteroidPlayerCollisions(asteroid_aux, &(GameManager::game_status.actual_game->p1));
+                            }
+                        break;
 
-                    if(!is_collided){
-                        is_collided = Collisions::CollisionAsteroidPlayer(
-                            &asteroid_ingame,
-                            &asteroid_particles,
-                            asteroid_aux,
-                            &(GameManager::game_status.actual_game->p1)
-                        );
-                    }
+                        case PlayedGames::Gamemode::MP_ALT:
+                            if(GameManager::game_status.actual_game->is_player1_turn){
+                                //Player 1 Collisions
+                                if(!is_collided){
+                                    is_collided = AsteroidPlayerCollisions(asteroid_aux, &(GameManager::game_status.actual_game->p1));
+                                } 
+                            }else{
+                                //Player 2 Collisions
+                                if(!is_collided){
+                                    is_collided = AsteroidPlayerCollisions(asteroid_aux, &(GameManager::game_status.actual_game->p2));
+                                }
+                            }
+                            
+                        break;
 
-                    if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
-                        //Player 2 Collisions
-                        if(!is_collided){
-                            is_collided = Collisions::CollisionAsteroidPlayerShots(
-                                &asteroid_ingame,
-                                &asteroid_particles,
-                                asteroid_aux,
-                                &(GameManager::game_status.actual_game->p2)
-                            );
-                        }
+                        case PlayedGames::Gamemode::MP_COOP:
+                        case PlayedGames::Gamemode::MP_VS:
+                            //Player 1 Collisions
+                            if(!is_collided){
+                                is_collided = AsteroidPlayerCollisions(asteroid_aux, &(GameManager::game_status.actual_game->p1));
+                            }
+                            //Player 2 Collisions
+                            if(!is_collided){
+                                is_collided = AsteroidPlayerCollisions(asteroid_aux, &(GameManager::game_status.actual_game->p2));
+                            }
+                        break;
                     }
                 }
 
@@ -176,9 +245,25 @@ namespace Gameplay{
     
 
     void UpdatePlayers(){
-        Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
-        if(GameManager::game_status.actual_game->gamemode != PlayedGames::Gamemode::SP){
-            Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP:
+                Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
+            break;
+
+            case PlayedGames::Gamemode::MP_ALT:
+                if(GameManager::game_status.actual_game->is_player1_turn){
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
+                }else{
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
+                }
+                
+            break;
+
+            case PlayedGames::Gamemode::MP_COOP:
+            case PlayedGames::Gamemode::MP_VS:
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
+            break;
         }
     }
 
@@ -191,7 +276,9 @@ namespace Gameplay{
 
         aux_info.game_info = *(GameManager::game_status.actual_game);
         if(HighscoresMenu::AddHighScoreGame(aux_info)){
+            // printf("SaveList HIGHSCORES ON GAME OVER\n");
             TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
+            // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
         }
     }
 
@@ -239,24 +326,39 @@ namespace Gameplay{
     
 
     //Loads the Gameplay
-    void Load(PlayedGames::Gamemode gm, UserManager::User* p2){
+    void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr){
         TList::ListInfo aux_game_info = {NULL};
+        PlayedGames::PlayedGame *aux_actual_game = nullptr;
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
 
         //CREATE NEW GAME
-        aux_game_info.game_info = PlayedGames::LoadBaseGameManagerGame(gm);
-        aux_game_info.game_info.p2_user = p2;
+        aux_game_info.game_info = PlayedGames::LoadBaseGameManagerGame(gm, p2);
 
         TList::InsertList(((TList::ListNode**)(&(PlayedGames::game_list))), TList::ListType::PLAYED_GAME, aux_game_info);
         TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
         //LOADS NEW GAME AS THE ACTUAL GAME
-        GameManager::game_status.actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
+        aux_actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
+        GameManager::game_status.actual_game = aux_actual_game;
 
-        p1_life_figure.color = GameManager::game_status.actual_game->p2.ship.figure.color;
+        //Player Colors
+        if(aux_actual_game->gamemode == PlayedGames::Gamemode::SP){
+            p1_life_figure.color = aux_actual_game->p1.ship.figure.color;
+        }else{
+            aux_actual_game->p1.ship.figure.color = {150,150,255};
+            aux_actual_game->p2.ship.figure.color = {255,0,0};
 
-        if(p2 != nullptr){
-            p2_life_figure.color = GameManager::game_status.actual_game->p2.ship.figure.color;
+            for (int i = 0; i < Players::max_player_shots; i++){
+                (aux_actual_game->p1.ship.shots+i)->bullet.color = aux_actual_game->p1.ship.figure.color;
+                (aux_actual_game->p2.ship.shots+i)->bullet.color = aux_actual_game->p2.ship.figure.color;
+                if(i < 4){
+                    (aux_actual_game->p1.ship.death_particles+i)->figure.color = aux_actual_game->p1.ship.figure.color;
+                    (aux_actual_game->p2.ship.death_particles+i)->figure.color = aux_actual_game->p2.ship.figure.color;
+                }
+            }
+
+            p1_life_figure.color = aux_actual_game->p1.ship.figure.color;
+            p2_life_figure.color = aux_actual_game->p2.ship.figure.color;
         }
 
         LoadGameplayLevel();
@@ -345,8 +447,18 @@ namespace Gameplay{
             case PlayedGames::Gamemode::SP:
                 Players::DrawPlayer(actual_game.p1);
             break;
+
+            case PlayedGames::Gamemode::MP_ALT:
+                if (actual_game.is_player1_turn){
+                    Players::DrawPlayer(actual_game.p1);
+                }else{
+                    Players::DrawPlayer(actual_game.p2);
+                }
+                
+            break;
         
-            default:
+            case PlayedGames::Gamemode::MP_VS:
+            case PlayedGames::Gamemode::MP_COOP:
                 Players::DrawPlayer(actual_game.p1);
                 Players::DrawPlayer(actual_game.p2);
             break;
@@ -359,8 +471,20 @@ namespace Gameplay{
                 DrawP1UI(actual_game);
                 DrawP1Lifes(actual_game);
             break;
+
+            case PlayedGames::Gamemode::MP_ALT:
+                if (actual_game.is_player1_turn){
+                    DrawP1UI(actual_game);
+                    DrawP1Lifes(actual_game);
+                }else{
+                    DrawP2UI(actual_game);
+                    DrawP2Lifes(actual_game);
+                }
+                
+            break;
         
-            default:
+            case PlayedGames::Gamemode::MP_VS:
+            case PlayedGames::Gamemode::MP_COOP:
                 DrawP1UI(actual_game);
                 DrawP1Lifes(actual_game);
 
@@ -405,6 +529,7 @@ namespace Gameplay{
     void EmptyMemory(){
         Ufo::EmptyUfoMemory(&ufo);
         TList::ClearList(&asteroid_ingame);
+        TList::ClearList(&asteroid_particles);
         PolyLibJMATH::EmptyPolyMemory(&p1_life_figure);
         PolyLibJMATH::EmptyPolyMemory(&p2_life_figure);
     }

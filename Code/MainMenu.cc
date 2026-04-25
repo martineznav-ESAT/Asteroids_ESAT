@@ -57,7 +57,7 @@ namespace MainMenu{
 
         Utils::Collider base_collider = {{centered_coord.x, centered_coord.y-(float)Utils::kBaseFontSize},{centered_coord.x, (centered_coord.y+(float)Utils::kBaseFontSize)}};
 
-        Utils::Color button_color = {0,0,0,255};
+        Utils::Color button_color = {0,0,0,0};
         Utils::Color text_color = {255,255,255,255};
         float font_width_aux = ((float)Utils::kBaseFontSize*2)/3.5f;
 

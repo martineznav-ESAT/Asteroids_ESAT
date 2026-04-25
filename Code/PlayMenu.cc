@@ -23,13 +23,23 @@ namespace PlayMenu{
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
 
-
     //ACTIONS
     void SinglePlayerAction(){
         Gameplay::Load(PlayedGames::Gamemode::SP);
     }
 
-    void MultiPlayerAction(){
+    void MpAltAction(){
+        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_ALT;
+        LoginMenu::Load(GameManager::Level::PLAY_MENU);
+    }
+
+    void MpVsAction(){
+        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_VS;
+        LoginMenu::Load(GameManager::Level::PLAY_MENU);
+    }
+
+    void MpCoopAction(){
+        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_COOP;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
@@ -44,22 +54,24 @@ namespace PlayMenu{
         JMATH::Vec2 centered_coord = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
         JMATH::Vec2 margin_y = {0.0f, 70.0f};
 
-        Utils::Collider base_collider = {{centered_coord.x, centered_coord.y-(float)Utils::kBaseFontSize},{centered_coord.x, (centered_coord.y+(float)Utils::kBaseFontSize)}};
+        Utils::Collider base_collider = {
+            {centered_coord.x, centered_coord.y-(((float)Utils::kBaseFontSize*2) * (((int)PlayMenuItems::TOTAL_ITEMS)))},
+            {centered_coord.x, centered_coord.y-(((float)Utils::kBaseFontSize*2) * ((((int)PlayMenuItems::TOTAL_ITEMS))-1))}};
 
-        Utils::Color button_color = {0,0,0,255};
+        Utils::Color button_color = {0,0,0,0};
         Utils::Color text_color = {255,255,255,255};
         float font_width_aux = ((float)Utils::kBaseFontSize*2)/3.5f;
 
         UILib::InitButton(
             &((menu_items+((int)PlayMenuItems::SINGLEPLAYER_BTN))->item.btn_item),
             {
-                JMATH::Vec2Sub(
+                JMATH::Vec2Sum(
                     {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::SINGLEPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                    margin_y
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::SINGLEPLAYER_BTN)
                 ),
-                JMATH::Vec2Sub(
+                JMATH::Vec2Sum(
                     {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::SINGLEPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
-                    margin_y
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::SINGLEPLAYER_BTN)
                 )
             },
             button_color,
@@ -74,20 +86,72 @@ namespace PlayMenu{
         );
 
         UILib::InitButton(
-            &((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item.btn_item),
+            &((menu_items+((int)PlayMenuItems::MULTIPLAYER_ALT))->item.btn_item),
             {
-                {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
+                JMATH::Vec2Sum(
+                    {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_ALT))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_ALT)
+                ),
+                JMATH::Vec2Sum(
+                    {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_ALT))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_ALT)
+                )
             },
             button_color,
             button_color,
             {
                 text_color,
-                (menu_items+((int)PlayMenuItems::MULTIPLAYER_BTN))->item_name.text,
+                (menu_items+((int)PlayMenuItems::MULTIPLAYER_ALT))->item_name.text,
                 (float)Utils::kBaseFontSize*2
             },
             true,
-            MultiPlayerAction
+            MpAltAction
+        );
+
+        UILib::InitButton(
+            &((menu_items+((int)PlayMenuItems::MULTIPLAYER_VS))->item.btn_item),
+            {
+                JMATH::Vec2Sum(
+                    {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_VS))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_VS)
+                ),
+                JMATH::Vec2Sum(
+                    {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_VS))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_VS)
+                )
+            },
+            button_color,
+            button_color,
+            {
+                text_color,
+                (menu_items+((int)PlayMenuItems::MULTIPLAYER_VS))->item_name.text,
+                (float)Utils::kBaseFontSize*2
+            },
+            true,
+            MpVsAction
+        );
+
+        UILib::InitButton(
+            &((menu_items+((int)PlayMenuItems::MULTIPLAYER_COOP))->item.btn_item),
+            {
+                JMATH::Vec2Sum(
+                    {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_COOP))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_COOP)
+                ),
+                JMATH::Vec2Sum(
+                    {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::MULTIPLAYER_COOP))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::MULTIPLAYER_COOP)
+                )
+            },
+            button_color,
+            button_color,
+            {
+                text_color,
+                (menu_items+((int)PlayMenuItems::MULTIPLAYER_COOP))->item_name.text,
+                (float)Utils::kBaseFontSize*2
+            },
+            true,
+            MpCoopAction
         );
 
         UILib::InitButton(
@@ -95,11 +159,11 @@ namespace PlayMenu{
             {
                 JMATH::Vec2Sum(
                     {base_collider.P1.x-(strlen((menu_items+((int)PlayMenuItems::BACK_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                    margin_y
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::BACK_BTN)
                 ),
                 JMATH::Vec2Sum(
                     {base_collider.P2.x+(strlen((menu_items+((int)PlayMenuItems::BACK_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
-                    margin_y
+                    JMATH::Vec2Scale(margin_y, (int)PlayMenuItems::BACK_BTN)
                 )
             },
             button_color,
@@ -127,9 +191,19 @@ namespace PlayMenu{
             {{255,255,255,255},"SINGLEPLAYER", Utils::kBaseFontSize*2.0f}
         );
         UILib::InitItem(
-            (menu_items + ((int)PlayMenuItems::MULTIPLAYER_BTN)),
+            (menu_items + ((int)PlayMenuItems::MULTIPLAYER_ALT)),
             UILib::ItemType::BUTTON,
-            {{255,255,255,255},"MULTIPLAYER", Utils::kBaseFontSize*2.0f}
+            {{255,255,255,255},"2P ALTERNATE", Utils::kBaseFontSize*2.0f}
+        );
+        UILib::InitItem(
+            (menu_items + ((int)PlayMenuItems::MULTIPLAYER_VS)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"2P VERSUS", Utils::kBaseFontSize*2.0f}
+        );
+        UILib::InitItem(
+            (menu_items + ((int)PlayMenuItems::MULTIPLAYER_COOP)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"2P   COOP", Utils::kBaseFontSize*2.0f}
         );
         UILib::InitItem(
             (menu_items + ((int)PlayMenuItems::BACK_BTN)),

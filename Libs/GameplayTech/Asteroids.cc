@@ -124,13 +124,13 @@ namespace Asteroids{
     void AddAsteroidPoints(int size_level, Players::Player* player){
         switch (size_level){
             case 1:
-                player->score+=100;
+                Players::AddPoints(player,100);
             break;
             case 2:
-                player->score+=50;
+                Players::AddPoints(player,50);
             break;
             case 3:
-                player->score+=20;
+                Players::AddPoints(player,20);
             break;
         }
     }

@@ -16,13 +16,15 @@
 #include "./PlayMenu.h"
 #include "./HighscoresMenu.h"
 #include "./AdminMenu.h"
+#include "./Gameplay.h"
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace GameManager{
     GameStatus game_status = {
         LOGIN_MENU,
         nullptr,
-        // PlayedGames::PlayedGame actual_game;
+        nullptr,
+        PlayedGames::Gamemode::SP
     };
 
     void LoadInitLevel(){
@@ -33,6 +35,21 @@ namespace GameManager{
         }else{
             // printf("RegisterMenu\n");
             RegisterMenu::Load(GameManager::Level::REGISTER_MENU);
+        }
+    }
+
+    void AlternateActivePlayer(){
+        if(game_status.actual_game->gamemode == PlayedGames::Gamemode::MP_ALT){
+            game_status.actual_game->is_player1_turn = !game_status.actual_game->is_player1_turn;
+            
+            if(game_status.actual_game->is_player1_turn){
+                game_status.actual_game->p1.is_active = true;
+                game_status.actual_game->p2.is_active = false;
+            }else{
+                game_status.actual_game->p1.is_active = false;
+                game_status.actual_game->p2.is_active = true;
+            }
+            Gameplay::LoadGameplayLevel();
         }
     }
 

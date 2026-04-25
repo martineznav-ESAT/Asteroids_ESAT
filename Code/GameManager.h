@@ -29,23 +29,18 @@ namespace GameManager{
         QUIT
     };
 
-    //Gamemode enum 
-    enum Gamemode{
-        ONE_PLAYER,
-        TWO_PLAYER_COOP,
-        TWO_PLAYER_VS,
-    };
-
-
     struct GameStatus{
         Level level = LOGIN_MENU;
         UserManager::User *logged_user;
         PlayedGames::PlayedGame *actual_game;
+        PlayedGames::Gamemode load_game_aux_gamemode;
     };
 
     extern GameStatus game_status;
 
     void LoadInitLevel();
+
+    void AlternateActivePlayer();
 
     void DebugUpdate();
 }

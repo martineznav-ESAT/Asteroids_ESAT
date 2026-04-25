@@ -38,6 +38,7 @@ namespace Players{
         int dead_ltc;
         int inmunity_lt;
         int inmunity_ltc;
+        int round = 1;
     };
 
     void Init();
@@ -45,6 +46,8 @@ namespace Players{
     Ship NewShip();
 
     Player NewPlayer();
+
+    void AddPoints(Player* player, int points);
 
     void KillPlayer(Player* player);
 

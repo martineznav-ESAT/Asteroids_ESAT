@@ -19,7 +19,9 @@ namespace PlayMenu{
     
     enum PlayMenuItems{
         SINGLEPLAYER_BTN,
-        MULTIPLAYER_BTN,
+        MULTIPLAYER_ALT,
+        MULTIPLAYER_VS,
+        MULTIPLAYER_COOP,
         BACK_BTN,
         TOTAL_ITEMS
     };

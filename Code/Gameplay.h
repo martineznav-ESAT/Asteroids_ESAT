@@ -25,8 +25,10 @@ namespace Gameplay{
     //Whole Gameplay initializer
     void Init();
 
-    //Loads the Gameplay
+    //Loads the Gameplay level at game start
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr);
+
+    void LoadGameplayLevel();
 
     void GenerateAsteroidRound();
     void UpdateGameAsteroids();

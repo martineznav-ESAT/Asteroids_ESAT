@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "../../Code/UserManager.h"
+#include "../../Code/GameManager.h"
 #include "../CustomLibs/Utils.h"
 
 #include "./GameplayTech.h"
@@ -62,6 +63,7 @@ namespace Players{
         new_player.dead_ltc = 3000;
         new_player.inmunity_lt = 2000;
         new_player.inmunity_ltc = 2000;
+        new_player.round = 0;
 
         return new_player;
     }
@@ -100,6 +102,17 @@ namespace Players{
             i--;
             Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, ship->max_speed*3);
         }
+    }
+
+    void AddPoints(Player* player, int points){
+        //Integer division
+        //54.000/10000 = 5 -> 50.000/10000 = 5 -> 59.999/10000 = 5 -> 5-5 = 0 extra lifes 
+        //59.999/10000 = 5 < 60.000/10000 = 6 -> 6-5 = 1 extra life
+        //59.999/10000 = 5 < 80.000/10000 = 7 -> 8-5 = 3 extra lifes
+        int prev_aux = player->score / 10000;
+        int new_aux = (player->score + points)/10000;
+        player->lifes += new_aux-prev_aux;
+        player->score += points;
     }
 
     void RespawnPlayer(Player* player){
@@ -157,6 +170,7 @@ namespace Players{
             }
 
             if(esat::IsKeyPressed('G')){
+                //TO_DO
                 // printf("HYPERSPACE\n");
             }
 
@@ -248,6 +262,15 @@ namespace Players{
             if(player->lifes > 0){
                 player->dead_ltc += 1000/Utils::kFPS;
                 player->is_active = !IsPlayerDead(*player);
+
+                //Created as a switch to conserve code structure in case posible future gamemodes arrive 
+                switch (GameManager::game_status.actual_game->gamemode){
+                    case PlayedGames::Gamemode::MP_ALT:
+                        if(player->is_active){
+                            GameManager::AlternateActivePlayer();
+                        }
+                    break;
+                }
             }
         }
 

@@ -48,19 +48,61 @@ namespace HighscoresMenu{
         }
     }
 
-    //
-    bool AddHighScoreGame(TList::ListInfo game){
+    bool CheckSPHighScore(TList::ListInfo game){
         bool is_comparison_end = false;
         for(TList::ListNode *highscore = top_games; highscore!=nullptr && !is_comparison_end; highscore = highscore->next){
-            //If is checking any value, and the actual score is bigger or equal than the one getting checked
-            //Sets the value to the current position and displaces the rest one row underneath
-            //TO_DO CHECK OTHER GAMEMODES
-            if(game.game_info.is_finished && game.game_info.p1.score >= highscore->info.game_info.p1.score){
-                // printf("%d >= %d\n",game.game_info.p1.score, highscore->info.game_info.p1.score);
-                DisplaceAndFillHighScores(highscore, game);
-                is_comparison_end = true;
+            switch (highscore->info.game_info.gamemode){
+                case PlayedGames::Gamemode::SP:
+                    //If the SP score is bigger or equal than the SP getting checked
+                    //Sets the value to the current position and displaces the rest of the rows underneath
+                    if(game.game_info.p1.score >= highscore->info.game_info.p1.score){
+                        // printf("%d >= %d\n",game.game_info.p1.score, highscore->info.game_info.p1.score);
+                        DisplaceAndFillHighScores(highscore, game);
+                        is_comparison_end = true;
+                    }
+                break;
+
+                case PlayedGames::Gamemode::MP_ALT:
+                case PlayedGames::Gamemode::MP_VS:
+                    
+                break;
+
+                case PlayedGames::Gamemode::MP_COOP:
+                    //If the SP score is bigger or equal than the Sumatory of player scores from the COOP game getting checked
+                    //Sets the value to the current position and displaces the rest of the rows underneath
+                    if(game.game_info.p1.score >= highscore->info.game_info.p1.score+highscore->info.game_info.p2.score){
+                        // printf("%d >= %d\n",game.game_info.p1.score, highscore->info.game_info.p1.score);
+                        DisplaceAndFillHighScores(highscore, game);
+                        is_comparison_end = true;
+                    }
+                break;
             }
         }
+        
+        return is_comparison_end;
+    }
+
+    bool AddHighScoreGame(TList::ListInfo game){
+        bool is_comparison_end = false;
+        
+        //TO_DO CHECK ALL GAMEMODES
+        if(game.game_info.is_finished){
+            switch (game.game_info.gamemode){
+                case PlayedGames::Gamemode::SP:
+                    CheckSPHighScore(game);
+                break;
+
+                case PlayedGames::Gamemode::MP_ALT:
+                case PlayedGames::Gamemode::MP_VS:
+                
+                break;
+
+                case PlayedGames::Gamemode::MP_COOP:
+                
+                break;
+            }
+        }
+        
         return is_comparison_end;
     }
 
