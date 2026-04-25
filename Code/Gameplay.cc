@@ -288,6 +288,7 @@ namespace Gameplay{
     }
 
     void CheckGameOver(){
+        //TO_DO MP ALTERNATIVO FALLA
         if(GameManager::game_status.actual_game->gamemode == PlayedGames::Gamemode::SP){
             if(GameManager::game_status.actual_game->p1.lifes <= 0){
                 GameOver();
@@ -444,6 +445,17 @@ namespace Gameplay{
         );
     }
 
+    void DrawCoopScore(PlayedGames::PlayedGame actual_game){
+        UILib::DrawIntToText(
+            {(Utils::kWindowWidth*0.5f) - ((Utils::kBaseFontSize*2.0f)*2.0f),Utils::kBaseFontSize*2.0f},
+            {
+                {255,255,255,255},
+                actual_game.p2_user->alias,
+                Utils::kBaseFontSize*2.0f
+            },
+            actual_game.p1.score+actual_game.p2.score,6,true
+        );
+    }
     
 
     void DrawPlayers(PlayedGames::PlayedGame actual_game){
@@ -489,9 +501,16 @@ namespace Gameplay{
             break;
         
             case PlayedGames::Gamemode::MP_VS:
+                DrawP1UI(actual_game);
+                DrawP1Lifes(actual_game);
+
+                DrawP2UI(actual_game);
+                DrawP2Lifes(actual_game);
             case PlayedGames::Gamemode::MP_COOP:
                 DrawP1UI(actual_game);
                 DrawP1Lifes(actual_game);
+
+                DrawCoopScore(actual_game);
 
                 DrawP2UI(actual_game);
                 DrawP2Lifes(actual_game);
@@ -523,7 +542,9 @@ namespace Gameplay{
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             DrawPlayers(*(GameManager::game_status.actual_game));
             DrawGameUI(*(GameManager::game_status.actual_game));
+            //Draw Game over while counter is smaller than the life time
             if(gameover_title_ltc < gameover_title_lt){
+                //Blink Condition
                 if((gameover_title_ltc % 1000) < 750){
                     DrawGameOverScreen();
                 }
