@@ -10,6 +10,8 @@
 #include "../CustomLibs/JMATH.h"
 #include "../CustomLibs/Utils.h"
 
+#include "../../Code/GameManager.h"
+
 namespace Collisions{
     bool show_colliders = false;
 

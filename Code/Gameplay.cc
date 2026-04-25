@@ -105,13 +105,18 @@ namespace Gameplay{
 
     //Gameplay UPDATE
 
-    void LoadGameplayLevel(){
+    void LoadGameplayLevel(bool respawn){
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
         
         GenerateAsteroidRound();
         ufo.type = Ufo::UfoType::NONE;
         ufo.spawn_ltc = 0;
+
+        if(respawn){
+            Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
+            Players::RespawnPlayer(&(GameManager::game_status.actual_game->p2));
+        }
     }
 
     void AdvanceRound(){
@@ -134,7 +139,7 @@ namespace Gameplay{
                 GameManager::game_status.actual_game->p2.round++;
             break;
         }
-        LoadGameplayLevel();
+        LoadGameplayLevel(false);
     }
 
     bool AsteroidPlayerCollisions(Asteroids::Asteroid *asteroid, Players::Player *p){
@@ -247,22 +252,22 @@ namespace Gameplay{
     void UpdatePlayers(){
         switch (GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::SP:
-                Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
+                Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1));
             break;
 
             case PlayedGames::Gamemode::MP_ALT:
                 if(GameManager::game_status.actual_game->is_player1_turn){
-                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1));
                 }else{
-                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2));
                 }
                 
             break;
 
             case PlayedGames::Gamemode::MP_COOP:
             case PlayedGames::Gamemode::MP_VS:
-                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1), true);
-                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2), false);
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p1));
+                    Players::UpdatePlayer(&(GameManager::game_status.actual_game->p2));
             break;
         }
     }
@@ -361,7 +366,7 @@ namespace Gameplay{
             p2_life_figure.color = aux_actual_game->p2.ship.figure.color;
         }
 
-        LoadGameplayLevel();
+        LoadGameplayLevel(true);
     }
 
     //Gameplay DRAW

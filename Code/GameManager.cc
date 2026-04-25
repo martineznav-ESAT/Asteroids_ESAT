@@ -49,8 +49,12 @@ namespace GameManager{
                 game_status.actual_game->p1.is_active = false;
                 game_status.actual_game->p2.is_active = true;
             }
-            Gameplay::LoadGameplayLevel();
+            Gameplay::LoadGameplayLevel(true);
         }
+    }
+
+    bool IsPlayer1(Players::Player *player){
+        return &(GameManager::game_status.actual_game->p1) == player;
     }
 
     //Debug Level switch by F1-F7 keyboard input

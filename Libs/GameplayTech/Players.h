@@ -49,13 +49,15 @@ namespace Players{
 
     void AddPoints(Player* player, int points);
 
+    void RespawnPlayer(Player* player);
+
     void KillPlayer(Player* player);
 
     bool IsPlayerDead(Players::Player player);
 
     bool IsPlayerInmune(Players::Player player);
 
-    void UpdatePlayer(Players::Player* player, bool is_p1);
+    void UpdatePlayer(Players::Player* player);
     
     void DrawPlayerShots(Players::Player player);
 

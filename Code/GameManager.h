@@ -42,6 +42,8 @@ namespace GameManager{
 
     void AlternateActivePlayer();
 
+    bool IsPlayer1(Players::Player *player);
+
     void DebugUpdate();
 }
 

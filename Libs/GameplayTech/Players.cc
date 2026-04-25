@@ -119,7 +119,22 @@ namespace Players{
         player->inmunity_ltc = 0;
 
         player->ship.figure.transform.rotation = -90.0f;
-        player->ship.figure.transform.translation = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
+
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP:
+            case PlayedGames::Gamemode::MP_ALT:
+                player->ship.figure.transform.translation = {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f};
+            break;
+        
+            case PlayedGames::Gamemode::MP_VS:
+            case PlayedGames::Gamemode::MP_COOP:
+                if(GameManager::IsPlayer1(player)){
+                    player->ship.figure.transform.translation = {Utils::kWindowWidth*0.33f, Utils::kWindowHeight*0.5f};
+                }else{
+                    player->ship.figure.transform.translation = {Utils::kWindowWidth*0.66f, Utils::kWindowHeight*0.5f};
+                }
+            break;
+        }
 
         player->ship.fwd = {0.0f,0.0f};
         player->ship.speed_v = {0.0f,0.0f};
@@ -142,8 +157,8 @@ namespace Players{
         RespawnPlayer(player);
     }
 
-    void PlayerInput(Player* p, bool is_p1){
-        if(is_p1){
+    void PlayerInput(Player* p){
+        if(GameManager::IsPlayer1(p)){
             //PLAYER 1 INPUT CONTROL
 
             if(esat::IsKeyPressed('W')){
@@ -244,14 +259,14 @@ namespace Players{
         return player.inmunity_ltc < player.inmunity_lt;
     }
 
-    void UpdatePlayer(Players::Player* player, bool is_p1){
+    void UpdatePlayer(Players::Player* player){
         if(player->is_active){
             if(IsPlayerInmune(*player)){
                 player->inmunity_ltc += 1000/Utils::kFPS;
             }
             UpdateShipFwd(&(player->ship));
 
-            PlayerInput(player, is_p1);
+            PlayerInput(player);
             DecelerateShip(&(player->ship));
             // printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
             // JMATH::Vec3Print(player->ship.speed_v);

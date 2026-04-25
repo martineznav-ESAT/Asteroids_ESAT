@@ -48,9 +48,7 @@ namespace LoginMenu{
     bool VerifyLogin(UserManager::User **user){
         TList::ListNode* aux_tn = nullptr;
         bool is_verified = false;
-        
         TList::ListNode** aux_user_list = (TList::ListNode**) &(UserManager::user_list);
-
         TList::ListInfo aux_ti = {NULL};
         aux_ti.user_info = UserManager::NewUser();
         strcpy(aux_ti.user_info.username, (menu_items+LoginItems::USER_TI)->item.text_item.input_text.text);
@@ -58,9 +56,15 @@ namespace LoginMenu{
 
         aux_tn = TList::FindInList(*aux_user_list, aux_ti);
         if(aux_tn != nullptr){
-            is_verified = (strcmp(aux_tn->info.user_info.password, aux_ti.user_info.password) == 0);
-            if(is_verified){
-                *user = &(aux_tn->info.user_info);
+            if(strcmp(aux_tn->info.user_info.password, aux_ti.user_info.password) == 0){
+                if(GameManager::game_status.logged_user != nullptr && (strcmp(aux_tn->info.user_info.username, GameManager::game_status.logged_user->username) == 0)){
+                    //In case is verifying a second player...
+                    strcpy(error_dialog.text, "USER ALREADY LOGGED");
+                    error_dialog_ltc = 0;
+                }else{
+                    *user = &(aux_tn->info.user_info);
+                    is_verified = true;
+                }
             }else{
                 // printf("PASSWORD DOES NOT MATCH WITH USERNAME %s\n", aux_ti.user_info.username);
                 strcpy(error_dialog.text, "INCORRECT PASSWORD");
@@ -71,9 +75,8 @@ namespace LoginMenu{
             strcpy(error_dialog.text, "USERNAME NOT FOUND");
             error_dialog_ltc = 0;
         }
-
-        
         UserManager::FreeUserMemory(&aux_ti.user_info);
+
         return is_verified;
     }
 
