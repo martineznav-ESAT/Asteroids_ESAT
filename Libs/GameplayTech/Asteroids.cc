@@ -186,9 +186,10 @@ namespace Asteroids{
     }
     
     void EmptyMemory(){
-        //Free asteroids coords
+        // printf("Free asteroids coords\n");
         for(int i = 0; i < (int)AsteroidType::TOTAL_ASTEROIDS; i++){
-            free(*asteroids_coords+i);
+            free(*(asteroids_coords+i));
+            // printf("Asteroid %d FINO\n",i);
         }
         free(asteroids_coords);
     }

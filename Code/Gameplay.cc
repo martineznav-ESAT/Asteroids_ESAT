@@ -278,7 +278,7 @@ namespace Gameplay{
 
         gameover_title_ltc = 0;
 
-        printf("GAMEOVER SWITCH START\n");
+        // printf("GAMEOVER SWITCH START\n");
         switch (GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::SP:
                 GameManager::game_status.actual_game->compare_score = GameManager::game_status.actual_game->p1.score;
@@ -292,6 +292,7 @@ namespace Gameplay{
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
                 }
             break;
+
             case PlayedGames::Gamemode::MP_ALT:
             case PlayedGames::Gamemode::MP_VS:
                 //CREATES A COPY GAME WITH PLAYER 2 SCORE FOR HIGHSCORE COMPARISON REASONS

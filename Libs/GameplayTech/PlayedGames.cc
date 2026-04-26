@@ -62,20 +62,26 @@ namespace PlayedGames{
         return new_game;
     }
 
-    void SaveGameP2User(PlayedGame game, FILE *dat_file){
-        UserManager::User aux_p2_user = UserManager::NewUser();
-
-        if(game.p2_user == nullptr){
-            //printf("Saving aux_p2_user.username\n");
-            fwrite(aux_p2_user.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
-            //printf("Saved aux_p2_user.username\n");
+    void SaveGameUser(UserManager::User *user , FILE *dat_file){
+        TList::ListInfo aux_user_info = {NULL};
+        // printf("\n\nSaveGameUser\n");
+        
+        if(user == nullptr){
+            // printf("Saving user.username\n");
+            fwrite(UserManager::empty_user.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+            // printf("Saved user.username %s\n", UserManager::empty_user.username);
         }else{
-            //printf("Saving game.p2_user->username\n");
-            fwrite(game.p2_user->username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
-            //printf("Saved game.p2_user->username\n");
+            aux_user_info.user_info = *user;
+            if(TList::FindInList((TList::ListNode*)UserManager::user_list, aux_user_info) == nullptr){
+                // printf("Saving user.username\n");
+                fwrite(UserManager::empty_user.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+                // printf("Saved user.username %s\n", UserManager::empty_user.username);
+            }else{
+                // printf("Saving game.user->username\n");
+                fwrite(user->username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+                // printf("Saved game.user->username %s\n", user->username);
+            }
         }
-
-        UserManager::FreeUserMemory(&aux_p2_user);
     }
 
     void SaveGamePlayer(Players::Player player, FILE *dat_file){
@@ -102,18 +108,14 @@ namespace PlayedGames{
             
             //printf("Saving game.game_id\n");
             fwrite(&(game.game_id), sizeof(int), 1, dat_file);
-            //printf("Saved game.game_id\n");
+            //printf("Saved game.game_id %d\n",game.game_id);
             
             //printf("Saving game.gamemode\n");
             fwrite(&(game.gamemode), sizeof(Gamemode), 1, dat_file);
             //printf("Saved game.gamemode\n");
             
-            
-            //printf("Saving game.p1_user->username\n");
-            fwrite(game.p1_user->username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
-            //printf("Saved game.p1_user->username\n");
-
-            SaveGameP2User(game, dat_file);
+            SaveGameUser(game.p1_user, dat_file);
+            SaveGameUser(game.p2_user, dat_file);
             
             //printf("Saving game.is_player1_turn\n");
             fwrite(&(game.is_player1_turn), sizeof(bool), 1, dat_file);
@@ -127,6 +129,33 @@ namespace PlayedGames{
             fwrite(&(game.is_finished), sizeof(bool), 1, dat_file);
             //printf("Saved game.is_finished\n");
         }
+
+        // UserManager::FreeUserMemory(&aux_user_info.user_info);
+    }
+
+    void LoadGameUsers(PlayedGame *loaded_game, FILE *dat_file){
+        TList::ListInfo aux_info = {NULL};
+        TList::ListNode *aux_node = nullptr;
+        aux_info.user_info = UserManager::NewUser();
+
+
+        fread(aux_info.user_info.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+        aux_node = TList::FindInList((TList::ListNode*)UserManager::user_list, aux_info);
+        if(aux_node == nullptr){
+            loaded_game->p1_user = &UserManager::empty_user;
+        }else{
+            loaded_game->p1_user = &(aux_node->info.user_info);
+        }
+
+        fread(aux_info.user_info.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
+        aux_node = TList::FindInList((TList::ListNode*)UserManager::user_list, aux_info);
+        if(aux_node == nullptr){
+            loaded_game->p2_user = &UserManager::empty_user;
+        }else{
+            loaded_game->p2_user = &(aux_node->info.user_info);
+        }
+
+        UserManager::FreeUserMemory(&aux_info.user_info);
     }
 
     void LoadGamePlayer(Players::Player *player, FILE *dat_file){
@@ -137,7 +166,7 @@ namespace PlayedGames{
 
     PlayedGame LoadGame(FILE *dat_file){
         PlayedGame loaded_game = NewGame();
-        TList::ListInfo aux_info = {NULL};
+
         if(dat_file != NULL){
             // printf("START LOADING\n");
             fread(&(loaded_game.game_id), sizeof(int), 1, dat_file);
@@ -145,13 +174,8 @@ namespace PlayedGames{
             fread(&(loaded_game.gamemode), sizeof(Gamemode), 1, dat_file);
             // printf("gamemode %d\n",loaded_game.gamemode);
             
-            aux_info.user_info = UserManager::NewUser();
 
-            fread(aux_info.user_info.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
-            loaded_game.p1_user = &(TList::FindInList((TList::ListNode*)UserManager::user_list, aux_info)->info.user_info);
-
-            fread(aux_info.user_info.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
-            loaded_game.p2_user = &(TList::FindInList((TList::ListNode*)UserManager::user_list, aux_info)->info.user_info);
+            LoadGameUsers(&loaded_game, dat_file);
 
             fread(&(loaded_game.is_player1_turn), sizeof(bool), 1, dat_file);
 
@@ -171,5 +195,11 @@ namespace PlayedGames{
 
         // printf("%p || %p\n",*aux_list,user_list);
         return is_loaded;
+    }
+
+    void CloseFiles(){
+        if(game_list_dat != nullptr){
+            fclose(game_list_dat);
+        }
     }
 }

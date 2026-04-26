@@ -37,6 +37,8 @@ namespace HighscoresMenu{
 
     bool AddHighScoreGame(TList::ListInfo game);
     
+    void CloseFiles();
+
     void EmptyMemory();
 }
 

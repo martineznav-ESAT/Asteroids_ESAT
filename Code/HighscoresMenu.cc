@@ -93,11 +93,8 @@ namespace HighscoresMenu{
                 
                 aux_info.game_info.game_id = i-100;
                 
-                aux_user.user_info = UserManager::NewUser();
-                aux_info.game_info.p1_user = &aux_user.user_info;
-
-                aux_user.user_info = UserManager::NewUser();
-                aux_info.game_info.p2_user = &aux_user.user_info;
+                aux_info.game_info.p1_user = &(UserManager::empty_user);
+                aux_info.game_info.p2_user = &(UserManager::empty_user);
 
                 aux_info.game_info.is_finished = true;
 
@@ -363,6 +360,12 @@ namespace HighscoresMenu{
         DrawTitle();
         DrawGameScores();
         DrawMenuItems();
+    }
+
+    void CloseFiles(){
+        if(highscores_dat != nullptr){
+            fclose(highscores_dat);
+        }
     }
 
     void EmptyMemory(){

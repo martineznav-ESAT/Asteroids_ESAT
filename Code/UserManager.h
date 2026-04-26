@@ -47,6 +47,9 @@ namespace UserManager{
     //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
     //It has been made this way due to the impossibility to include BTree.h in UserManager since it makes an "infinite include loop"
     extern void *user_list;
+    extern User empty_user;
+
+    void Init();
 
     User NewUser();
 
@@ -59,6 +62,8 @@ namespace UserManager{
     bool LoadRegisteredUsers();
 
     void CloseFiles();
+
+    void EmptyMemory();
 }
 
 #endif

@@ -12,6 +12,7 @@
 #include "./UserManager.h"
 
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/Utils.h"
 
 //Holds the game information needed globally, that may be needed for Level/Screen management 
 namespace UserManager{
@@ -30,12 +31,18 @@ namespace UserManager{
     //TList::ListNode** aux_list = (TList::ListNode**) &user_list;
     //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
     //It has been made this way due to the impossibility to include TList.h in UserManager since it makes an "infinite include loop"
-    void *user_list = nullptr; 
+    void *user_list = nullptr;
+    User empty_user;
+
+    void Init(){
+        empty_user = NewUser();
+    }
     
     User NewUser(){
         User new_user;
         new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '---';
+        Utils::StringFillWithChar(new_user.username, kDefaultStrL+1, '\0', -1);
+        Utils::StringFillWithChar(new_user.username, kDefaultStrL+1, '-', 3);
         
         new_user.password = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
         *(new_user.password) = '\0';
@@ -243,6 +250,12 @@ namespace UserManager{
     }
 
     void CloseFiles(){
-        fclose(user_list_dat);
+        if(user_list_dat != nullptr){
+            fclose(user_list_dat);
+        }
+    }
+
+    void EmptyMemory(){
+        FreeUserMemory(&empty_user);
     }
 }

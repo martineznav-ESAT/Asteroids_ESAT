@@ -21,6 +21,7 @@
 #include "./Code/Gameplay.h"
 
 void InitGame(){
+    UserManager::Init();
     Players::Init();
     Asteroids::Init();
     Ufo::Init();
@@ -115,18 +116,30 @@ bool CloseGameCondition(){
 }
 
 void EmptyMemory(){
+    //printf("EmptyMemory FINO?\n");
     LoginMenu::EmptyMemory();
+    //printf("LoginMenu FINO\n");
     RegisterMenu::EmptyMemory();
+    //printf("RegisterMenu FINO\n");
     MainMenu::EmptyMemory();
+    //printf("MainMenu FINO\n");
     PlayMenu::EmptyMemory();
+    //printf("PlayMenu FINO\n");
     HighscoresMenu::EmptyMemory();
+    //printf("HighscoresMenu FINO\n");
     AdminMenu::EmptyMemory();
+    //printf("AdminMenu FINO\n");
     Gameplay::EmptyMemory();
+    //printf("Gameplay FINO\n");
     Asteroids::EmptyMemory();
+    //printf("Asteroids FINO\n");
+    UserManager::EmptyMemory();
 }
 
 void CloseFiles(){
     UserManager::CloseFiles();
+    HighscoresMenu::CloseFiles();
+    PlayedGames::CloseFiles();
 }
 
 int esat::main(int argc, char **argv) {
@@ -161,9 +174,14 @@ int esat::main(int argc, char **argv) {
     }
         
     TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+    // printf("SaveList FINO\n");
+    
     CloseFiles();
+    // printf("CloseFiles FINO\n");
+    
     EmptyMemory();
-
+    // printf("EmptyMemory FINO\n");
+    
     esat::WindowDestroy();
 
     return 0;  

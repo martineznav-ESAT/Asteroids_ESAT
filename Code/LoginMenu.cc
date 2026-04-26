@@ -389,10 +389,15 @@ namespace LoginMenu{
     }
 
     void EmptyMemory(){
+        //printf("EmptyItemMemory FINO?\n");
         for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);
-        }
+            // printf("EmptyItemMemory FINO\n");
+        }    
+
         free(menu_items);
+        // printf("menu_items FINO\n");
         free(error_dialog.text);
+        // printf("error_dialog FINO\n");
     }
 }

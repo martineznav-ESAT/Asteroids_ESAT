@@ -570,20 +570,28 @@ namespace UILib{
     }
 
     void EmptyItemMemory(UI_Item *item){
-        free(item->item_name.text);
         switch (item->item_type){
             case UILib::ItemType::BUTTON:
-                free(item->item.btn_item.button_text.text);
+                // printf("BUTTON FINO?\n");
+                // free(item->item.btn_item.button_text.text);
+                //printf("BUTTON FINO\n");
             break;
             case UILib::ItemType::BUTTON_PA:
-                free(item->item.btn_pa_item.button_text.text);
+                //printf("BUTTON_PA FINO?\n");
+                // free(item->item.btn_pa_item.button_text.text);
+                //printf("BUTTON_PA FINO\n");
             break;
             case UILib::ItemType::TEXT_INPUT:
+                //printf("TEXT_INPUT FINO?\n");
                 free(item->item.text_item.input_text.text);
+                //printf("TEXT_INPUT FINO\n");
                 free(item->item.text_item.pointer);
+                //printf("TEXT_INPUT2 FINO\n");
             break;
             case UILib::ItemType::CHECKBOX:
-                free(item->item.chk_item.chk_text.text);
+                //printf("CHECKBOX FINO ?\n");
+                // free(item->item.chk_item.chk_text.text);
+                //printf("CHECKBOX FINO\n");
             break;
         }
     }

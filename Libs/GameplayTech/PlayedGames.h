@@ -47,6 +47,7 @@ namespace PlayedGames{
 
     bool LoadGameList();
 
+    void CloseFiles();
 }
 
 #endif

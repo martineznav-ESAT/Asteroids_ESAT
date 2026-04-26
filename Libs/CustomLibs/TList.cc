@@ -22,7 +22,7 @@ namespace TList{
     //Searches for a node by value
     ListNode* FindInList(ListNode *list, ListInfo info){
         ListNode *aux = nullptr;
-
+        
         switch (list->type){
             case ListType::INT:
                 for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
@@ -324,6 +324,7 @@ namespace TList{
             // printf("SavedNode\n");
         }
         fclose(dat_file);
+        dat_file = nullptr;
         // printf("LIST SAVED CORRECTLY\n");
     }
 
@@ -374,6 +375,7 @@ namespace TList{
             }
 
             fclose(dat_file);
+            dat_file = nullptr;
         }
 
         return is_loaded;
