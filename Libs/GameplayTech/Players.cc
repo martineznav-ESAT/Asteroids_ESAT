@@ -195,6 +195,11 @@ namespace Players{
                 KillPlayer(p);
             }
 
+            if(esat::IsKeyDown('Z')){
+                p->lifes++;
+            }
+
+
 
         }else{
             //PLAYER 2 INPUT CONTROL
@@ -222,13 +227,17 @@ namespace Players{
                 ShipShoot(&(p->ship));
             }
 
-            if(esat::IsKeyPressed('L')){
+            if(esat::IsKeyPressed('P')){
                 // printf("HYPERSPACE\n");
             }
 
             //DEBUG INPUT
             if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
                 KillPlayer(p);
+            }
+
+            if(esat::IsKeyDown('L')){
+                p->lifes++;
             }
         }
     }
@@ -274,18 +283,34 @@ namespace Players{
             Collisions::BorderExitRellocation(&(player->ship.figure));
             PolyLibJMATH::UpdatePoly(&(player->ship.figure));
         }else{
-            if(player->lifes > 0){
-                player->dead_ltc += 1000/Utils::kFPS;
-                player->is_active = !IsPlayerDead(*player);
+            
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::MP_ALT:
+                    if(player->lifes >= 0){
+                        player->dead_ltc += 1000/Utils::kFPS;
 
-                //Created as a switch to conserve code structure in case posible future gamemodes arrive 
-                switch (GameManager::game_status.actual_game->gamemode){
-                    case PlayedGames::Gamemode::MP_ALT:
-                        if(player->is_active){
-                            GameManager::AlternateActivePlayer();
+                        if(!IsPlayerDead(*player)){
+                            if(
+                                GameManager::IsPlayer1(player) ? 
+                                    GameManager::game_status.actual_game->p2.lifes > 0 : 
+                                    GameManager::game_status.actual_game->p1.lifes > 0
+                            ){
+                                GameManager::AlternateActivePlayer();
+                            }else{
+                                if(player->lifes > 0){
+                                    player->is_active = true;
+                                }
+                            }
                         }
-                    break;
-                }
+                    }
+                break;
+
+                default:
+                    if(player->lifes > 0){
+                        player->dead_ltc += 1000/Utils::kFPS;
+                        player->is_active = !IsPlayerDead(*player);
+                    }
+                break;
             }
         }
 

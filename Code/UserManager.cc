@@ -35,32 +35,32 @@ namespace UserManager{
     User NewUser(){
         User new_user;
         new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.username) = '---';
         
         new_user.password = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.password) = '\0';
         
         new_user.alias = (char*) malloc(sizeof(char)*(kAliasStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.alias) = '\0';
         
         new_user.email = (char*) malloc(sizeof(char)*(kEmailStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.email) = '\0';
         
         new_user.name = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.name) = '\0';
         
         new_user.surname = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.surname) = '\0';
 
         new_user.day_dob = 1;
         new_user.month_dob = 1;
         new_user.year_dob = 1979;
         
         new_user.country = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.country) = '\0';
         
         new_user.province = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
-        *(new_user.username) = '\0';
+        *(new_user.province) = '\0';
 
         new_user.credits = 10;
         new_user.is_admin = false;

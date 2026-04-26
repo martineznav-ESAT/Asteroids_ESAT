@@ -141,9 +141,11 @@ namespace TList{
 
     //Prints the values of the whole list
     void PrintList(ListNode *list){
+        printf("PRINTING TLIST\n");
         for(ListNode *p = list; p!=nullptr; p = p->next){
             PrintNodeInfo(p);
         }
+        printf("\n");
     }
 
     ListNode* GetLastListNode(ListNode *list){

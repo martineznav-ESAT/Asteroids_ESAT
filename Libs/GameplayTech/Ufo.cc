@@ -322,25 +322,27 @@ namespace Ufo{
     }
 
     void DrawUfo(UfoShip ufo){
-        Shots::DrawShot(&(ufo.shot));
-        DrawUfoParticles(ufo);
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            Shots::DrawShot(&(ufo.shot));
+            DrawUfoParticles(ufo);
 
-        // printf("DrawUfo\n");
-        // for (int i = 0; i < 8; i++){
-        //     JMATH::Vec2Print(*(ufo.figure.draw_coords+i));
-        // }
+            // printf("DrawUfo\n");
+            // for (int i = 0; i < 8; i++){
+            //     JMATH::Vec2Print(*(ufo.figure.draw_coords+i));
+            // }
 
-        if(ufo.type != UfoType::NONE){
-            // printf("DRAWUFO\n");
-            PolyLibJMATH::DrawPoly(ufo.figure, false);
-            esat::DrawLine(
-                (ufo.figure.draw_coords+0)->x,(ufo.figure.draw_coords+0)->y,
-                (ufo.figure.draw_coords+5)->x,(ufo.figure.draw_coords+5)->y
-            );
-            esat::DrawLine(
-                (ufo.figure.draw_coords+1)->x,(ufo.figure.draw_coords+1)->y,
-                (ufo.figure.draw_coords+4)->x,(ufo.figure.draw_coords+4)->y
-            );
+            if(ufo.type != UfoType::NONE){
+                // printf("DRAWUFO\n");
+                PolyLibJMATH::DrawPoly(ufo.figure, false);
+                esat::DrawLine(
+                    (ufo.figure.draw_coords+0)->x,(ufo.figure.draw_coords+0)->y,
+                    (ufo.figure.draw_coords+5)->x,(ufo.figure.draw_coords+5)->y
+                );
+                esat::DrawLine(
+                    (ufo.figure.draw_coords+1)->x,(ufo.figure.draw_coords+1)->y,
+                    (ufo.figure.draw_coords+4)->x,(ufo.figure.draw_coords+4)->y
+                );
+            }
         }
     }
 

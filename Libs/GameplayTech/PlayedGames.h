@@ -26,6 +26,7 @@ namespace PlayedGames{
         UserManager::User *p2_user;
         Players::Player p1;
         Players::Player p2;
+        int compare_score = 0;
         bool is_finished;
     };
 
@@ -35,6 +36,9 @@ namespace PlayedGames{
     extern void *game_list; 
 
     PlayedGame NewGame();
+
+    PlayedGame NewGameCopy(PlayedGame *game);
+
     PlayedGame LoadBaseGameManagerGame(Gamemode gm, UserManager::User* p2);
 
     void SaveGame(PlayedGame game, FILE *dat_file);

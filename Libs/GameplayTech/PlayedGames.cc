@@ -30,7 +30,25 @@ namespace PlayedGames{
         new_game.is_player1_turn = true;
         new_game.p1 = Players::NewPlayer();
         new_game.p2 = Players::NewPlayer();
+        new_game.compare_score = 0;
         new_game.is_finished = false;
+
+        return new_game;
+    }
+
+    PlayedGame NewGameCopy(PlayedGame *game){
+        TList::ListNode** aux_list = (TList::ListNode**) &game_list;
+
+        PlayedGame new_game;
+        new_game.game_id = TList::ListLength(*aux_list);
+        new_game.gamemode = game->gamemode;
+        new_game.p1_user = game->p1_user;
+        new_game.p2_user = game->p2_user;
+        new_game.is_player1_turn = game->is_player1_turn;
+        new_game.p1 = game->p1;
+        new_game.p2 = game->p2;
+        new_game.compare_score = game->compare_score;
+        new_game.is_finished = game->is_finished;
 
         return new_game;
     }
@@ -104,6 +122,7 @@ namespace PlayedGames{
             SaveGamePlayer(game.p1, dat_file);
             SaveGamePlayer(game.p2, dat_file);
             
+            fwrite(&(game.compare_score), sizeof(int), 1, dat_file);
             //printf("Saving game.is_finished\n");
             fwrite(&(game.is_finished), sizeof(bool), 1, dat_file);
             //printf("Saved game.is_finished\n");
@@ -139,6 +158,8 @@ namespace PlayedGames{
             LoadGamePlayer(&(loaded_game.p1), dat_file);
             LoadGamePlayer(&(loaded_game.p2), dat_file);
             
+            fread(&(loaded_game.compare_score), sizeof(int), 1, dat_file);
+
             fread(&(loaded_game.is_finished), sizeof(bool), 1, dat_file);
         }
         return loaded_game;
