@@ -98,8 +98,8 @@ namespace Asteroids{
         new_ast.type = type;
         new_ast.size_level = size_level;
         new_ast.speed_v = {
-            ((Utils::GenerateRandomFloat(3)+1.0f) * (Utils::GenerateRandomNumber(2) == 0 ? -1 : 1)), //Random number between -3.0f -> -1.0f and 1.0f -> 3.0f 
-            ((Utils::GenerateRandomFloat(3)+1.0f) * (Utils::GenerateRandomNumber(2) == 0 ? -1 : 1)), //Random number between -3.0f -> -1.0f and 1.0f -> 3.0f 
+            ((Utils::GenerateRandomFloat(2)+0.5f) * (Utils::GenerateRandomNumber(2) == 0 ? -1 : 1)), //Random number between -2.5f -> -0.5f and 0.5f -> 2.5f 
+            ((Utils::GenerateRandomFloat(2)+0.5f) * (Utils::GenerateRandomNumber(2) == 0 ? -1 : 1)), //Random number between -2.5f -> -0.5f and 0.5f -> 2.5f 
             0.0f
         };
 

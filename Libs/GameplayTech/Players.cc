@@ -64,8 +64,17 @@ namespace Players{
         new_player.inmunity_lt = 2000;
         new_player.inmunity_ltc = 2000;
         new_player.round = 0;
+        new_player.consecutive_hs = 0;
 
         return new_player;
+    }
+
+    bool IsPlayerDead(Players::Player player){
+        return player.dead_ltc < player.dead_lt;
+    }
+
+    bool IsPlayerInmune(Players::Player player){
+        return player.inmunity_ltc < player.inmunity_lt;
     }
 
     void RotateShip(Ship *ship, float degreesSecond){
@@ -154,7 +163,27 @@ namespace Players{
         player->is_active = false;
         player->dead_ltc = 0;
         player->lifes--;
+        player->consecutive_hs = 0;
         RespawnPlayer(player);
+    }
+
+    void HyperSpacePlayer(Player* player){
+        player->ship.figure.transform.translation = {
+            Utils::GenerateRandomNumber(Utils::kWindowWidth-(player->ship.figure.transform.scale.x * 2))+player->ship.figure.transform.scale.x,
+            Utils::GenerateRandomNumber(Utils::kWindowHeight-(player->ship.figure.transform.scale.y * 2))+player->ship.figure.transform.scale.y 
+        };
+
+        //If the Hyperspace is used while inmune, adds 1 to the consecutive Hyperspaces debuff
+        if(IsPlayerInmune(*player)){
+            player->consecutive_hs++;
+        }
+
+        //While the debuff is less or equal than 3. Grants inmunity on Hyperspace 
+        if(player->consecutive_hs <= 3){
+            player->inmunity_ltc = 0;
+        }else{
+            player->inmunity_ltc = player->inmunity_lt;
+        }
     }
 
     void PlayerInput(Player* p){
@@ -179,14 +208,13 @@ namespace Players{
                 RotateShip(&(p->ship),360);
             }
 
-            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space)){
+            if(!IsPlayerInmune(*p) && esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space)){
                 // printf("SHOOT\n");
                 ShipShoot(&(p->ship));
             }
 
-            if(esat::IsKeyPressed('G')){
-                //TO_DO
-                // printf("HYPERSPACE\n");
+            if(esat::IsKeyDown('G')){
+                HyperSpacePlayer(p);
             }
 
 
@@ -222,13 +250,13 @@ namespace Players{
                 RotateShip(&(p->ship),360);
             }
 
-            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter)){
+            if(!IsPlayerInmune(*p) && esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter)){
                 // printf("SHOOT\n");
                 ShipShoot(&(p->ship));
             }
 
-            if(esat::IsKeyPressed('P')){
-                // printf("HYPERSPACE\n");
+            if(esat::IsKeyDown('P')){
+                HyperSpacePlayer(p);
             }
 
             //DEBUG INPUT
@@ -258,14 +286,6 @@ namespace Players{
         float radianBase = JMATH::DegreesToRadians(360.0f/ship->figure.t_vertices);
         float radianRotation = JMATH::DegreesToRadians(ship->figure.transform.rotation);
         ship->fwd = {cosf(radianRotation), sinf(radianRotation)};
-    }
-
-    bool IsPlayerDead(Players::Player player){
-        return player.dead_ltc < player.dead_lt;
-    }
-
-    bool IsPlayerInmune(Players::Player player){
-        return player.inmunity_ltc < player.inmunity_lt;
     }
 
     void UpdatePlayer(Players::Player* player){
