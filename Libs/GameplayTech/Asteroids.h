@@ -36,6 +36,7 @@ namespace Asteroids{
         PolyLibJMATH::Poly figure;
         JMATH::Vec3 speed_v;
         Particles::Particle* destroy_particles;
+        //TO_DO REVISAR MEMORIA
         int size_level = 1;
     };
 
