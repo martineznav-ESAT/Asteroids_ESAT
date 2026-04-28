@@ -270,7 +270,7 @@ namespace TList{
                 break;
 
                 case ListType::ASTEROID:
-                    PolyLibJMATH::EmptyPolyMemory(&(delete_node->info.asteroid_info.figure));
+                    Asteroids::EmptyAsteroidMemory(&(delete_node->info.asteroid_info));
                 break;
 
                 case ListType::PARTICLE:

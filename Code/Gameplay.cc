@@ -28,6 +28,8 @@ namespace Gameplay{
 
     int gameover_title_lt = 5000;
     int gameover_title_ltc = gameover_title_lt;
+    bool new_highscore_p1 = false;
+    bool new_highscore_p2 = false;
 
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
@@ -286,8 +288,9 @@ namespace Gameplay{
                 TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
                 aux_info.game_info = *(GameManager::game_status.actual_game);
-                if(HighscoresMenu::AddHighScoreGame(aux_info)){
+                if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
+                    aux_info.game_info.p1_user->credits += 5;
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
                 }
@@ -295,10 +298,11 @@ namespace Gameplay{
 
             case PlayedGames::Gamemode::MP_ALT:
             case PlayedGames::Gamemode::MP_VS:
-                //CREATES A COPY GAME WITH PLAYER 2 SCORE FOR HIGHSCORE COMPARISON REASONS
                 //Player 1 (Actual Game) Compare Score save 
                 GameManager::game_status.actual_game->compare_score = GameManager::game_status.actual_game->p1.score;
 
+                //CREATES A COPY GAME WITH PLAYER 2 SCORE FOR HIGHSCORE COMPARISON REASONS 
+                //IF THE SCORE IS DIFFERENT TO PLAYER 1
                 if(GameManager::game_status.actual_game->p1.score != GameManager::game_status.actual_game->p2.score){
                     aux_info.game_info = PlayedGames::NewGameCopy(GameManager::game_status.actual_game);
                     aux_info.game_info.compare_score = aux_info.game_info.p2.score;
@@ -308,9 +312,11 @@ namespace Gameplay{
 
                 TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
+                //IF THE PLAYER 2 SCORE IS DIFFERENT TO PLAYER 1 CHECKS HIGHSCORE
                 if(GameManager::game_status.actual_game->p1.score != GameManager::game_status.actual_game->p2.score){
                     //Player 2 Score Highscore Check
-                    if(HighscoresMenu::AddHighScoreGame(aux_info)){
+                    if((new_highscore_p2 = HighscoresMenu::AddHighScoreGame(aux_info))){
+                        aux_info.game_info.p2_user->credits += 5;
                         // printf("SaveList HIGHSCORES ON GAME OVER\n");
                         TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                         // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
@@ -319,7 +325,13 @@ namespace Gameplay{
 
                 //Player 1 (Actual Game) Score Highscore Check
                 aux_info.game_info = *(GameManager::game_status.actual_game);
-                if(HighscoresMenu::AddHighScoreGame(aux_info)){
+                if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
+                    aux_info.game_info.p1_user->credits += 5;
+                    
+                    //Add credits to player 2 too if is the same score
+                    if(GameManager::game_status.actual_game->p1.score == GameManager::game_status.actual_game->p2.score){
+                        aux_info.game_info.p2_user->credits += 5;
+                    }
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
@@ -337,7 +349,9 @@ namespace Gameplay{
                 TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
                 aux_info.game_info = *(GameManager::game_status.actual_game);
-                if(HighscoresMenu::AddHighScoreGame(aux_info)){
+                if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
+                    aux_info.game_info.p1_user->credits += 5;
+                    aux_info.game_info.p2_user->credits += 5;
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
@@ -395,6 +409,7 @@ namespace Gameplay{
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr){
         TList::ListInfo aux_game_info = {NULL};
         PlayedGames::PlayedGame *aux_actual_game = nullptr;
+
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
 
         //CREATE NEW GAME
@@ -581,9 +596,17 @@ namespace Gameplay{
 
     void DrawGameOverScreen(){
         UILib::Text game_over_txt;
+        UILib::Text highscore_p1_txt;
+        UILib::Text highscore_p2_txt;
         switch (GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::SP:
             case PlayedGames::Gamemode::MP_COOP:
+                highscore_p1_txt = {
+                    {255,255,255,255},
+                    "NEW HIGHSCORE",
+                    Utils::kBaseFontSize*3.0f
+                };
+
                 game_over_txt = {
                     {255,255,255,255},
                     "GAME OVER",
@@ -593,6 +616,12 @@ namespace Gameplay{
 
             case PlayedGames::Gamemode::MP_ALT:
             case PlayedGames::Gamemode::MP_VS:
+                highscore_p1_txt = {
+                    {150,150,255,255},
+                    "NEW HIGHSCORE",
+                    Utils::kBaseFontSize*3.0f
+                };
+
                 if(GameManager::game_status.actual_game->p1.score == GameManager::game_status.actual_game->p2.score){
                     game_over_txt = {
                         {255,255,255,255},
@@ -614,9 +643,24 @@ namespace Gameplay{
                         };
                     }
                 }
+
+                highscore_p2_txt = {
+                    {255,0,0,255},
+                    "NEW HIGHSCORE",
+                    Utils::kBaseFontSize*3.0f
+                };
             break;
         }
         
+        if(new_highscore_p1){
+            UILib::DrawText(
+                {
+                    Utils::kWindowWidth*0.5f - (highscore_p1_txt.font_size * (strlen(highscore_p1_txt.text)/3)), 
+                    Utils::kWindowHeight*0.5f - ((highscore_p1_txt.font_size)*2)
+                }, 
+                highscore_p1_txt
+            );
+        }
         UILib::DrawText(
             {
                 Utils::kWindowWidth*0.5f - (game_over_txt.font_size * (strlen(game_over_txt.text)/3)), 
@@ -624,6 +668,15 @@ namespace Gameplay{
             }, 
             game_over_txt
         );
+        if(new_highscore_p2){
+            UILib::DrawText(
+                {
+                    Utils::kWindowWidth*0.5f - (highscore_p2_txt.font_size * (strlen(highscore_p2_txt.text)/3)), 
+                    Utils::kWindowHeight*0.5f + ((highscore_p2_txt.font_size)*1)
+                }, 
+                highscore_p2_txt
+            );
+        }
     }
 
     //Whole Gameplay draw method

@@ -185,6 +185,11 @@ namespace Asteroids{
         TList::DeleteElement(asteroid_list_aux, aux_asteroid_info);
     }
     
+    void EmptyAsteroidMemory(Asteroid *asteroid){
+        PolyLibJMATH::EmptyPolyMemory(&(asteroid->figure));
+        free(asteroid->destroy_particles);
+    }
+
     void EmptyMemory(){
         // printf("Free asteroids coords\n");
         for(int i = 0; i < (int)AsteroidType::TOTAL_ASTEROIDS; i++){

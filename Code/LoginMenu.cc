@@ -62,8 +62,13 @@ namespace LoginMenu{
                     strcpy(error_dialog.text, "USER ALREADY LOGGED");
                     error_dialog_ltc = 0;
                 }else{
-                    *user = &(aux_tn->info.user_info);
-                    is_verified = true;
+                    if(aux_tn->info.user_info.credits <= 0){
+                        strcpy(error_dialog.text, "NOT ENOUGH CREDITS CONTACT AN ADMIN");
+                        error_dialog_ltc = 0;
+                    }else{
+                        *user = &(aux_tn->info.user_info);
+                        is_verified = true;
+                    }
                 }
             }else{
                 // printf("PASSWORD DOES NOT MATCH WITH USERNAME %s\n", aux_ti.user_info.username);
