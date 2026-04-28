@@ -239,6 +239,10 @@ namespace TList{
                 case ListType::ASTEROID:
                     PolyLibJMATH::EmptyPolyMemory(&(aux->info.asteroid_info.figure));
                 break;
+
+                case ListType::PARTICLE:
+                    Particles::EmptyParticleMemory(aux->info.particle_info);
+                break;
             }
             
             //Free memory
