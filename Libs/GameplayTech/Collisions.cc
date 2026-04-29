@@ -154,7 +154,7 @@ namespace Collisions{
     bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
-        if(!Players::IsPlayerDead(*player) && !Players::IsPlayerInmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
+        if(!Players::IsPlayerDead(*player) && !Players::IsPlayerImmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
             Players::KillPlayer(player);
         }
@@ -189,7 +189,7 @@ namespace Collisions{
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->type != Ufo::UfoType::NONE && 
             !Players::IsPlayerDead(*player) && 
-            !Players::IsPlayerInmune(*player) && 
+            !Players::IsPlayerImmune(*player) && 
             CollisionPolyPoly(ufo->figure, player->ship.figure)
         ){
             Players::KillPlayer(player);
@@ -227,7 +227,7 @@ namespace Collisions{
         // printf("CollisionAsteroidPlayerShots\n");
         if(ufo->shot.is_active && 
             !Players::IsPlayerDead(*player) && 
-            !Players::IsPlayerInmune(*player) && 
+            !Players::IsPlayerImmune(*player) && 
             CollisionPolyPoly(ufo->shot.bullet, player->ship.figure)
         ){
             ufo->shot.is_active = false;

@@ -56,7 +56,7 @@ namespace Players{
 
     bool IsPlayerDead(Players::Player player);
 
-    bool IsPlayerInmune(Players::Player player);
+    bool IsPlayerImmune(Players::Player player);
 
     void UpdatePlayer(Players::Player* player);
     

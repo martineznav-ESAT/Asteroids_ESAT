@@ -119,6 +119,20 @@ namespace Gameplay{
             Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
             Players::RespawnPlayer(&(GameManager::game_status.actual_game->p2));
         }
+
+        switch(GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::MP_COOP:
+                if(GameManager::game_status.actual_game->p1.lifes <=0 ){
+                    GameManager::game_status.actual_game->p1.lifes++;
+                    GameManager::game_status.actual_game->p1.dead_ltc = GameManager::game_status.actual_game->p1.dead_lt;
+                }
+
+                if(GameManager::game_status.actual_game->p2.lifes <=0 ){
+                    GameManager::game_status.actual_game->p2.lifes++;
+                    GameManager::game_status.actual_game->p2.dead_ltc = GameManager::game_status.actual_game->p2.dead_lt;
+                }
+            break;
+        }
     }
 
     void AdvanceRound(){

@@ -73,7 +73,7 @@ namespace Players{
         return player.dead_ltc < player.dead_lt;
     }
 
-    bool IsPlayerInmune(Players::Player player){
+    bool IsPlayerImmune(Players::Player player){
         return player.inmunity_ltc < player.inmunity_lt;
     }
 
@@ -173,8 +173,8 @@ namespace Players{
             Utils::GenerateRandomNumber(Utils::kWindowHeight-(player->ship.figure.transform.scale.y * 2))+player->ship.figure.transform.scale.y 
         };
 
-        //If the Hyperspace is used while inmune, adds 1 to the consecutive Hyperspaces debuff
-        if(IsPlayerInmune(*player)){
+        //If the Hyperspace is used while immune, adds 1 to the consecutive Hyperspaces debuff
+        if(IsPlayerImmune(*player)){
             player->consecutive_hs++;
         }
 
@@ -184,6 +184,17 @@ namespace Players{
         }else{
             player->inmunity_ltc = player->inmunity_lt;
         }
+    }
+
+    int GetPlayerActiveShots(Player *p){
+        int count = 0;
+        for(int i = 0; i < max_player_shots; i++){
+            if((p->ship.shots+i)->is_active){
+                count++;
+            }
+        }
+        // printf("ACTIVE SHOTS %d\n", count);
+        return count;
     }
 
     void PlayerInput(Player* p){
@@ -208,9 +219,21 @@ namespace Players{
                 RotateShip(&(p->ship),360);
             }
 
-            if(!IsPlayerInmune(*p) && esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space)){
-                // printf("SHOOT\n");
-                ShipShoot(&(p->ship));
+            if(!IsPlayerImmune(*p) ){
+                if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) < 3){
+                    // printf("IsSpecialKeyPressed\n");
+                    if(((int)esat::Time()%50) <= 15){
+                        // printf("esat::Time\n");
+                        ShipShoot(&(p->ship));
+                        // printf("ShipShoot\n");
+                    }
+                }else{
+                    if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) >= 3){
+                        // printf("IsSpecialKeyDown\n");
+                        ShipShoot(&(p->ship));
+                        // printf("ShipShoot\n");
+                    }
+                }
             }
 
             if(esat::IsKeyDown('G')){
@@ -250,9 +273,21 @@ namespace Players{
                 RotateShip(&(p->ship),360);
             }
 
-            if(!IsPlayerInmune(*p) && esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter)){
-                // printf("SHOOT\n");
-                ShipShoot(&(p->ship));
+            if(!IsPlayerImmune(*p) ){
+                if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) < 3){
+                    printf("IsSpecialKeyPressed\n");
+                    if(((int)esat::Time()%50) <= 15){
+                        printf("esat::Time\n");
+                        ShipShoot(&(p->ship));
+                        printf("ShipShoot\n");
+                    }
+                }
+
+                if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) >= 3){
+                    printf("IsSpecialKeyDown\n");
+                    ShipShoot(&(p->ship));
+                    printf("ShipShoot\n");
+                }
             }
 
             if(esat::IsKeyDown('P')){
@@ -290,7 +325,7 @@ namespace Players{
 
     void UpdatePlayer(Players::Player* player){
         if(player->is_active){
-            if(IsPlayerInmune(*player)){
+            if(IsPlayerImmune(*player)){
                 player->inmunity_ltc += 1000/Utils::kFPS;
             }
             UpdateShipFwd(&(player->ship));
@@ -373,7 +408,7 @@ namespace Players{
 
     void DrawPlayer(Player player){
         if(player.is_active){
-            if(!IsPlayerInmune(player) || (player.inmunity_ltc % 500) < 250){
+            if(!IsPlayerImmune(player) || (player.inmunity_ltc % 500) < 250){
                 PolyLibJMATH::DrawPoly(player.ship.figure,false);
                 DrawPlayerPropeller(player);
             }
