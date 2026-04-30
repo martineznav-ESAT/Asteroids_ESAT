@@ -304,7 +304,7 @@ namespace Gameplay{
                 aux_info.game_info = *(GameManager::game_status.actual_game);
                 if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
-                    aux_info.game_info.p1_user->credits += 5;
+                    UserManager::AddCredits(aux_info.game_info.p1_user, 5);
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
                 }
@@ -330,7 +330,7 @@ namespace Gameplay{
                 if(GameManager::game_status.actual_game->p1.score != GameManager::game_status.actual_game->p2.score){
                     //Player 2 Score Highscore Check
                     if((new_highscore_p2 = HighscoresMenu::AddHighScoreGame(aux_info))){
-                        aux_info.game_info.p2_user->credits += 5;
+                        UserManager::AddCredits(aux_info.game_info.p2_user, 5);
                         // printf("SaveList HIGHSCORES ON GAME OVER\n");
                         TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                         // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
@@ -340,11 +340,11 @@ namespace Gameplay{
                 //Player 1 (Actual Game) Score Highscore Check
                 aux_info.game_info = *(GameManager::game_status.actual_game);
                 if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
-                    aux_info.game_info.p1_user->credits += 5;
+                    UserManager::AddCredits(aux_info.game_info.p1_user, 5);
                     
                     //Add credits to player 2 too if is the same score
                     if(GameManager::game_status.actual_game->p1.score == GameManager::game_status.actual_game->p2.score){
-                        aux_info.game_info.p2_user->credits += 5;
+                        UserManager::AddCredits(aux_info.game_info.p2_user, 5);
                     }
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
@@ -364,8 +364,8 @@ namespace Gameplay{
 
                 aux_info.game_info = *(GameManager::game_status.actual_game);
                 if((new_highscore_p1 = HighscoresMenu::AddHighScoreGame(aux_info))){
-                    aux_info.game_info.p1_user->credits += 5;
-                    aux_info.game_info.p2_user->credits += 5;
+                    UserManager::AddCredits(aux_info.game_info.p1_user, 5);
+                    UserManager::AddCredits(aux_info.game_info.p2_user, 5);
                     // printf("SaveList HIGHSCORES ON GAME OVER\n");
                     TList::SaveList(((TList::ListNode**)(&(HighscoresMenu::top_games))), HighscoresMenu::highscores_dat, HighscoresMenu::highscores_dat_path);
                     // printf("HIGHSCORES LIST PROPERLY SAVED ON GAME OVER\n");
@@ -373,6 +373,10 @@ namespace Gameplay{
             break;
         }
 
+        //Saves user credit change in case of highscore
+        if(new_highscore_p1 || new_highscore_p2){
+            TList::SaveList(((TList::ListNode**)(&(UserManager::user_list))), UserManager::user_list_dat, UserManager::user_list_dat_path);
+        }
         // printf("GAMEOVER SWITCH\n");
     }
 
@@ -435,6 +439,16 @@ namespace Gameplay{
         //LOADS NEW GAME AS THE ACTUAL GAME
         aux_actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
         GameManager::game_status.actual_game = aux_actual_game;
+
+        RemoveCredits(aux_actual_game->p1_user, 1);
+        if(p2 != nullptr){
+            RemoveCredits(aux_actual_game->p2_user, 1);
+        }
+
+        TList::SaveList(((TList::ListNode**)(&(UserManager::user_list))), UserManager::user_list_dat, UserManager::user_list_dat_path);
+
+        //LOADS SELECTED GAME AS THE ACTUAL GAME TO_DO
+
 
         //Player Colors
         if(aux_actual_game->gamemode == PlayedGames::Gamemode::SP){

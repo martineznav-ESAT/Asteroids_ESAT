@@ -61,6 +61,11 @@ namespace UserManager{
     bool RegisterNewUser(User new_user);
     bool LoadRegisteredUsers();
 
+    void AddCredits(User *user, int credits);
+    
+    void RemoveCredits(User *user, int credits);
+
+
     void CloseFiles();
 
     void EmptyMemory();

@@ -249,6 +249,18 @@ namespace UserManager{
         return is_registered;
     }
 
+    void AddCredits(User *user, int credits){
+        if(!(user->is_admin)){
+            user->credits += credits;
+        }
+    }
+
+    void RemoveCredits(User *user, int credits){
+        if(!(user->is_admin)){
+            user->credits -= credits;
+        }
+    }
+
     void CloseFiles(){
         if(user_list_dat != nullptr){
             fclose(user_list_dat);

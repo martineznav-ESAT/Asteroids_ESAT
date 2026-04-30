@@ -8,5 +8,6 @@
 #include "./Shots.h"
 #include "./Ufo.h"
 #include "./Particles.h"
+#include "./PowerUps.h"
 
 #endif
