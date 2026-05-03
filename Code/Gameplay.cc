@@ -449,7 +449,7 @@ namespace Gameplay{
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
 
         //CREATE NEW GAME
-        aux_game_info.game_info = PlayedGames::LoadBaseGameManagerGame(gm, p2);
+        aux_game_info.game_info = PlayedGames::LoadBaseGameManager(gm, p2);
 
         TList::InsertList(((TList::ListNode**)(&(PlayedGames::game_list))), TList::ListType::PLAYED_GAME, aux_game_info);
         TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
@@ -464,9 +464,6 @@ namespace Gameplay{
         }
 
         TList::SaveList(((TList::ListNode**)(&(UserManager::user_list))), UserManager::user_list_dat, UserManager::user_list_dat_path);
-
-        //LOADS SELECTED GAME AS THE ACTUAL GAME TO_DO
-
 
         //Player Colors
         if(aux_actual_game->gamemode == PlayedGames::Gamemode::SP){
@@ -486,6 +483,33 @@ namespace Gameplay{
 
             p1_life_figure.color = aux_actual_game->p1.ship.figure.color;
             p2_life_figure.color = aux_actual_game->p2.ship.figure.color;
+        }
+
+        LoadGameplayLevel(true);
+    }
+
+    void Load(PlayedGames::PlayedGame* loaded_game){
+        GameManager::game_status.level = GameManager::Level::GAMEPLAY;
+        GameManager::game_status.actual_game = loaded_game;
+
+        //Player Colors
+        if(loaded_game->gamemode == PlayedGames::Gamemode::SP){
+            p1_life_figure.color = loaded_game->p1.ship.figure.color;
+        }else{
+            loaded_game->p1.ship.figure.color = {150,150,255};
+            loaded_game->p2.ship.figure.color = {255,0,0};
+
+            for (int i = 0; i < Players::max_player_shots; i++){
+                (loaded_game->p1.ship.shots+i)->bullet.color = loaded_game->p1.ship.figure.color;
+                (loaded_game->p2.ship.shots+i)->bullet.color = loaded_game->p2.ship.figure.color;
+                if(i < 4){
+                    (loaded_game->p1.ship.death_particles+i)->figure.color = loaded_game->p1.ship.figure.color;
+                    (loaded_game->p2.ship.death_particles+i)->figure.color = loaded_game->p2.ship.figure.color;
+                }
+            }
+
+            p1_life_figure.color = loaded_game->p1.ship.figure.color;
+            p2_life_figure.color = loaded_game->p2.ship.figure.color;
         }
 
         LoadGameplayLevel(true);

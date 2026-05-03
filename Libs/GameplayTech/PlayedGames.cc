@@ -19,6 +19,8 @@ namespace PlayedGames{
     //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
     void *game_list = nullptr; 
 
+    char **gamemode_texts;
+
     PlayedGame NewGame(){
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
 
@@ -53,7 +55,7 @@ namespace PlayedGames{
         return new_game;
     }
 
-    PlayedGame LoadBaseGameManagerGame(Gamemode gm, UserManager::User* p2 = nullptr){
+    PlayedGame LoadBaseGameManager(Gamemode gm, UserManager::User* p2 = nullptr){
         PlayedGame new_game = NewGame();
         new_game.gamemode = gm;
         new_game.p1_user = GameManager::game_status.logged_user;
@@ -197,6 +199,17 @@ namespace PlayedGames{
         return is_loaded;
     }
 
+    void Init(){
+        gamemode_texts = (char**) malloc(sizeof(char*)*4);
+
+        *(gamemode_texts+Gamemode::SP) = "SINGLE PLAYER";
+        *(gamemode_texts+Gamemode::MP_ALT) = "MP ALTERNATE";
+        *(gamemode_texts+Gamemode::MP_COOP) = "MP VERSUS";
+        *(gamemode_texts+Gamemode::MP_VS) = "MP COOPERATIVE";
+
+        LoadGameList();
+    }
+
     void CloseFiles(){
         if(game_list_dat != nullptr){
             fclose(game_list_dat);
@@ -209,5 +222,6 @@ namespace PlayedGames{
 
     void EmptyMemory(){
         TList::ClearList((TList::ListNode**)&game_list);
+        free(gamemode_texts);
     }
 }

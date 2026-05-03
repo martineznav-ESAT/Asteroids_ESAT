@@ -29,6 +29,8 @@ namespace Gameplay{
     //Loads the Gameplay level at game start
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr);
 
+    void Load(PlayedGames::PlayedGame* loaded_game);
+
     void LoadGameplayLevel(bool respawn);
 
     void GenerateAsteroidRound();

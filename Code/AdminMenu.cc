@@ -286,6 +286,7 @@ namespace AdminMenu{
     //Loads the Admin menu
     void Load(){
         LoadUserPage();
+        page_number = 0;
         selected_item = -1;
         GameManager::game_status.level = GameManager::Level::ADMIN_MENU;
     }

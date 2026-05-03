@@ -40,7 +40,8 @@ void InitGame(){
     Gameplay::Init();
 
     GameManager::LoadInitLevel();
-    PlayedGames::LoadGameList();
+
+    PlayedGames::Init();
     HighscoresMenu::Init();
 }
 
@@ -148,12 +149,13 @@ void EmptyMemory(){
     //printf("Gameplay FINO\n");
     Asteroids::EmptyMemory();
     //printf("Asteroids FINO\n");
-    UserManager::EmptyMemory();
-    // printf("UserManager FINO\n");
     PowerUps::EmptyMemory();
-    // printf("PowerUps FINO\n");
+    //printf("PowerUps FINO\n");
     PlayedGames::EmptyMemory();
-    // printf("PlayedGames FINO\n");
+    //printf("PlayedGames FINO\n");
+
+    UserManager::EmptyMemory();
+    //printf("UserManager FINO\n");
 }
 
 void CloseFiles(){

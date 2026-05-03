@@ -19,6 +19,7 @@
 #include "./LoadGameMenu.h"
 #include "./MainMenu.h"
 #include "./RegisterMenu.h"
+#include "./Gameplay.h"
 
 namespace LoadGameMenu{
     //Memory block that holds all the menu items no matter if they are visible or not.
@@ -57,7 +58,7 @@ namespace LoadGameMenu{
 
     //ACTIONS
     void PlayAction(void *game){
-        printf("PLAY ACTION WIP\n");
+        Gameplay::Load((PlayedGames::PlayedGame*)game);
     }
 
     void DeleteAction(void *game){
@@ -260,6 +261,7 @@ namespace LoadGameMenu{
 
 
     void LoadUserGames(){
+        page_number = 0;
         TList::ClearList(&user_games);
         for(TList::ListNode *aux = (TList::ListNode*)PlayedGames::game_list ; aux != nullptr; aux = aux->next){
             if(aux->info.game_info.p1_user == GameManager::game_status.logged_user){
@@ -346,40 +348,31 @@ namespace LoadGameMenu{
             coord,
             {
                 {255,255,255,255},
-                game.p1_user->username,
+                *(PlayedGames::gamemode_texts+(int)game.gamemode),
                 font_size
             }
         );
 
-        UILib::DrawText(
-            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789    "),0}),
-            {
-                {255,255,255,255},
-                game.p1_user->alias,
-                font_size
-            }
-        );
 
-        UILib::DrawIntToText(
-            JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  "),0}),
-            {
-                {255,255,255,255},
-                nullptr,
-                font_size
-            },
-            ((int)(game.p1_user->credits)),2,true
-        );
-
-        if(game.p1_user->is_admin){
+        if(game.gamemode != PlayedGames::Gamemode::SP){
             UILib::DrawText(
-                JMATH::Vec2Sum(coord, {font_size*strlen("0123456789   ALIAS  CREDITS"),0}),
+                JMATH::Vec2Sum(coord, {font_size*strlen("MPCOOPERATIV"),0}),
                 {
                     {255,255,255,255},
-                    "X",
+                    game.p2_user->username,
                     font_size
                 }
             );
         }
+
+        UILib::DrawText(
+            JMATH::Vec2Sum(coord, {font_size*strlen("                          "),0}),
+            {
+                {255,255,255,255},
+                "01/01/2026 12:00",
+                font_size*0.5f
+            }
+        );
 
     }
 
@@ -397,7 +390,7 @@ namespace LoadGameMenu{
 
         JMATH::Vec2 base_coord = {
             (Utils::kWindowWidth*0.5f) -
-            (strlen("USERNAME             ALIAS   CREDITS   ADMIN") * 0.45f * list_font_size),
+            (strlen("GAMEMODE           P2 USERNAME    DATE TIME") * 0.45f * list_font_size),
             200
         };
         JMATH::Vec2 margin_v = {0,55};
@@ -406,7 +399,7 @@ namespace LoadGameMenu{
             base_coord,
             {
                 {255,255,255,255},
-                "USERNAME               ALIAS   CREDITS      ADMIN",
+                "GAMEMODE           P2 USERNAME              DATE TIME",
                 {list_font_size}
             }
         );
@@ -448,7 +441,6 @@ namespace LoadGameMenu{
             UILib::EmptyItemMemory(menu_items+i);
         }
         free(menu_items);
-        TList::ClearList(&loaded_games_page);
         TList::ClearList(&user_games);
     }
 }

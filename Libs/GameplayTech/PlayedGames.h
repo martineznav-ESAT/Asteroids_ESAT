@@ -35,11 +35,15 @@ namespace PlayedGames{
 
     extern void *game_list; 
 
+    extern char **gamemode_texts;
+
+    void Init();
+
     PlayedGame NewGame();
 
     PlayedGame NewGameCopy(PlayedGame *game);
 
-    PlayedGame LoadBaseGameManagerGame(Gamemode gm, UserManager::User* p2);
+    PlayedGame LoadBaseGameManager(Gamemode gm, UserManager::User* p2);
 
     void SaveGame(PlayedGame game, FILE *dat_file);
 
