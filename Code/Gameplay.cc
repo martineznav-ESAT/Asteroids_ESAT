@@ -77,6 +77,8 @@ namespace Gameplay{
                 TList::InsertList(&asteroid_particles, TList::ListType::PARTICLE, particle_aux_info);
             }
         }
+
+        // TList::PrintList(asteroid_ingame);
     }
 
 
@@ -203,6 +205,7 @@ namespace Gameplay{
                         asteroid_aux,
                         &ufo
                     );
+                    
                     if(!is_collided){
                         is_collided = Collisions::CollisionAsteroidUfo(
                             &asteroid_ingame,
@@ -409,7 +412,9 @@ namespace Gameplay{
     }
 
     void UpdatePowerUps(){
-
+        for(TList::ListNode *aux = spawned_power_ups; aux != nullptr; aux = aux->next){
+            PowerUps::UpdatePowerUp(&(aux->info.powerUp_info));
+        }
     }
 
     //Whole Gameplay update method
@@ -721,13 +726,16 @@ namespace Gameplay{
     }
 
     void DrawPowerUps(){
-        
+        for(TList::ListNode *aux = spawned_power_ups; aux != nullptr; aux = aux->next){
+            PowerUps::DrawPowerUp(aux->info.powerUp_info);
+        }
     }
 
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
         DrawGameAsteroidsParticles();
+        DrawPowerUps();
         Ufo::DrawUfo(ufo);
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             DrawPlayers(*(GameManager::game_status.actual_game));
@@ -740,7 +748,6 @@ namespace Gameplay{
                 }
             }
         }
-        DrawPowerUps();
     }
 
     void EmptyMemory(){

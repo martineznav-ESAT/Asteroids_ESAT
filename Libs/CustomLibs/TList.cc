@@ -114,12 +114,12 @@ namespace TList{
             case ListType::PLAYED_GAME:
                 printf("|| Game %d - Gamemode %d ",list->info.game_info.game_id, list->info.game_info.gamemode);
                 if(list->info.game_info.p1_user != nullptr){
-                    printf("P1 %s ",list->info.game_info.p1_user->username);
+                    // printf("P1 %s ",list->info.game_info.p1_user->username);
                 }
                 printf("S1 %d ",list->info.game_info.p1.score);
                 
                 if(list->info.game_info.p2_user != nullptr){
-                    printf("P2 %s ",list->info.game_info.p2_user->username);
+                    // printf("P2 %s ",list->info.game_info.p2_user->username);
                 }
                 printf("S2 %d ",list->info.game_info.p2.score);
 
@@ -225,6 +225,7 @@ namespace TList{
     //Deletes the given node from the list
     void DeleteElement(ListNode **list, ListNode *delete_node){
         // printf("DeleteFromList\n");
+        // printf(" EmptyAsteroidMemory 2 %p\n", delete_node);
 
         //Check if exists
         if(IsEmptyList(&delete_node)){
@@ -270,7 +271,6 @@ namespace TList{
         // printf("DeleteFromList\n");
         
         ListNode *aux = FindInList(*list, info);
-
         DeleteElement(list, aux);
     }
 

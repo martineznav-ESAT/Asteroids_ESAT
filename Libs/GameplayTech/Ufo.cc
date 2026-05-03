@@ -279,6 +279,8 @@ namespace Ufo{
 
         PolyLibJMATH::UpdatePoly(&(ufo->figure));
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->figure));
+        PolyLibJMATH::UpdatePoly(&(ufo->shot.bullet));
+        PolyLibJMATH::SavePrevDrawCoords(&(ufo->shot.bullet));
     }
 
     void UpdateUfoParticles(UfoShip *ufo){

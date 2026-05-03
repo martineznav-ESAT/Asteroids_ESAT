@@ -30,6 +30,7 @@ namespace Shots{
         new_shot.life_time = 1000; //ms
         new_shot.lt_count = 0; //ms timer
         new_shot.is_active = false;
+        
         return new_shot;
     }
 

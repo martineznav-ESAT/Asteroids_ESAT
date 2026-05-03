@@ -8,35 +8,37 @@
 #include "../CustomLibs/PolyLibJMATH.h"
 #include "../CustomLibs/Utils.h"
 
+#include "../../Code/GameManager.h"
+#include "../../Code/Gameplay.h"
 
 namespace PowerUps{
-    JMATH::Vec3 **friendly_fire_coords = nullptr;
+    JMATH::Vec3 **friendly_fire_icon_coords = nullptr;
     int last_pu_id = -1;
 
     void InitFriendlyFireIcon(){
-        friendly_fire_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*)*PU_Type::TOTAL_PU_TYPES);
+        friendly_fire_icon_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*) * ((int)FFIcons::TOTAL_ICONS));
 
         // Ship Bottom Half figure
-        *(friendly_fire_coords+0) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_1);
-        *(*(friendly_fire_coords+0)+0) =    {-0.6f, -0.3f, 1.0f};     // 1
-        *(*(friendly_fire_coords+0)+1) =    {-1.0f, -0.6f, 1.0f};     // 2
-        *(*(friendly_fire_coords+0)+2) =    {0.0f, -0.3f, 1.0f};      // 3
-        *(*(friendly_fire_coords+0)+3) =    {-0.2f, -0.2f, 1.0f};     // 4
-        *(*(friendly_fire_coords+0)+4) =    {0.2f, 0.0f, 1.0f};      // 5
-        *(*(friendly_fire_coords+0)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
-        *(*(friendly_fire_coords+0)+6) =    {0.0f, 0.3f, 1.0f};       // 7
-        *(*(friendly_fire_coords+0)+7) =    {-1.0f, 0.6f, 1.0f};      // 8
-        *(*(friendly_fire_coords+0)+8) =    {-0.6f, 0.3f, 1.0f};      // 9
+        *(friendly_fire_icon_coords+FFIcons::ICON_1) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_1);
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+0) =    {-0.6f, -0.3f, 1.0f};     // 1
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+1) =    {-1.0f, -0.6f, 1.0f};     // 2
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+2) =    {0.0f, -0.3f, 1.0f};      // 3
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+3) =    {-0.2f, -0.2f, 1.0f};     // 4
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+4) =    {0.2f, 0.0f, 1.0f};       // 5
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+6) =    {0.0f, 0.3f, 1.0f};       // 7
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+7) =    {-1.0f, 0.6f, 1.0f};      // 8
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+8) =    {-0.6f, 0.3f, 1.0f};      // 9
 
         
         // Ship Top Half figure
-        *(friendly_fire_coords+1) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_2);
-        *(*(friendly_fire_coords+1)+0) =    {0.2f, 0.0f, 1.0f};      // 1
-        *(*(friendly_fire_coords+1)+1) =    {-0.2f, -0.2f, 1.0f};     // 2
-        *(*(friendly_fire_coords+1)+2) =    {0.0f, -0.3f, 1.0f};      // 3
-        *(*(friendly_fire_coords+1)+3) =    {1.0f, 0.0f, 1.0f};       // 4
-        *(*(friendly_fire_coords+1)+4) =    {0.0f, 0.3f, 1.0f};       // 5
-        *(*(friendly_fire_coords+1)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
+        *(friendly_fire_icon_coords+FFIcons::ICON_2) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_2);
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+0) =    {0.2f, 0.0f, 1.0f};       // 1
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+1) =    {-0.2f, -0.2f, 1.0f};     // 2
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+2) =    {0.0f, -0.3f, 1.0f};      // 3
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+3) =    {1.0f, 0.0f, 1.0f};       // 4
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+4) =    {0.0f, 0.3f, 1.0f};       // 5
+        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
 
     }
 
@@ -51,7 +53,7 @@ namespace PowerUps{
         PolyLibJMATH::InitPoly(
             (p_up->icon_figures+FFIcons::ICON_1),
             FFIconsVertices::V_ICON_1,
-            *(friendly_fire_coords+((int)FFIcons::ICON_1)),
+            *(friendly_fire_icon_coords+((int)FFIcons::ICON_1)),
             p_up->base_figure.transform.scale,
             p_up->base_figure.transform.rotation,
             p_up->base_figure.transform.translation,
@@ -64,7 +66,7 @@ namespace PowerUps{
         PolyLibJMATH::InitPoly(
             (p_up->icon_figures+FFIcons::ICON_2),
             FFIconsVertices::V_ICON_2,
-            *(friendly_fire_coords+((int)FFIcons::ICON_2)),
+            *(friendly_fire_icon_coords+((int)FFIcons::ICON_2)),
             p_up->base_figure.transform.scale,
             p_up->base_figure.transform.rotation,
             p_up->base_figure.transform.translation,
@@ -115,7 +117,7 @@ namespace PowerUps{
         }
     }
 
-    PowerUp NewPowerUp(PU_Type type){
+    PowerUp NewPowerUp(PU_Type type, JMATH::Vec2 position){
         PowerUp new_powerUp;
         new_powerUp.id = ++last_pu_id;
         new_powerUp.type = type;
@@ -124,32 +126,6 @@ namespace PowerUps{
             &new_powerUp.base_figure,
             4,
             {22.5f,22.5f},
-            -135.0f,
-            {Utils::kWindowWidth*0.5f, Utils::kWindowHeight*0.5f},
-            {25,25,25},
-            {0.0f,0.0f}
-        );
-        
-        BuildIcons(&new_powerUp);
-
-        new_powerUp.duration_lt = 8000;
-        new_powerUp.duration_ltc = 0;
-
-        UpdateIcon(&new_powerUp);
-
-        // printf("NEW POWER UP CREATED %d\n",new_powerUp.id);
-        return new_powerUp;
-    }
-
-    PowerUp NewPowerUpAt(PU_Type type, JMATH::Vec2 position){
-        PowerUp new_powerUp;
-        new_powerUp.id = ++last_pu_id;
-        new_powerUp.type = type;
-        
-        PolyLibJMATH::InitPoly(
-            &new_powerUp.base_figure,
-            4,
-            {35,35},
             -135.0f,
             {position.x, position.y},
             {25,25,25},
@@ -175,6 +151,38 @@ namespace PowerUps{
         return (powerUp.duration_ltc >= powerUp.duration_lt-3000);
     }
 
+    void GeneratePowerUp(Asteroids::Asteroid asteroid){
+        TList::ListInfo aux_info = {NULL};
+
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP :
+            case PlayedGames::Gamemode::MP_ALT:
+                //Since MP_ALT gamemode is technically 2 separated single players alternating, 
+                //the available power ups are essentially the same 
+
+                //Currently no PowerUps 03/05/2026
+                if(PowerUps::PU_Type::TOTAL_PU_SP_TYPES > 0){
+                    aux_info.powerUp_info = PowerUps::NewPowerUp(
+                        (PowerUps::PU_Type)Utils::GenerateRandomNumber(PowerUps::PU_Type::TOTAL_PU_SP_TYPES), 
+                        asteroid.figure.transform.translation
+                    );
+                    TList::InsertList(&Gameplay::spawned_power_ups, TList::ListType::POWER_UP, aux_info);
+                }
+            break;
+        
+            case PlayedGames::Gamemode::MP_VS :
+            case PlayedGames::Gamemode::MP_COOP :
+                if(PowerUps::PU_Type::TOTAL_PU_MP_TYPES > 0){
+                    aux_info.powerUp_info = PowerUps::NewPowerUp(
+                        (PowerUps::PU_Type)Utils::GenerateRandomNumber(PowerUps::PU_Type::TOTAL_PU_MP_TYPES),
+                        asteroid.figure.transform.translation
+                    );
+                    TList::InsertList(&Gameplay::spawned_power_ups, TList::ListType::POWER_UP, aux_info);
+                }
+            break;
+        }
+    }
+
 
     //Scales the given PowerUp for the amount of the frame equivalent calculated value of a percentage during an specified amount of miliseconds.
     //It scales up or down based on the is_growing parameter
@@ -186,19 +194,50 @@ namespace PowerUps{
         }
     }
 
+    bool PowerUpCollisions(PowerUp *powerUp){
+        bool is_collided = false;
+
+        //PowerUp/Player Collisions in diferent gamemodes
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP:
+                is_collided = Collisions::CollisionPowerUpPlayer(powerUp, &(GameManager::game_status.actual_game->p1));
+            break;
+
+            case PlayedGames::Gamemode::MP_ALT:
+                if(GameManager::game_status.actual_game->is_player1_turn){
+                    is_collided = Collisions::CollisionPowerUpPlayer(powerUp, &(GameManager::game_status.actual_game->p1));
+                }else{
+                    is_collided = Collisions::CollisionPowerUpPlayer(powerUp, &(GameManager::game_status.actual_game->p2));
+                }
+            break;
+
+            case PlayedGames::Gamemode::MP_COOP:
+            case PlayedGames::Gamemode::MP_VS:
+                is_collided = Collisions::CollisionPowerUpPlayer(powerUp, &(GameManager::game_status.actual_game->p1));
+                if(!is_collided){
+                    is_collided = Collisions::CollisionPowerUpPlayer(powerUp, &(GameManager::game_status.actual_game->p2));
+                }
+            break;
+        }
+
+        return is_collided;
+    }
+
     void UpdatePowerUp(PowerUp *powerUp){
-        if(IsPowerUpActive(*powerUp)){
-            //Grows for 0.5s and Shrinks for 0.5s
-            if((((int)(powerUp->duration_ltc))%1000) < 500){
-                ScalePowerUpFramePercentageEquivalent(powerUp, 0.33f, 500, true);
-            }else{
-                ScalePowerUpFramePercentageEquivalent(powerUp, 0.33f, 500, false);
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            if(IsPowerUpActive(*powerUp) && !PowerUpCollisions(powerUp)){
+                //Grows for 0.5s and Shrinks for 0.5s
+                if((((int)(powerUp->duration_ltc))%1000) < 500){
+                    ScalePowerUpFramePercentageEquivalent(powerUp, 0.33f, 500, true);
+                }else{
+                    ScalePowerUpFramePercentageEquivalent(powerUp, 0.33f, 500, false);
+                }
+
+                UpdateIcon(powerUp);
+
+                powerUp->duration_ltc += 1000/Utils::kFPS;
+                // printf("pu_duration_ltc %f\n", powerUp->duration_ltc);
             }
-
-            UpdateIcon(powerUp);
-
-            powerUp->duration_ltc += 1000/Utils::kFPS;
-            // printf("pu_duration_ltc %f\n", powerUp->duration_ltc);
         }
     }
 
@@ -245,10 +284,10 @@ namespace PowerUps{
         for (int type = 0; type < (int)PU_Type::TOTAL_PU_TYPES; type++){
             switch ((PU_Type)type){
                 case PU_Type::FRIENDLY_FIRE:
-                    for (int i = 0; i < FFIcons::TOTAL_ICONS; i+=2){
-                        free(*(friendly_fire_coords+i));
+                    for (int i = 0; i < FFIcons::TOTAL_ICONS; i++){
+                        free(*(friendly_fire_icon_coords+i));
                     }
-                    free(friendly_fire_coords);
+                    free(friendly_fire_icon_coords);
                 break;
             }
         }

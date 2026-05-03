@@ -29,17 +29,17 @@ namespace PlayMenu{
     }
 
     void MpAltAction(){
-        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_ALT;
+        GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_ALT;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
     void MpVsAction(){
-        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_VS;
+        GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_VS;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
     void MpCoopAction(){
-        GameManager::game_status.load_game_aux_gamemode = PlayedGames::Gamemode::MP_COOP;
+        GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_COOP;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 

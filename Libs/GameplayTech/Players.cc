@@ -5,6 +5,7 @@
 
 #include "../../Code/UserManager.h"
 #include "../../Code/GameManager.h"
+#include "../../Code/MainMenu.h"
 #include "../CustomLibs/Utils.h"
 
 #include "./GameplayTech.h"
@@ -198,6 +199,10 @@ namespace Players{
     }
 
     void PlayerInput(Player* p){
+        if(esat::IsKeyDown('M')){
+            MainMenu::Load();
+        }
+
         if(GameManager::IsPlayer1(p)){
             //PLAYER 1 INPUT CONTROL
 
@@ -222,7 +227,7 @@ namespace Players{
             if(!IsPlayerImmune(*p) ){
                 if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) < 3){
                     // printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%50) <= 15){
+                    if(((int)esat::Time()%50) <= 25){
                         // printf("esat::Time\n");
                         ShipShoot(&(p->ship));
                         // printf("ShipShoot\n");
@@ -276,7 +281,7 @@ namespace Players{
             if(!IsPlayerImmune(*p) ){
                 if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) < 3){
                     printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%50) <= 15){
+                    if(((int)esat::Time()%50) <= 25){
                         printf("esat::Time\n");
                         ShipShoot(&(p->ship));
                         printf("ShipShoot\n");

@@ -21,6 +21,7 @@
 
 namespace Gameplay{
     extern TList::ListNode *asteroid_ingame;
+    extern TList::ListNode *spawned_power_ups;
 
     //Whole Gameplay initializer
     void Init();

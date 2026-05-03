@@ -138,7 +138,8 @@ namespace Asteroids{
         }
     }
 
-    void GenerateOnAsteroidDestroy(TList::ListNode **asteroid_list, TList::ListNode **particle_list, Asteroids::Asteroid *asteroid){
+
+    void GenerateAsteroidsFromAsteroid(TList::ListNode **asteroid_list, TList::ListNode **particle_list, Asteroid *asteroid){
         TList::ListInfo asteroid_aux_info = {NULL};
         TList::ListInfo particle_aux_info = {NULL};
         // printf("LIST 3 %p\n",*asteroid_list);
@@ -148,8 +149,8 @@ namespace Asteroids{
         if(asteroid->size_level > 1){
             for(int i = 0; i < 2; i++){
                 asteroid_aux_info.asteroid_info = 
-                    Asteroids::NewAsteroid(
-                        (Asteroids::AsteroidType)Utils::GenerateRandomNumber(Asteroids::AsteroidType::TOTAL_ASTEROIDS), 
+                    NewAsteroid(
+                        (AsteroidType)Utils::GenerateRandomNumber(AsteroidType::TOTAL_ASTEROIDS), 
                         asteroid->size_level-1
                     );
                     
@@ -167,7 +168,7 @@ namespace Asteroids{
         // TList::PrintList(*asteroid_list);
     }
 
-    void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroids::Asteroid *asteroid, Players::Player *player = nullptr){
+    void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroid *asteroid, Players::Player *player = nullptr){
         TList::ListNode** asteroid_list_aux = (TList::ListNode**) asteroid_list;
         TList::ListNode** particle_list_aux = (TList::ListNode**) particle_list;
         // printf("LIST 2 %p\n",*asteroid_list_aux);
@@ -178,19 +179,24 @@ namespace Asteroids{
         if(player != nullptr){
             AddAsteroidPoints(asteroid->size_level, player);
         }
-        GenerateOnAsteroidDestroy(asteroid_list_aux, particle_list_aux, asteroid);
+        GenerateAsteroidsFromAsteroid(asteroid_list_aux, particle_list_aux, asteroid);
         for(int i = 0; i < 8; i++){
             Particles::LoadParticle(
                 (asteroid->destroy_particles+i),
                 asteroid->figure.transform.translation
             );
         }
+        // printf(" DestroyAsteroid 1 %d\n", aux_asteroid_info.asteroid_info.id);
         TList::DeleteElement(asteroid_list_aux, aux_asteroid_info);
     }
     
     void EmptyAsteroidMemory(Asteroid *asteroid){
         PolyLibJMATH::EmptyPolyMemory(&(asteroid->figure));
-        free(asteroid->destroy_particles);
+        //The particle work separately on another list for them to be able to me shown
+        //after the asteroid is destroyed since it will get removed from the list instantly on collision
+
+        //THIS CODE IS ONLY FOR REMINDING PURPOSES. JUST MAKE SURE PARTICLES WORK PROPERLY ON THEIR INDEPENDENT GAMEPLAY LIST 
+        // free(asteroid->destroy_particles);
     }
 
     void EmptyMemory(){

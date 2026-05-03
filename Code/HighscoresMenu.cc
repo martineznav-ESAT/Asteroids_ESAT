@@ -146,11 +146,11 @@ namespace HighscoresMenu{
     //Whole Highscores Menu initializer
     void Init(){
         InitEmptyHighscores();
-        printf("InitEmptyHighscores\n");
+        // printf("InitEmptyHighscores\n");
         InitMenuItems();
-        printf("InitMenuItems\n");
+        // printf("InitMenuItems\n");
         InitButtons();
-        printf("InitButtons\n");
+        // printf("InitButtons\n");
     }
 
     //HIGHSCORES MENU LOAD

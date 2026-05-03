@@ -10,7 +10,6 @@
 
 #include "./Libs/CustomLibs/TList.h"
 #include "./Libs/CustomLibs/Utils.h"
-#include "./Libs/GameplayTech/GameplayTech.h"
 
 #include "./Code/GameManager.h"
 #include "./Code/LoginMenu.h"
@@ -21,6 +20,7 @@
 #include "./Code/AdminMenu.h"
 #include "./Code/Gameplay.h"
 
+#include "./Libs/GameplayTech/GameplayTech.h"
 
 void InitGame(){
     UserManager::Init();
@@ -171,7 +171,9 @@ int esat::main(int argc, char **argv) {
         }
 
         UpdateGame();
+        // printf("Update FINO\n");
         DrawGame();
+        // printf("Draw FINO\n");
 
         esat::DrawEnd();  	
         esat::WindowFrame();

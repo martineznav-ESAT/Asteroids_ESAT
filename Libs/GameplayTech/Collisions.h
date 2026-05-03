@@ -42,7 +42,9 @@ namespace Collisions{
     
     bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player);
 
-    //DEBUG COLLISIONS
+    bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player);
+    
+        //DEBUG COLLISIONS
     //CREATED FOR TESTING PURPOSES
     bool CollisionPolyOnRClick(PolyLibJMATH::Poly p1);
 

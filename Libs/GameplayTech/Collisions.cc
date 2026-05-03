@@ -11,6 +11,7 @@
 #include "../CustomLibs/Utils.h"
 
 #include "../../Code/GameManager.h"
+#include "../../Code/Gameplay.h"
 
 namespace Collisions{
     bool show_colliders = false;
@@ -143,8 +144,14 @@ namespace Collisions{
                 // printf("LIST %p\n",*asteroid_list);
                 // printf("Asteroid %d\n",asteroid->id);
                 // printf("Bullet %d\n\n",i);
-                Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
                 (player->ship.shots+i)->is_active = false;
+                // 2% chance of dropping a powerUp (2/100)
+                if(Utils::GenerateRandomNumber(100)+1 <= 2){
+                    PowerUps::GeneratePowerUp(*asteroid);
+                }
+
+                Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
+                collision = true;
             }
         }
         
@@ -157,6 +164,7 @@ namespace Collisions{
         if(!Players::IsPlayerDead(*player) && !Players::IsPlayerImmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
             Players::KillPlayer(player);
+            collision = true;
         }
         
         return collision;
@@ -168,6 +176,7 @@ namespace Collisions{
         if(ufo->shot.is_active && CollisionPolyPoly(ufo->shot.bullet, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
             ufo->shot.is_active = false;
+            collision = true;
         }
         
         return collision;
@@ -179,6 +188,7 @@ namespace Collisions{
         if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
             Ufo::DestroyUfo(ufo);
+            collision = true;
         }
         
         return collision;
@@ -193,6 +203,7 @@ namespace Collisions{
             CollisionPolyPoly(ufo->figure, player->ship.figure)
         ){
             Players::KillPlayer(player);
+            collision = true;
         }
         
         return collision;
@@ -215,6 +226,7 @@ namespace Collisions{
 
                     Ufo::DestroyUfo(ufo);
                     (player->ship.shots+i)->is_active = false;
+                    collision = true;
                 }
             }
         }
@@ -232,10 +244,36 @@ namespace Collisions{
         ){
             ufo->shot.is_active = false;
             Players::KillPlayer(player);
+            collision = true;
         }
         
         return collision;
     }
+
+
+    bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player){
+        TList::ListInfo aux_info = {NULL};
+        bool collision = false;
+        // printf("CollisionAsteroidPlayerShots\n");
+        if(PowerUps::IsPowerUpActive(*pu) && 
+            !Players::IsPlayerDead(*player) && 
+            !Players::IsPlayerImmune(*player) && 
+            CollisionPolyPoly(pu->base_figure, player->ship.figure)
+        ){
+            switch (pu->type){
+                case PowerUps::PU_Type::FRIENDLY_FIRE:
+                    //TO_DO
+                break;
+            }
+
+            aux_info.powerUp_info = *pu;
+            TList::DeleteElement(&Gameplay::spawned_power_ups, aux_info);
+            collision = true;
+        }
+        
+        return collision;
+    }
+
 
     //DEBUG COLLISIONS
     //CREATED FOR TESTING PURPOSES

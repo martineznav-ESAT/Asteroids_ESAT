@@ -33,7 +33,7 @@ namespace GameManager{
         Level level = LOGIN_MENU;
         UserManager::User *logged_user;
         PlayedGames::PlayedGame *actual_game;
-        PlayedGames::Gamemode load_game_aux_gamemode;
+        PlayedGames::Gamemode load_game_aux_mp_gamemode;
     };
 
     extern GameStatus game_status;
