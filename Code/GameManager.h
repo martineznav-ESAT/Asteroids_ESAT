@@ -23,6 +23,7 @@ namespace GameManager{
         REGISTER_MENU,
         MAIN_MENU,
         PLAY_MENU,
+        LOAD_MENU,
         HIGHSCORES_MENU,
         ADMIN_MENU,
         GAMEPLAY,

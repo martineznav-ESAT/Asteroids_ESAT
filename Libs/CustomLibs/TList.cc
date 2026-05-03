@@ -114,12 +114,12 @@ namespace TList{
             case ListType::PLAYED_GAME:
                 printf("|| Game %d - Gamemode %d ",list->info.game_info.game_id, list->info.game_info.gamemode);
                 if(list->info.game_info.p1_user != nullptr){
-                    // printf("P1 %s ",list->info.game_info.p1_user->username);
+                    printf("P1 %s ",list->info.game_info.p1_user->username);
                 }
                 printf("S1 %d ",list->info.game_info.p1.score);
                 
                 if(list->info.game_info.p2_user != nullptr){
-                    // printf("P2 %s ",list->info.game_info.p2_user->username);
+                    printf("P2 %s ",list->info.game_info.p2_user->username);
                 }
                 printf("S2 %d ",list->info.game_info.p2.score);
 
@@ -244,8 +244,7 @@ namespace TList{
                 break;
 
                 case ListType::PLAYED_GAME:
-                    printf(" EMPTY ON DELETE PLAYED_GAME WIP TO_DO \n");
-                    // PlayedGames::EmptyGameMemory(&(aux->info.game_info));
+                    PlayedGames::EmptyGameMemory(&(delete_node->info.game_info));
                 break;
 
                 case ListType::ASTEROID:
@@ -275,10 +274,12 @@ namespace TList{
     }
 
     void ClearList(ListNode **list){
+        printf("CLEAR LIST\n");
         for(ListNode *act = *list; !IsEmptyList(list); act = *list){
             DeleteElement(list, act);
         }
         *list = CreateList();
+        printf("CLEAR LIST COMPLETED\n");
     }
 
     void SaveNode(ListNode *list, FILE *file){

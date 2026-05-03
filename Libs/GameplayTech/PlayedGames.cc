@@ -202,4 +202,12 @@ namespace PlayedGames{
             fclose(game_list_dat);
         }
     }
+
+    void EmptyGameMemory(PlayedGame *game){
+        
+    }
+
+    void EmptyMemory(){
+        TList::ClearList((TList::ListNode**)&game_list);
+    }
 }

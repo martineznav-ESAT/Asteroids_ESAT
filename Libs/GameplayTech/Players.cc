@@ -424,14 +424,18 @@ namespace Players{
 
 
     void EmptyPlayerMemory(Player* player){
-        for(int i = 0; i < max_player_shots; i++){
-            PolyLibJMATH::EmptyPolyMemory(&((player->ship.shots+i)->bullet));
+        if(player->ship.shots){
+            for(int i = 0; i < max_player_shots; i++){
+                PolyLibJMATH::EmptyPolyMemory(&((player->ship.shots+i)->bullet));
+            }
         }
         
-        for(int i = 0; i < 4; i++){
-            Particles::EmptyParticleMemory((player->ship.death_particles+i));
+        
+        if(player->ship.death_particles){
+            for(int i = 0; i < 4; i++){
+                Particles::EmptyParticleMemory((player->ship.death_particles+i));
+            }
         }
-
         PolyLibJMATH::EmptyPolyMemory(&(player->ship.figure));
     }
     

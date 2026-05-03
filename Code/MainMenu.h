@@ -19,6 +19,7 @@ namespace MainMenu{
     
     enum MainMenuItems{
         PLAY_BTN,
+        LOAD_BTN,
         HIGHSCORES_BTN,
         QUIT_BTN,
         USER_BTN,

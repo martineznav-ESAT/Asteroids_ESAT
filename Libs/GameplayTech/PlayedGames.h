@@ -48,6 +48,10 @@ namespace PlayedGames{
     bool LoadGameList();
 
     void CloseFiles();
+
+    void EmptyGameMemory(PlayedGame *game);
+
+    void EmptyMemory();
 }
 
 #endif

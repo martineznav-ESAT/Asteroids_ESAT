@@ -16,6 +16,7 @@
 #include "./UserManager.h"
 #include "./MainMenu.h"
 #include "./PlayMenu.h"
+#include "./LoadGameMenu.h"
 #include "./HighscoresMenu.h"
 #include "./LoginMenu.h"
 #include "./AdminMenu.h"
@@ -30,6 +31,10 @@ namespace MainMenu{
     //ACTIONS
     void PlayAction(){
         PlayMenu::Load();
+    }
+
+    void LoadGameAction(){
+        LoadGameMenu::Load();
     }
 
     void HighScoreAction(){
@@ -79,15 +84,38 @@ namespace MainMenu{
         );
 
         UILib::InitButton(
+            &((menu_items+((int)MainMenuItems::LOAD_BTN))->item.btn_item),
+            {
+                JMATH::Vec2Sum(
+                    {base_collider.P1.x-(strlen((menu_items+((int)MainMenuItems::LOAD_BTN))->item_name.text)*font_width_aux), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::LOAD_BTN)
+                ),
+                JMATH::Vec2Sum(
+                    {base_collider.P2.x+(strlen((menu_items+((int)MainMenuItems::LOAD_BTN))->item_name.text)*font_width_aux), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::LOAD_BTN)
+                )
+            },
+            button_color,
+            button_color,
+            {
+                text_color,
+                (menu_items+((int)MainMenuItems::LOAD_BTN))->item_name.text,
+                (float)Utils::kBaseFontSize*2
+            },
+            true,
+            LoadGameAction
+        );
+
+        UILib::InitButton(
             &((menu_items+((int)MainMenuItems::HIGHSCORES_BTN))->item.btn_item),
             {
                 JMATH::Vec2Sum(
-                    {base_collider.P1.x-(strlen((menu_items+((int)MainMenuItems::HIGHSCORES_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                    margin_y
+                    {base_collider.P1.x-(strlen((menu_items+((int)MainMenuItems::HIGHSCORES_BTN))->item_name.text)*font_width_aux), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::HIGHSCORES_BTN)
                 ),
                 JMATH::Vec2Sum(
-                    {base_collider.P2.x+(strlen((menu_items+((int)MainMenuItems::HIGHSCORES_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
-                    margin_y
+                    {base_collider.P2.x+(strlen((menu_items+((int)MainMenuItems::HIGHSCORES_BTN))->item_name.text)*font_width_aux), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::HIGHSCORES_BTN)
                 )
             },
             button_color,
@@ -105,12 +133,12 @@ namespace MainMenu{
             &((menu_items+((int)MainMenuItems::QUIT_BTN))->item.btn_item),
             {
                 JMATH::Vec2Sum(
-                    {base_collider.P1.x-(strlen((menu_items+((int)MainMenuItems::QUIT_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P1.y},
-                    JMATH::Vec2Scale(margin_y,2)
+                    {base_collider.P1.x-(strlen((menu_items+((int)MainMenuItems::QUIT_BTN))->item_name.text)*font_width_aux), base_collider.P1.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::QUIT_BTN)
                 ),
                 JMATH::Vec2Sum(
-                    {base_collider.P2.x+(strlen((menu_items+((int)MainMenuItems::QUIT_BTN))->item_name.text)*((float)Utils::kBaseFontSize*2)/3.5f), base_collider.P2.y},
-                    JMATH::Vec2Scale(margin_y,2)
+                    {base_collider.P2.x+(strlen((menu_items+((int)MainMenuItems::QUIT_BTN))->item_name.text)*font_width_aux), base_collider.P2.y},
+                    JMATH::Vec2Scale(margin_y,(int)MainMenuItems::QUIT_BTN)
                 )
             },
             button_color,
@@ -170,7 +198,12 @@ namespace MainMenu{
         UILib::InitItem(
             (menu_items + ((int)MainMenuItems::PLAY_BTN)),
             UILib::ItemType::BUTTON,
-            {{255,255,255,255},"PLAY GAME", Utils::kBaseFontSize*2.0f}
+            {{255,255,255,255},"NEW GAME", Utils::kBaseFontSize*2.0f}
+        );
+        UILib::InitItem(
+            (menu_items + ((int)MainMenuItems::LOAD_BTN)),
+            UILib::ItemType::BUTTON,
+            {{255,255,255,255},"LOAD GAME", Utils::kBaseFontSize*2.0f}
         );
         UILib::InitItem(
             (menu_items + ((int)MainMenuItems::HIGHSCORES_BTN)),

@@ -16,6 +16,7 @@
 #include "./Code/RegisterMenu.h"
 #include "./Code/MainMenu.h"
 #include "./Code/PlayMenu.h"
+#include "./Code/LoadGameMenu.h"
 #include "./Code/HighscoresMenu.h"
 #include "./Code/AdminMenu.h"
 #include "./Code/Gameplay.h"
@@ -32,6 +33,7 @@ void InitGame(){
     LoginMenu::Init();
     RegisterMenu::Init();
     MainMenu::Init();
+    LoadGameMenu::Init();
     PlayMenu::Init();
     AdminMenu::Init();
 
@@ -60,6 +62,10 @@ void UpdateGame(){
 
         case GameManager::Level::PLAY_MENU :
             PlayMenu::Update();
+        break;
+
+        case GameManager::Level::LOAD_MENU :
+            LoadGameMenu::Update();
         break;
 
         case GameManager::Level::HIGHSCORES_MENU :
@@ -96,6 +102,10 @@ void DrawGame(){
             PlayMenu::Draw();
         break;
 
+        case GameManager::Level::LOAD_MENU :
+            LoadGameMenu::Draw();
+        break;
+
         case GameManager::Level::HIGHSCORES_MENU :
             HighscoresMenu::Draw();
         break;
@@ -128,6 +138,8 @@ void EmptyMemory(){
     //printf("MainMenu FINO\n");
     PlayMenu::EmptyMemory();
     //printf("PlayMenu FINO\n");
+    LoadGameMenu::EmptyMemory();
+    //printf("LoadGameMenu FINO\n");
     HighscoresMenu::EmptyMemory();
     //printf("HighscoresMenu FINO\n");
     AdminMenu::EmptyMemory();
@@ -140,6 +152,8 @@ void EmptyMemory(){
     // printf("UserManager FINO\n");
     PowerUps::EmptyMemory();
     // printf("PowerUps FINO\n");
+    PlayedGames::EmptyMemory();
+    // printf("PlayedGames FINO\n");
 }
 
 void CloseFiles(){

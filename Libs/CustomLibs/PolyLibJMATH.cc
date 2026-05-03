@@ -144,8 +144,14 @@ namespace PolyLibJMATH{
     }
 
     void EmptyPolyMemory(Poly *p){
+        if(p->local_coords){
             free(p->local_coords);
+        }
+        if(p->draw_coords){
             free(p->draw_coords);
+        }
+        if(p->prev_draw_coords){
             free(p->prev_draw_coords);
+        }
     }
 }
