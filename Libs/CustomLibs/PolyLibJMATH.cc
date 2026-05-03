@@ -126,6 +126,23 @@ namespace PolyLibJMATH{
         
     }
 
+    void DrawPoly(Poly p, bool solid, JMATH::Vec3 border_color){
+        if(solid){
+            esat::DrawSetFillColor(p.color.x,p.color.y,p.color.z);
+        }else{
+            esat::DrawSetFillColor(0,0,0,0);
+        }
+        esat::DrawSetStrokeColor(border_color.x, border_color.y, border_color.z);
+        esat::DrawSolidPath(&(p.draw_coords->x), p.t_vertices);
+
+        // DEBUG);
+        // for (int i = 0; i < p.t_vertices; i++){
+        //     esat::DrawSetStrokeColor(0,255,0);
+        //     esat::DrawLine((p.draw_coords+i)->x, (p.draw_coords+i)->y, (p.prev_draw_coords+i)->x, (p.prev_draw_coords+i)->y);
+        // }
+        
+    }
+
     void EmptyPolyMemory(Poly *p){
         free(p->local_coords);
         free(p->draw_coords);

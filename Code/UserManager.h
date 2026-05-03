@@ -53,7 +53,7 @@ namespace UserManager{
 
     User NewUser();
 
-    void FreeUserMemory(User *user);
+    void EmptyUserMemory(User *user);
 
     void SaveUser(User user, FILE *dat_file);
     User LoadUser(FILE *dat_file);

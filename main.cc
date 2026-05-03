@@ -10,6 +10,7 @@
 
 #include "./Libs/CustomLibs/TList.h"
 #include "./Libs/CustomLibs/Utils.h"
+#include "./Libs/GameplayTech/GameplayTech.h"
 
 #include "./Code/GameManager.h"
 #include "./Code/LoginMenu.h"
@@ -20,11 +21,13 @@
 #include "./Code/AdminMenu.h"
 #include "./Code/Gameplay.h"
 
+
 void InitGame(){
     UserManager::Init();
     Players::Init();
     Asteroids::Init();
     Ufo::Init();
+    PowerUps::Init();
     
     LoginMenu::Init();
     RegisterMenu::Init();
@@ -134,6 +137,9 @@ void EmptyMemory(){
     Asteroids::EmptyMemory();
     //printf("Asteroids FINO\n");
     UserManager::EmptyMemory();
+    // printf("UserManager FINO\n");
+    PowerUps::EmptyMemory();
+    // printf("PowerUps FINO\n");
 }
 
 void CloseFiles(){
@@ -181,6 +187,8 @@ int esat::main(int argc, char **argv) {
     
     EmptyMemory();
     // printf("EmptyMemory FINO\n");
+    
+    printf("GAME CLOSED CORRECTLY\n");
     
     esat::WindowDestroy();
 

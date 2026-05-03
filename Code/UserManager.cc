@@ -111,7 +111,7 @@ namespace UserManager{
         return new_user;
     }
 
-    void FreeUserMemory(User *user){
+    void EmptyUserMemory(User *user){
         free(user->username);
         free(user->password);
         free(user->alias);
@@ -268,6 +268,6 @@ namespace UserManager{
     }
 
     void EmptyMemory(){
-        FreeUserMemory(&empty_user);
+        EmptyUserMemory(&empty_user);
     }
 }

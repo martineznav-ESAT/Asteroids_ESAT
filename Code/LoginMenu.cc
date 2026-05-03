@@ -80,7 +80,7 @@ namespace LoginMenu{
             strcpy(error_dialog.text, "USERNAME NOT FOUND");
             error_dialog_ltc = 0;
         }
-        UserManager::FreeUserMemory(&aux_ti.user_info);
+        UserManager::EmptyUserMemory(&aux_ti.user_info);
 
         return is_verified;
     }

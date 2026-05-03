@@ -22,6 +22,7 @@
 namespace Gameplay{
     TList::ListNode *asteroid_ingame = TList::CreateList();
     TList::ListNode *asteroid_particles = TList::CreateList();
+    TList::ListNode *spawned_power_ups = TList::CreateList();
     Ufo::UfoShip ufo;
     PolyLibJMATH::Poly p1_life_figure;
     PolyLibJMATH::Poly p2_life_figure;
@@ -108,6 +109,8 @@ namespace Gameplay{
     //Gameplay UPDATE
 
     void LoadGameplayLevel(bool respawn){
+
+
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
         
@@ -395,13 +398,23 @@ namespace Gameplay{
     void UpdateGameOverScreen(){
         gameover_title_ltc += 1000/Utils::kFPS;
         if(gameover_title_ltc >= gameover_title_lt){
-            Ufo::DestroyUfo(&ufo);
+            ufo.type = Ufo::UfoType::NONE;
+            ufo.spawn_ltc = 10000; 
+            TList::ClearList(&asteroid_ingame);
+            TList::ClearList(&asteroid_particles);
+            TList::ClearList(&spawned_power_ups);
+
             MainMenu::Load();
         }
     }
 
+    void UpdatePowerUps(){
+
+    }
+
     //Whole Gameplay update method
     void Update(){
+        UpdatePowerUps();
 
         //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
@@ -707,6 +720,10 @@ namespace Gameplay{
         }
     }
 
+    void DrawPowerUps(){
+        
+    }
+
     //Whole Gameplay draw method
     void Draw(){
         DrawGameAsteroids();
@@ -723,12 +740,14 @@ namespace Gameplay{
                 }
             }
         }
+        DrawPowerUps();
     }
 
     void EmptyMemory(){
         Ufo::EmptyUfoMemory(&ufo);
         TList::ClearList(&asteroid_ingame);
         TList::ClearList(&asteroid_particles);
+        TList::ClearList(&spawned_power_ups);
         PolyLibJMATH::EmptyPolyMemory(&p1_life_figure);
         PolyLibJMATH::EmptyPolyMemory(&p2_life_figure);
     }

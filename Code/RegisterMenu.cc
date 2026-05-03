@@ -57,7 +57,7 @@ namespace RegisterMenu{
     }
 
     void SaveNewUser(){
-        UserManager::FreeUserMemory(&form_user);
+        UserManager::EmptyUserMemory(&form_user);
         form_user = UserManager::NewUser();
 
         strcpy(form_user.username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
@@ -736,7 +736,7 @@ namespace RegisterMenu{
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);
         }
-        UserManager::FreeUserMemory(&form_user);
+        UserManager::EmptyUserMemory(&form_user);
         free(menu_items);
         free(error_dialog.text);
     }

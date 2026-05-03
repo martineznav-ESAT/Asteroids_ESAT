@@ -40,6 +40,7 @@ namespace PolyLibJMATH{
     void UpdatePoly(Poly *p);
     
     void DrawPoly(Poly p, bool solid);
+    void DrawPoly(Poly p, bool solid, JMATH::Vec3 border_color);
 
     void EmptyPolyMemory(Poly *p);
 }

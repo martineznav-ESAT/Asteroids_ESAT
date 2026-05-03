@@ -4,6 +4,7 @@
 
 #include "../../Code/UserManager.h"
 #include "../GameplayTech/GameplayTech.h"
+#include "../GameplayTech/PowerUps.h"
 
 #ifndef TList_H
 #define TList_H
@@ -15,7 +16,8 @@ namespace TList{
         USER,
         PLAYED_GAME,
         ASTEROID,
-        PARTICLE
+        PARTICLE,
+        POWER_UP
     };
 
     union ListInfo{
@@ -25,6 +27,7 @@ namespace TList{
         PlayedGames::PlayedGame game_info;
         Asteroids::Asteroid asteroid_info;
         Particles::Particle *particle_info;
+        PowerUps::PowerUp powerUp_info;
     };
 
     struct ListNode{

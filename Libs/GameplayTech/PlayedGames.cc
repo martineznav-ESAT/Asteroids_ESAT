@@ -130,7 +130,7 @@ namespace PlayedGames{
             //printf("Saved game.is_finished\n");
         }
 
-        // UserManager::FreeUserMemory(&aux_user_info.user_info);
+        // UserManager::EmptyUserMemory(&aux_user_info.user_info);
     }
 
     void LoadGameUsers(PlayedGame *loaded_game, FILE *dat_file){
@@ -155,7 +155,7 @@ namespace PlayedGames{
             loaded_game->p2_user = &(aux_node->info.user_info);
         }
 
-        UserManager::FreeUserMemory(&aux_info.user_info);
+        UserManager::EmptyUserMemory(&aux_info.user_info);
     }
 
     void LoadGamePlayer(Players::Player *player, FILE *dat_file){

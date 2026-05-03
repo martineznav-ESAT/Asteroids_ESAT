@@ -45,15 +45,21 @@ namespace TList{
             break;
 
             case ListType::ASTEROID:
-                // printf("\n-----REGISTERED GAMES\n");
+                // printf("\n-----ASTEROIDS\n");
                 // PrintList(list);
                 for(aux = list; aux != nullptr && aux->info.asteroid_info.id != info.asteroid_info.id; aux = aux->next);
             break;
 
             case ListType::PARTICLE:
-                // printf("\n-----REGISTERED GAMES\n");
+                // printf("\n-----PARTICLES\n");
                 // PrintList(list);
                 for(aux = list; aux != nullptr && aux->info.particle_info->id != info.particle_info->id; aux = aux->next);
+            break;
+
+            case ListType::POWER_UP:
+                // printf("\n-----POWER_UPS\n");
+                // PrintList(list);
+                for(aux = list; aux != nullptr && aux->info.powerUp_info.id != info.powerUp_info.id; aux = aux->next);
             break;
         }
 
@@ -132,9 +138,11 @@ namespace TList{
             break;
 
             case ListType::PARTICLE:
-                // printf("\n-----REGISTERED GAMES\n");
-                // PrintList(list);
                 printf("|| Particle %d - Type %d ||\n",list->info.particle_info->id, list->info.particle_info->type);
+            break;
+
+            case ListType::POWER_UP:
+                printf("|| Power Up %d - Type %d ||\n",list->info.powerUp_info.id, list->info.powerUp_info.type);
             break;
         }
     }
@@ -214,42 +222,7 @@ namespace TList{
         return aux_act;
     }
 
-    //Deletes a node with the given value
-    void DeleteElement(ListNode **list, ListInfo info){
-        // printf("DeleteFromList\n");
-        
-        ListNode *aux = FindInList(*list, info);
-
-        //Check if exists
-        if(IsEmptyList(&aux)){
-            printf(" >>> Not found in list\n");
-        }else{
-            //If exists, extract it
-            if(aux == *list){
-                aux = ExtractFromList(list);
-            }else{
-                aux = ExtractFromList(&aux);
-            }
-
-            switch (aux->type){
-                case ListType::USER:
-                    UserManager::FreeUserMemory(&(aux->info.user_info));
-                break;
-
-                case ListType::ASTEROID:
-                    PolyLibJMATH::EmptyPolyMemory(&(aux->info.asteroid_info.figure));
-                break;
-
-                case ListType::PARTICLE:
-                    Particles::EmptyParticleMemory(aux->info.particle_info);
-                break;
-            }
-            
-            //Free memory
-            free(aux);
-        }
-    }
-
+    //Deletes the given node from the list
     void DeleteElement(ListNode **list, ListNode *delete_node){
         // printf("DeleteFromList\n");
 
@@ -266,7 +239,12 @@ namespace TList{
 
             switch (delete_node->type){
                 case ListType::USER:
-                    UserManager::FreeUserMemory(&(delete_node->info.user_info));
+                    UserManager::EmptyUserMemory(&(delete_node->info.user_info));
+                break;
+
+                case ListType::PLAYED_GAME:
+                    printf(" EMPTY ON DELETE PLAYED_GAME WIP TO_DO \n");
+                    // PlayedGames::EmptyGameMemory(&(aux->info.game_info));
                 break;
 
                 case ListType::ASTEROID:
@@ -276,11 +254,24 @@ namespace TList{
                 case ListType::PARTICLE:
                     Particles::EmptyParticleMemory((delete_node->info.particle_info));
                 break;
+
+                case ListType::POWER_UP:
+                    PowerUps::EmptyPowerUpMemory(&(delete_node->info.powerUp_info));
+                break;
             }
             
             //Free memory
             free(delete_node);
         }
+    }
+
+    //Deletes a node with the given value
+    void DeleteElement(ListNode **list, ListInfo info){
+        // printf("DeleteFromList\n");
+        
+        ListNode *aux = FindInList(*list, info);
+
+        DeleteElement(list, aux);
     }
 
     void ClearList(ListNode **list){

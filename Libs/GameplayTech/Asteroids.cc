@@ -51,6 +51,7 @@ namespace Asteroids{
         *(*(asteroids_coords+0)+10) = { 0.802f,  0.009f, 1.0f};  // 11
         *(*(asteroids_coords+0)+11) = { 0.311f,  0.868f, 1.0f};  // 12
         
+        // Asteroid 2
         *(asteroids_coords+1) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*AsteroidTypeVertices::A2_TV);
         *(*(asteroids_coords+1)+0) = {-0.063f,  0.019f, 1.0f};   // 1
         *(*(asteroids_coords+1)+1) = {-0.476f, -0.956f, 1.0f};   // 2
@@ -65,6 +66,7 @@ namespace Asteroids{
         *(*(asteroids_coords+1)+10) = {-0.108f, -0.986f, 1.0f};  // 11
 
         
+        // Asteroid 3
         *(asteroids_coords+2) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*AsteroidTypeVertices::A3_TV);
         *(*(asteroids_coords+2)+0) = {-0.940f, -0.539f, 1.0f};   // 1
         *(*(asteroids_coords+2)+1) = {-0.927f,  0.588f, 1.0f};   // 2
@@ -77,6 +79,7 @@ namespace Asteroids{
         *(*(asteroids_coords+2)+8) = { 0.007f, -0.586f, 1.0f};   // 9
         *(*(asteroids_coords+2)+9) = {-0.498f, -0.999f, 1.0f};   // 10
 
+        // Asteroid 4
         *(asteroids_coords+3) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*AsteroidTypeVertices::A4_TV);
         *(*(asteroids_coords+3)+0) = {-0.945f, -0.374f, 1.0f};   // 1
         *(*(asteroids_coords+3)+1) = {-0.940f,  0.148f, 1.0f};   // 2
