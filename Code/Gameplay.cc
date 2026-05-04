@@ -121,7 +121,10 @@ namespace Gameplay{
         ufo.spawn_ltc = 0;
 
         if(respawn){
+            GameManager::game_status.actual_game->p1.dead_ltc = GameManager::game_status.actual_game->p1.dead_lt;
             Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
+            
+            GameManager::game_status.actual_game->p2.dead_ltc = GameManager::game_status.actual_game->p2.dead_lt;
             Players::RespawnPlayer(&(GameManager::game_status.actual_game->p2));
         }
 
@@ -488,38 +491,55 @@ namespace Gameplay{
         LoadGameplayLevel(true);
     }
 
-    void Load(PlayedGames::PlayedGame* loaded_game){
-        GameManager::game_status.level = GameManager::Level::GAMEPLAY;
-        //Loads save_time with system time
-        //TO_DO
-        // printf("%lld\n",loaded_game->save_time);
-        time(&(loaded_game->save_time));
-        // printf("%lld\n",loaded_game->save_time);
-        TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+    bool Load(PlayedGames::PlayedGame loaded_game){
+        bool is_loaded = false;
+        TList::ListInfo aux_game_info = {NULL};
+        aux_game_info.game_info = loaded_game;
+        PlayedGames::PlayedGame *aux_actual_game = nullptr;
 
-        GameManager::game_status.actual_game = loaded_game;
+        //LOADS LOADED GAME AS THE ACTUAL GAME IF FOUND ON GAME_LIST
+        aux_actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);
         
-        //Player Colors
-        if(loaded_game->gamemode == PlayedGames::Gamemode::SP){
-            p1_life_figure.color = loaded_game->p1.ship.figure.color;
-        }else{
-            loaded_game->p1.ship.figure.color = {150,150,255};
-            loaded_game->p2.ship.figure.color = {255,0,0};
+        // If its found in the game list, completes the loading.
+        // is_loaded variable returns feedback to the line calling it in case an
+        // error message is needed
+        if(aux_actual_game){
+            //Loads save_time with system time
+            // printf("%lld\n",aux_actual_game->save_time);
+            time(&(aux_actual_game->save_time));
+            // printf("%lld\n",aux_actual_game->save_time);
+            TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
-            for (int i = 0; i < Players::max_player_shots; i++){
-                (loaded_game->p1.ship.shots+i)->bullet.color = loaded_game->p1.ship.figure.color;
-                (loaded_game->p2.ship.shots+i)->bullet.color = loaded_game->p2.ship.figure.color;
-                if(i < 4){
-                    (loaded_game->p1.ship.death_particles+i)->figure.color = loaded_game->p1.ship.figure.color;
-                    (loaded_game->p2.ship.death_particles+i)->figure.color = loaded_game->p2.ship.figure.color;
+            GameManager::game_status.actual_game = aux_actual_game;
+
+            GameManager::game_status.level = GameManager::Level::GAMEPLAY;
+            
+            //Player Colors
+            if(aux_actual_game->gamemode == PlayedGames::Gamemode::SP){
+                p1_life_figure.color = aux_actual_game->p1.ship.figure.color;
+            }else{
+                aux_actual_game->p1.ship.figure.color = {150,150,255};
+                aux_actual_game->p2.ship.figure.color = {255,0,0};
+
+                for (int i = 0; i < Players::max_player_shots; i++){
+                    (aux_actual_game->p1.ship.shots+i)->bullet.color = aux_actual_game->p1.ship.figure.color;
+                    (aux_actual_game->p2.ship.shots+i)->bullet.color = aux_actual_game->p2.ship.figure.color;
+                    if(i < 4){
+                        (aux_actual_game->p1.ship.death_particles+i)->figure.color = aux_actual_game->p1.ship.figure.color;
+                        (aux_actual_game->p2.ship.death_particles+i)->figure.color = aux_actual_game->p2.ship.figure.color;
+                    }
                 }
+
+                p1_life_figure.color = aux_actual_game->p1.ship.figure.color;
+                p2_life_figure.color = aux_actual_game->p2.ship.figure.color;
             }
 
-            p1_life_figure.color = loaded_game->p1.ship.figure.color;
-            p2_life_figure.color = loaded_game->p2.ship.figure.color;
+            LoadGameplayLevel(true);
+            is_loaded = true;
         }
+        
 
-        LoadGameplayLevel(true);
+        return is_loaded;
     }
 
     //Gameplay DRAW

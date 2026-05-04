@@ -58,7 +58,9 @@ namespace LoadGameMenu{
 
     //ACTIONS
     void PlayAction(void *game){
-        Gameplay::Load((PlayedGames::PlayedGame*)game);
+        if(!Gameplay::Load( *((PlayedGames::PlayedGame*) game) )){
+            printf("GAME NOT FOUND. COULD NOT LOAD\n");
+        }
     }
 
     void DeleteAction(void *game){
@@ -68,7 +70,7 @@ namespace LoadGameMenu{
         
         if(TList::ListLength(loaded_games_page) <= 1){
             //The actual page will be empty. So before deleting the element
-            //nd update/save the deletion, the previous page is loaded 
+            //and update/save the deletion, the previous page is loaded 
             //so loaded_games_page does not miss its pointer
             LoadGamesPage(--page_number);
         }
@@ -259,13 +261,38 @@ namespace LoadGameMenu{
 
     //LOADGAME MENU LOAD
 
+    bool IsLoggedUserUnfinishedGame(TList::ListNode *game_node){
+        return (
+            game_node->info.game_info.p1_user == GameManager::game_status.logged_user && 
+            !game_node->info.game_info.is_finished
+        );
+    }
+
+    void SortUserGamesWhileLoading(){
+        bool is_end_comparisons = false;
+        PlayedGames::PlayedGame aux_game;
+        for(TList::ListNode *user_game = user_games; user_game!=nullptr && !is_end_comparisons; user_game = user_game->next){
+            //If the actual score is lower than the next...
+            if(user_game->next && user_game->info.game_info.save_time < user_game->next->info.game_info.save_time){
+                // Swap places and continues the comparison 
+                // printf("%d >= %d\n",game.game_info.compare_score, highscore->info.game_info.compare_score);
+                aux_game = user_game->next->info.game_info;
+                user_game->next->info.game_info = user_game->info.game_info;
+                user_game->info.game_info = aux_game;
+            }else{
+                //Ends comparison
+                is_end_comparisons = true;
+            }
+        }
+    }
 
     void LoadUserGames(){
         page_number = 0;
         TList::ClearList(&user_games);
         for(TList::ListNode *aux = (TList::ListNode*)PlayedGames::game_list ; aux != nullptr; aux = aux->next){
-            if(aux->info.game_info.p1_user == GameManager::game_status.logged_user){
+            if(IsLoggedUserUnfinishedGame(aux)){
                 TList::InsertList(&user_games, TList::ListType::PLAYED_GAME, aux->info);
+                SortUserGamesWhileLoading();
             }
         }
     }

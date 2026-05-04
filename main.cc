@@ -196,7 +196,11 @@ int esat::main(int argc, char **argv) {
 
         Utils::ControlFps();
     }
-        
+
+    // In case the game is closed with the ESC key while playing, saves the time for the actual game too 
+    if(GameManager::game_status.actual_game && GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+        time(&(GameManager::game_status.actual_game->save_time));
+    }
     TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
     // printf("SaveList FINO\n");
     

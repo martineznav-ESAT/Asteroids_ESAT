@@ -199,10 +199,6 @@ namespace Players{
     }
 
     void PlayerInput(Player* p){
-        if(esat::IsKeyDown('M')){
-            MainMenu::Load();
-        }
-
         if(GameManager::IsPlayer1(p)){
             //PLAYER 1 INPUT CONTROL
 
@@ -329,6 +325,12 @@ namespace Players{
     }
 
     void UpdatePlayer(Players::Player* player){
+        // SAVE AND RETURN TO MAIN MENU INPUT
+        if(esat::IsKeyDown('M')){
+            time(&(GameManager::game_status.actual_game->save_time));
+            MainMenu::Load();
+        }
+
         if(player->is_active){
             if(IsPlayerImmune(*player)){
                 player->inmunity_ltc += 1000/Utils::kFPS;
