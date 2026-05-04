@@ -110,22 +110,33 @@ namespace Gameplay{
 
     //Gameplay UPDATE
 
+    void LoadPlayerOnLoadGameplayLevelRespawn(Players::Player *p){
+        p->dead_ltc = p->dead_lt;
+        for(int i = 0; i < Players::max_player_shots; i++){
+            ((p->ship.shots)+i)->lt_count = ((p->ship.shots)+i)->life_time;
+            ((p->ship.shots)+i)->is_active = false;
+        }
+        for(int i = 0; i < 4; i++){
+            (p->ship.death_particles+i)->lt_count = (p->ship.death_particles+i)->life_time;
+            (p->ship.death_particles+i)->is_active = false;
+        }
+        Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
+    }
+
     void LoadGameplayLevel(bool respawn){
 
 
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
+        //TO_DO RESET UFO;
         
         GenerateAsteroidRound();
         ufo.type = Ufo::UfoType::NONE;
         ufo.spawn_ltc = 0;
 
         if(respawn){
-            GameManager::game_status.actual_game->p1.dead_ltc = GameManager::game_status.actual_game->p1.dead_lt;
-            Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
-            
-            GameManager::game_status.actual_game->p2.dead_ltc = GameManager::game_status.actual_game->p2.dead_lt;
-            Players::RespawnPlayer(&(GameManager::game_status.actual_game->p2));
+            LoadPlayerOnLoadGameplayLevelRespawn(&(GameManager::game_status.actual_game->p1));
+            LoadPlayerOnLoadGameplayLevelRespawn(&(GameManager::game_status.actual_game->p2));
         }
 
         switch(GameManager::game_status.actual_game->gamemode){
@@ -509,6 +520,7 @@ namespace Gameplay{
             time(&(aux_actual_game->save_time));
             // printf("%lld\n",aux_actual_game->save_time);
             TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+
 
             GameManager::game_status.actual_game = aux_actual_game;
 

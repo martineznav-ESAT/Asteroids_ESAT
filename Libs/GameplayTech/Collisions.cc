@@ -262,7 +262,7 @@ namespace Collisions{
         ){
             switch (pu->type){
                 case PowerUps::PU_Type::FRIENDLY_FIRE:
-                    //TO_DO
+                    //TO_DO EFFECT
                 break;
             }
 
