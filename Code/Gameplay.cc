@@ -490,8 +490,15 @@ namespace Gameplay{
 
     void Load(PlayedGames::PlayedGame* loaded_game){
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
-        GameManager::game_status.actual_game = loaded_game;
+        //Loads save_time with system time
+        //TO_DO
+        // printf("%lld\n",loaded_game->save_time);
+        time(&(loaded_game->save_time));
+        // printf("%lld\n",loaded_game->save_time);
+        TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
+        GameManager::game_status.actual_game = loaded_game;
+        
         //Player Colors
         if(loaded_game->gamemode == PlayedGames::Gamemode::SP){
             p1_life_figure.color = loaded_game->p1.ship.figure.color;

@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../../Code/UserManager.h"
 #include "../../Code/GameManager.h"
@@ -34,6 +35,9 @@ namespace PlayedGames{
         new_game.p2 = Players::NewPlayer();
         new_game.compare_score = 0;
         new_game.is_finished = false;
+
+        //Loads save_time with system time
+        time(&new_game.save_time); 
 
         return new_game;
     }
@@ -130,6 +134,7 @@ namespace PlayedGames{
             //printf("Saving game.is_finished\n");
             fwrite(&(game.is_finished), sizeof(bool), 1, dat_file);
             //printf("Saved game.is_finished\n");
+            fwrite(&(game.save_time), sizeof(time_t), 1, dat_file);
         }
 
         // UserManager::EmptyUserMemory(&aux_user_info.user_info);
@@ -187,6 +192,8 @@ namespace PlayedGames{
             fread(&(loaded_game.compare_score), sizeof(int), 1, dat_file);
 
             fread(&(loaded_game.is_finished), sizeof(bool), 1, dat_file);
+
+            fread(&(loaded_game.save_time), sizeof(time_t), 1, dat_file);
         }
         return loaded_game;
     }

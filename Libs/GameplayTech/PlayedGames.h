@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../../Code/UserManager.h"
 
@@ -28,6 +29,7 @@ namespace PlayedGames{
         Players::Player p2;
         int compare_score = 0;
         bool is_finished;
+        time_t save_time;
     };
 
     extern FILE *game_list_dat;

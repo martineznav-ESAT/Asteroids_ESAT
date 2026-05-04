@@ -107,4 +107,15 @@ namespace Utils{
             *(string+i) = character;
         }
     }
+
+    //Transforms a timestamp given of time_t type into a tm structure corrected with the local timezone.
+    tm TimestampToStructTM(time_t timestamp){
+        char *time_buffer = (char*)malloc(26);
+        tm time_struct;
+        _localtime64_s(&time_struct, &timestamp); 
+        asctime_s(time_buffer, 26, &time_struct);
+
+        free(time_buffer);
+        return time_struct;
+    }
 }

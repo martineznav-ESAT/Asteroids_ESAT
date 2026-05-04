@@ -343,6 +343,33 @@ namespace LoadGameMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
+    void DrawGameItemDatetime(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
+        char* time_buffer = (char*) malloc(sizeof(char)*18);
+        tm time_struct = Utils::TimestampToStructTM(game.save_time);
+
+        // printf("DD ..........: %d\n", game.save_time.tm_mday);
+	    // printf("MM ..........: %d\n", game.save_time.tm_mon+1);
+	    // printf("AAAA ........: %d\n", 1900+game.save_time.tm_year); //Years since 1900
+        sprintf(time_buffer, "%02d/%02d/%04d %02d:%02d", 
+            time_struct.tm_mday, 
+            time_struct.tm_mon+1,
+            time_struct.tm_year+1900,
+            time_struct.tm_hour, 
+            time_struct.tm_min
+        );
+
+        UILib::DrawText(
+            JMATH::Vec2Sum(coord, {font_size*strlen("                          "),0}),
+            {
+                {255,255,255,255},
+                time_buffer,
+                font_size*0.5f
+            }
+        );
+
+        free(time_buffer);
+    }
+
     void DrawGameItem(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
         UILib::DrawText(
             coord,
@@ -365,14 +392,7 @@ namespace LoadGameMenu{
             );
         }
 
-        UILib::DrawText(
-            JMATH::Vec2Sum(coord, {font_size*strlen("                          "),0}),
-            {
-                {255,255,255,255},
-                "01/01/2026 12:00",
-                font_size*0.5f
-            }
-        );
+        DrawGameItemDatetime(coord, font_size, game);
 
     }
 

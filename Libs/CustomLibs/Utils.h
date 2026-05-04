@@ -63,6 +63,9 @@ namespace Utils{
     //Fills the string with the character used as parameter up to the introduced limit
     //Limit -1 implies the whole text will be filled
     void StringFillWithChar(char* string, int str_length, char character, int limit);
+
+    //Transforms a timestamp given of time_t type into a tm structure corrected with the local timezone.
+    tm TimestampToStructTM(time_t timestamp);
 }
 
 #endif
