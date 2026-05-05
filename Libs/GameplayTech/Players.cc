@@ -127,8 +127,10 @@ namespace Players{
     }
 
     void ResetPowerUpTagsTime(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
+        printf("ResetPowerUpTagsTime\n");
         for(int i = 0; i < total; i++){
-            (tags+i)->duration_ltc = (tags+i)->duration_lt; 
+            *(tags+i) = PowerUps::NewPowerUpTag((PowerUps::PU_Type)i); 
+            printf("TAG -> %d duration LTC %f\n",i,(tags+i)->duration_ltc);
         }
     }
 
@@ -136,10 +138,10 @@ namespace Players{
         if(player->pu_tags){
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::SP:
+                case PlayedGames::Gamemode::MP_ALT:
                     ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
                 break;
             
-                case PlayedGames::Gamemode::MP_ALT:
                 case PlayedGames::Gamemode::MP_VS:
                 case PlayedGames::Gamemode::MP_COOP:
                     ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
@@ -148,13 +150,13 @@ namespace Players{
         }else{
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::SP:
+                case PlayedGames::Gamemode::MP_ALT:
                     if(PowerUps::PU_Type::TOTAL_PU_SP_TYPES > 0){
                         player->pu_tags = (PowerUps::PowerUpTag*) malloc(sizeof(PowerUps::PowerUpTag) * (int)PowerUps::PU_Type::TOTAL_PU_SP_TYPES);
                         ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
                     }
                 break;
             
-                case PlayedGames::Gamemode::MP_ALT:
                 case PlayedGames::Gamemode::MP_VS:
                 case PlayedGames::Gamemode::MP_COOP:
                     if(PowerUps::PU_Type::TOTAL_PU_MP_TYPES > 0){
@@ -379,10 +381,10 @@ namespace Players{
             printf("UpdatePlayerPowerUps Player %d\n", player->score);
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::SP:
+                case PlayedGames::Gamemode::MP_ALT:
                     UpdatePowerUpTags(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
                 break;
             
-                case PlayedGames::Gamemode::MP_ALT:
                 case PlayedGames::Gamemode::MP_VS:
                 case PlayedGames::Gamemode::MP_COOP:
                     UpdatePowerUpTags(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
