@@ -10,6 +10,8 @@
 
 #include "./Shots.h"
 #include "./Particles.h"
+#include "./PowerUps.h"
+
 
 #ifndef Players_H
 #define Players_H
@@ -40,6 +42,7 @@ namespace Players{
         int inmunity_ltc;
         int round = 0;
         int consecutive_hs = 0;
+        PowerUps::PowerUpTag* pu_tags;
     };
 
     void Init();

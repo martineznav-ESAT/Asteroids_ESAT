@@ -120,7 +120,7 @@ namespace Gameplay{
             (p->ship.death_particles+i)->lt_count = (p->ship.death_particles+i)->life_time;
             (p->ship.death_particles+i)->is_active = false;
         }
-        Players::RespawnPlayer(&(GameManager::game_status.actual_game->p1));
+        Players::RespawnPlayer(p);
     }
 
     void LoadGameplayLevel(bool respawn){
@@ -128,11 +128,16 @@ namespace Gameplay{
 
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
-        //TO_DO RESET UFO;
         
         GenerateAsteroidRound();
         ufo.type = Ufo::UfoType::NONE;
         ufo.spawn_ltc = 0;
+        ufo.shot.lt_count = ufo.shot.lt_count;
+        ufo.shot.is_active = false;
+        for(int i = 0; i < 8; i++){
+            (ufo.death_particles+i)->lt_count = (ufo.death_particles+i)->lt_count;
+            (ufo.death_particles+i)->is_active = false;
+        }
 
         if(respawn){
             LoadPlayerOnLoadGameplayLevelRespawn(&(GameManager::game_status.actual_game->p1));
@@ -433,10 +438,10 @@ namespace Gameplay{
 
     //Whole Gameplay update method
     void Update(){
-        UpdatePowerUps();
 
         //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            UpdatePowerUps();
             UpdatePlayers();
     
             if(GameManager::game_status.actual_game->is_finished){
@@ -521,6 +526,7 @@ namespace Gameplay{
             // printf("%lld\n",aux_actual_game->save_time);
             TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
+            TList::ClearList(&spawned_power_ups);
 
             GameManager::game_status.actual_game = aux_actual_game;
 
@@ -798,9 +804,9 @@ namespace Gameplay{
     void Draw(){
         DrawGameAsteroids();
         DrawGameAsteroidsParticles();
-        DrawPowerUps();
         Ufo::DrawUfo(ufo);
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            DrawPowerUps();
             DrawPlayers(*(GameManager::game_status.actual_game));
             DrawGameUI(*(GameManager::game_status.actual_game));
             //Draw Game over while counter is smaller than the life time

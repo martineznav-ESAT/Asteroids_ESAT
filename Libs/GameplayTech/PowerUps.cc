@@ -143,15 +143,36 @@ namespace PowerUps{
         return new_powerUp;
     }
 
+    PowerUpTag NewPowerUpTag(PU_Type type){
+        PowerUpTag new_powerUpTag;
+
+        new_powerUpTag.type = type;
+
+        switch(type){
+            default:
+                new_powerUpTag.duration_lt = 5000; //5s default
+            break;
+        }
+
+        new_powerUpTag.duration_ltc = new_powerUpTag.duration_lt;
+
+        return new_powerUpTag;
+    }
+
     bool IsPowerUpActive(PowerUp powerUp){
         return powerUp.duration_ltc < powerUp.duration_lt;
+    }
+    
+    bool IsPowerUpActive(PowerUpTag powerUpTag){
+        return powerUpTag.duration_ltc < powerUpTag.duration_lt;
     }
 
     bool IsPowerUpBlinking(PowerUp powerUp){
         return (powerUp.duration_ltc >= powerUp.duration_lt-3000);
     }
 
-    void GeneratePowerUp(Asteroids::Asteroid asteroid){
+    void GeneratePowerUp(void* asteroid){
+        Asteroids::Asteroid aux_asteroid = *((Asteroids::Asteroid*)asteroid);
         TList::ListInfo aux_info = {NULL};
 
         switch (GameManager::game_status.actual_game->gamemode){
@@ -164,7 +185,7 @@ namespace PowerUps{
                 if(PowerUps::PU_Type::TOTAL_PU_SP_TYPES > 0){
                     aux_info.powerUp_info = PowerUps::NewPowerUp(
                         (PowerUps::PU_Type)Utils::GenerateRandomNumber(PowerUps::PU_Type::TOTAL_PU_SP_TYPES), 
-                        asteroid.figure.transform.translation
+                        aux_asteroid.figure.transform.translation
                     );
                     TList::InsertList(&Gameplay::spawned_power_ups, TList::ListType::POWER_UP, aux_info);
                 }
@@ -175,7 +196,7 @@ namespace PowerUps{
                 if(PowerUps::PU_Type::TOTAL_PU_MP_TYPES > 0){
                     aux_info.powerUp_info = PowerUps::NewPowerUp(
                         (PowerUps::PU_Type)Utils::GenerateRandomNumber(PowerUps::PU_Type::TOTAL_PU_MP_TYPES),
-                        asteroid.figure.transform.translation
+                        aux_asteroid.figure.transform.translation
                     );
                     TList::InsertList(&Gameplay::spawned_power_ups, TList::ListType::POWER_UP, aux_info);
                 }
@@ -238,6 +259,16 @@ namespace PowerUps{
                 powerUp->duration_ltc += 1000/Utils::kFPS;
                 // printf("pu_duration_ltc %f\n", powerUp->duration_ltc);
             }
+        }
+    }
+
+    void UpdatePowerUpTag(PowerUpTag *powerUpTag){
+        if(
+            GameManager::game_status.level == GameManager::Level::GAMEPLAY &&
+            IsPowerUpActive(*powerUpTag)
+        ){
+            powerUpTag->duration_ltc += 1000/Utils::kFPS;
+            printf("UpdatePowerUpTag Type %d Duration %f\n",powerUpTag->type, powerUpTag->duration_ltc);
         }
     }
 

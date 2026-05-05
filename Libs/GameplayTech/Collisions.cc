@@ -147,7 +147,7 @@ namespace Collisions{
                 (player->ship.shots+i)->is_active = false;
                 // 2% chance of dropping a powerUp (2/100)
                 if(Utils::GenerateRandomNumber(100)+1 <= 2){
-                    PowerUps::GeneratePowerUp(*asteroid);
+                    PowerUps::GeneratePowerUp((void*)asteroid);
                 }
 
                 Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
@@ -262,7 +262,8 @@ namespace Collisions{
         ){
             switch (pu->type){
                 case PowerUps::PU_Type::FRIENDLY_FIRE:
-                    //TO_DO EFFECT
+                    printf("FRIENDLY FIRE PICKED UP\n");
+                    (player->pu_tags + PowerUps::PU_Type::FRIENDLY_FIRE)->duration_ltc = 0;
                 break;
             }
 

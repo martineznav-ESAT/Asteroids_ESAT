@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "../CustomLibs/PolyLibJMATH.h"
-#include "./Asteroids.h"
+// #include "./Asteroids.h"
 
 #ifndef PowerUps_H
 #define PowerUps_H
@@ -41,16 +41,27 @@ namespace PowerUps{
         float duration_lt, duration_ltc;
     };
 
+    struct PowerUpTag{
+        PU_Type type;
+        float duration_lt, duration_ltc;
+    };
+
     void Init();
 
     PowerUp NewPowerUp(PU_Type type, JMATH::Vec2 position);
-
+    
+    PowerUpTag NewPowerUpTag(PU_Type type);
+    
     bool IsPowerUpActive(PowerUp powerUp);
+    bool IsPowerUpActive(PowerUpTag powerUpTag);
+    
     bool IsPowerUpBlinking(PowerUp powerUp);
 
-    void GeneratePowerUp(Asteroids::Asteroid asteroid);
+    void GeneratePowerUp(void* asteroid);
 
     void UpdatePowerUp(PowerUp *powerUp);
+
+    void UpdatePowerUpTag(PowerUpTag *powerUpTag);
 
     void DrawPowerUp(PowerUp powerUp);
 

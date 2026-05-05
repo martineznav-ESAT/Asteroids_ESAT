@@ -66,6 +66,7 @@ namespace Players{
         new_player.inmunity_ltc = 2000;
         new_player.round = 0;
         new_player.consecutive_hs = 0;
+        new_player.pu_tags = nullptr;
 
         return new_player;
     }
@@ -125,6 +126,46 @@ namespace Players{
         player->score += points;
     }
 
+    void ResetPowerUpTagsTime(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
+        for(int i = 0; i < total; i++){
+            (tags+i)->duration_ltc = (tags+i)->duration_lt; 
+        }
+    }
+
+    void ResetPlayerPowerUps(Player* player){
+        if(player->pu_tags){
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::SP:
+                    ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
+                break;
+            
+                case PlayedGames::Gamemode::MP_ALT:
+                case PlayedGames::Gamemode::MP_VS:
+                case PlayedGames::Gamemode::MP_COOP:
+                    ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
+                break;
+            }
+        }else{
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::SP:
+                    if(PowerUps::PU_Type::TOTAL_PU_SP_TYPES > 0){
+                        player->pu_tags = (PowerUps::PowerUpTag*) malloc(sizeof(PowerUps::PowerUpTag) * (int)PowerUps::PU_Type::TOTAL_PU_SP_TYPES);
+                        ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
+                    }
+                break;
+            
+                case PlayedGames::Gamemode::MP_ALT:
+                case PlayedGames::Gamemode::MP_VS:
+                case PlayedGames::Gamemode::MP_COOP:
+                    if(PowerUps::PU_Type::TOTAL_PU_MP_TYPES > 0){
+                        player->pu_tags = (PowerUps::PowerUpTag*) malloc(sizeof(PowerUps::PowerUpTag) * (int)PowerUps::PU_Type::TOTAL_PU_MP_TYPES);
+                        ResetPowerUpTagsTime(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
+                    }
+                break;
+            }
+        }
+    }
+
     void RespawnPlayer(Player* player){
         player->inmunity_ltc = 0;
 
@@ -151,6 +192,9 @@ namespace Players{
         player->ship.max_speed = 7.0f;
         player->ship.accel = 15.0f;
         player->ship.decel = 0.99f;
+
+        ResetPlayerPowerUps(player);
+
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));
     }
 
@@ -324,7 +368,31 @@ namespace Players{
         ship->fwd = {cosf(radianRotation), sinf(radianRotation)};
     }
 
-    void UpdatePlayer(Players::Player* player){
+    void UpdatePowerUpTags(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
+        for(int i = 0; i < total; i++){
+            PowerUps::UpdatePowerUpTag(tags+i);
+        }
+    }
+
+    void UpdatePlayerPowerUps(Player* player){
+        if(player->pu_tags){
+            printf("UpdatePlayerPowerUps Player %d\n", player->score);
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::SP:
+                    UpdatePowerUpTags(PowerUps::PU_Type::TOTAL_PU_SP_TYPES,player->pu_tags);
+                break;
+            
+                case PlayedGames::Gamemode::MP_ALT:
+                case PlayedGames::Gamemode::MP_VS:
+                case PlayedGames::Gamemode::MP_COOP:
+                    UpdatePowerUpTags(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
+                break;
+            }
+            printf("END POWERUP UPDATE %d\n\n\n", player->score);
+        }
+    }
+
+    void UpdatePlayer(Player* player){
         // SAVE AND RETURN TO MAIN MENU INPUT
         if(esat::IsKeyDown('M')){
             time(&(GameManager::game_status.actual_game->save_time));
@@ -332,6 +400,8 @@ namespace Players{
         }
 
         if(player->is_active){
+            
+
             if(IsPlayerImmune(*player)){
                 player->inmunity_ltc += 1000/Utils::kFPS;
             }
@@ -344,6 +414,8 @@ namespace Players{
             PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);
             Collisions::BorderExitRellocation(&(player->ship.figure));
             PolyLibJMATH::UpdatePoly(&(player->ship.figure));
+
+            UpdatePlayerPowerUps(player);
         }else{
             
             switch (GameManager::game_status.actual_game->gamemode){
@@ -413,10 +485,19 @@ namespace Players{
         }
     }
 
+    bool IsDrawPlayerSolid(Player player){
+        return (
+            PowerUps::IsPowerUpActive(*(player.pu_tags+PowerUps::PU_Type::FRIENDLY_FIRE))
+        );
+    }
+
     void DrawPlayer(Player player){
         if(player.is_active){
             if(!IsPlayerImmune(player) || (player.inmunity_ltc % 500) < 250){
-                PolyLibJMATH::DrawPoly(player.ship.figure,false);
+                PolyLibJMATH::DrawPoly(
+                    player.ship.figure,
+                    IsDrawPlayerSolid(player)
+                );
                 DrawPlayerPropeller(player);
             }
         }
@@ -438,6 +519,8 @@ namespace Players{
                 Particles::EmptyParticleMemory((player->ship.death_particles+i));
             }
         }
+
+        free(player->pu_tags);
         PolyLibJMATH::EmptyPolyMemory(&(player->ship.figure));
     }
     
