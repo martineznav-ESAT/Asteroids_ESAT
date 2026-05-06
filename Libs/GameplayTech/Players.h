@@ -36,6 +36,7 @@ namespace Players{
         bool is_moving;
         int lifes;
         int score;
+        int life_up_score;
         int dead_lt;
         int dead_ltc;
         int inmunity_lt;
@@ -52,6 +53,8 @@ namespace Players{
     Player NewPlayer();
 
     void AddPoints(Player* player, int points);
+    
+    void RemovePoints(Player* player, int points);
 
     void RespawnPlayer(Player* player);
 

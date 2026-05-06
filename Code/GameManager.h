@@ -45,6 +45,8 @@ namespace GameManager{
 
     bool IsPlayer1(Players::Player *player);
 
+    Players::Player* GetOtherPlayer(Players::Player *player);
+
     void DebugUpdate();
 }
 

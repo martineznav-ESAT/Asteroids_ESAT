@@ -98,6 +98,10 @@ namespace PlayedGames{
         //printf("Saving player.score\n");
         fwrite(&(player.score), sizeof(int), 1, dat_file);
         //printf("Saved player.score\n");
+
+        //printf("Saving player.score\n");
+        fwrite(&(player.life_up_score), sizeof(int), 1, dat_file);
+        //printf("Saved player.score\n");
         
         //printf("Saving player.score\n");
         fwrite(&(player.round), sizeof(int), 1, dat_file);
@@ -168,6 +172,7 @@ namespace PlayedGames{
     void LoadGamePlayer(Players::Player *player, FILE *dat_file){
         fread(&(player->lifes), sizeof(int), 1, dat_file);
         fread(&(player->score), sizeof(int), 1, dat_file);
+        fread(&(player->life_up_score), sizeof(int), 1, dat_file);
         fread(&(player->round), sizeof(int), 1, dat_file);
     }
 

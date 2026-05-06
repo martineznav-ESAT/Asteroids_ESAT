@@ -275,6 +275,24 @@ namespace Collisions{
         return collision;
     }
 
+    bool PlayerShotsPlayerCollision(Players::Player *player_shooting, Players::Player *other_player){
+        bool collision = false;
+        // printf("CollisionPlayerShotsPlayer\n");
+        if(!Players::IsPlayerDead(*other_player) && !IsPlayerImmune(*other_player)){
+            for (int i = 0; i < Players::max_player_shots && !collision; i++){
+                if((player_shooting->ship.shots+i)->is_active && CollisionPolyPoly((player_shooting->ship.shots+i)->bullet, other_player->ship.figure)){
+                    RemovePoints(other_player, 1000);
+                    other_player->lifes++;
+                    Players::KillPlayer(other_player);
+                    (player_shooting->ship.shots+i)->is_active = false;
+                    collision = true;
+                }
+            }
+        }
+        
+        return collision;
+    }
+
 
     //DEBUG COLLISIONS
     //CREATED FOR TESTING PURPOSES

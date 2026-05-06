@@ -60,6 +60,7 @@ namespace Players{
         new_player.is_moving = false;
         new_player.lifes = 4;
         new_player.score = 0;
+        new_player.life_up_score = 0;
         new_player.dead_lt = 3000;
         new_player.dead_ltc = 3000;
         new_player.inmunity_lt = 2000;
@@ -116,21 +117,31 @@ namespace Players{
     }
 
     void AddPoints(Player* player, int points){
-        //Integer division
-        //54.000/10000 = 5 -> 50.000/10000 = 5 -> 59.999/10000 = 5 -> 5-5 = 0 extra lifes 
-        //59.999/10000 = 5 < 60.000/10000 = 6 -> 6-5 = 1 extra life
-        //59.999/10000 = 5 < 80.000/10000 = 7 -> 8-5 = 3 extra lifes
-        int prev_aux = player->score / 10000;
-        int new_aux = (player->score + points)/10000;
-        player->lifes += new_aux-prev_aux;
+        player->life_up_score += points;
+        // printf("LIFE UP SCORE %d\n", player->life_up_score/10000);
+
+        player->lifes += player->life_up_score/10000;
+        player->life_up_score %= 10000;
+
         player->score += points;
+        if(player->score > 999999){
+            player->score = 999999;
+        }
+        
+    }
+
+    void RemovePoints(Player* player, int points){
+        player->score -= points;
+        if(player->score < 0){
+            player->score = 0;
+        }
     }
 
     void ResetPowerUpTagsTime(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
-        printf("ResetPowerUpTagsTime\n");
+        // printf("ResetPowerUpTagsTime\n");
         for(int i = 0; i < total; i++){
             *(tags+i) = PowerUps::NewPowerUpTag((PowerUps::PU_Type)i); 
-            printf("TAG -> %d duration LTC %f\n",i,(tags+i)->duration_ltc);
+            // printf("TAG -> %d duration LTC %f\n",i,(tags+i)->duration_ltc);
         }
     }
 
@@ -269,7 +280,7 @@ namespace Players{
             if(!IsPlayerImmune(*p) ){
                 if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) < 3){
                     // printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%50) <= 25){
+                    if(((int)esat::Time()%100) <= 25){
                         // printf("esat::Time\n");
                         ShipShoot(&(p->ship));
                         // printf("ShipShoot\n");
@@ -322,18 +333,18 @@ namespace Players{
 
             if(!IsPlayerImmune(*p) ){
                 if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) < 3){
-                    printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%50) <= 25){
-                        printf("esat::Time\n");
+                    // printf("IsSpecialKeyPressed\n");
+                    if(((int)esat::Time()%100) <= 25){
+                        // printf("esat::Time\n");
                         ShipShoot(&(p->ship));
-                        printf("ShipShoot\n");
+                        // printf("ShipShoot\n");
                     }
                 }
 
                 if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) >= 3){
-                    printf("IsSpecialKeyDown\n");
+                    // printf("IsSpecialKeyDown\n");
                     ShipShoot(&(p->ship));
-                    printf("ShipShoot\n");
+                    // printf("ShipShoot\n");
                 }
             }
 
@@ -378,7 +389,7 @@ namespace Players{
 
     void UpdatePlayerPowerUps(Player* player){
         if(player->pu_tags){
-            printf("UpdatePlayerPowerUps Player %d\n", player->score);
+            // printf("UpdatePlayerPowerUps Player %d\n", player->score);
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::SP:
                 case PlayedGames::Gamemode::MP_ALT:
@@ -390,7 +401,26 @@ namespace Players{
                     UpdatePowerUpTags(PowerUps::PU_Type::TOTAL_PU_MP_TYPES,player->pu_tags);
                 break;
             }
-            printf("END POWERUP UPDATE %d\n\n\n", player->score);
+            // printf("END POWERUP UPDATE %d\n\n\n", player->score);
+        }
+    }
+    
+
+    void PlayerCollisions(Player* player){
+        if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+
+            //Ufo/Player Collisions in diferent gamemodes
+            //Ufo/Asteroids collisions is managed by Gameplay method "UpdateGameAsteroids()"
+            switch (GameManager::game_status.actual_game->gamemode){
+                case PlayedGames::Gamemode::MP_COOP:
+                case PlayedGames::Gamemode::MP_VS:
+                    //FRIENDLY_FIRE COLLISIONS IF POWER UP ACTIVE
+                    if(PowerUps::IsPowerUpActive(*(player->pu_tags+PowerUps::PU_Type::FRIENDLY_FIRE))){
+                        // printf("ACTUALIZANDO COLISIONES DISPAROS POWERUP FRIENDLY_FIRE\n");
+                        Collisions::PlayerShotsPlayerCollision(player, GameManager::GetOtherPlayer(player));
+                    }
+                break;
+            }
         }
     }
 
@@ -402,11 +432,13 @@ namespace Players{
         }
 
         if(player->is_active){
-            
-
             if(IsPlayerImmune(*player)){
                 player->inmunity_ltc += 1000/Utils::kFPS;
             }
+
+            UpdatePlayerPowerUps(player);
+            PlayerCollisions(player);
+
             UpdateShipFwd(&(player->ship));
 
             PlayerInput(player);
@@ -417,7 +449,6 @@ namespace Players{
             Collisions::BorderExitRellocation(&(player->ship.figure));
             PolyLibJMATH::UpdatePoly(&(player->ship.figure));
 
-            UpdatePlayerPowerUps(player);
         }else{
             
             switch (GameManager::game_status.actual_game->gamemode){
@@ -488,23 +519,45 @@ namespace Players{
     }
 
     bool IsDrawPlayerSolid(Player player){
-        return (
-            PowerUps::IsPowerUpActive(*(player.pu_tags+PowerUps::PU_Type::FRIENDLY_FIRE))
-        );
+        bool is_draw_solid = false;
+        switch (GameManager::game_status.actual_game->gamemode){
+            case PlayedGames::Gamemode::SP:
+            case PlayedGames::Gamemode::MP_ALT:
+                //Current mechanics do not affect solid draw on SinglePlayer-like gameplay mechanics
+                //MP_ALT is essentialy 2 different singleplayer games played with alternation on dead
+                //which means the mechanics are the same as single player
+
+                //Switch structure remains in case of future updates
+
+            break;
+            case PlayedGames::Gamemode::MP_COOP:
+            case PlayedGames::Gamemode::MP_VS:
+                is_draw_solid = PowerUps::IsPowerUpActive(*(player.pu_tags+PowerUps::PU_Type::FRIENDLY_FIRE));
+            break;
+        }
+        return is_draw_solid;
     }
 
     void DrawPlayer(Player player){
+        // printf("DrawPlayer INIT\n");
         if(player.is_active){
+            // printf("player.is_active\n");
             if(!IsPlayerImmune(player) || (player.inmunity_ltc % 500) < 250){
+                // printf("!IsPlayerImmune\n");
                 PolyLibJMATH::DrawPoly(
                     player.ship.figure,
                     IsDrawPlayerSolid(player)
                 );
+                // printf("DrawPoly END\n");
                 DrawPlayerPropeller(player);
+                // printf("DrawPlayerPropeller END\n");
             }
         }
         DrawPlayerShots(player);
+        // printf("DrawPlayerShots END\n");
         DrawPlayerParticles(player);
+        // printf("DrawPlayerParticles END\n");
+        // printf("DrawPlayer END\n");
     }
 
 

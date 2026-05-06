@@ -57,6 +57,17 @@ namespace GameManager{
         return &(GameManager::game_status.actual_game->p1) == player;
     }
 
+    Players::Player* GetOtherPlayer(Players::Player *player){
+        Players::Player* return_player;
+        if(IsPlayer1(player)){
+            return_player = &(game_status.actual_game->p2);
+        }else{
+            return_player = &(game_status.actual_game->p1);
+        }
+
+        return return_player;
+    }
+
     //Debug Level switch by F1-F7 keyboard input
     void DebugUpdate(){
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){

@@ -43,8 +43,11 @@ namespace Collisions{
     bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player);
 
     bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player);
+
+    bool PlayerShotsPlayerCollision(Players::Player *player_shooting, Players::Player *other_player);
+
     
-        //DEBUG COLLISIONS
+    //DEBUG COLLISIONS
     //CREATED FOR TESTING PURPOSES
     bool CollisionPolyOnRClick(PolyLibJMATH::Poly p1);
 

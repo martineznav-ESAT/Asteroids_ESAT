@@ -268,7 +268,7 @@ namespace PowerUps{
             IsPowerUpActive(*powerUpTag)
         ){
             powerUpTag->duration_ltc += 1000/Utils::kFPS;
-            printf("UpdatePowerUpTag Type %d Duration %f\n",powerUpTag->type, powerUpTag->duration_ltc);
+            // printf("UpdatePowerUpTag Type %d Duration %f\n",powerUpTag->type, powerUpTag->duration_ltc);
         }
     }
 

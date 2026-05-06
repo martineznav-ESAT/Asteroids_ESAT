@@ -120,12 +120,11 @@ namespace Gameplay{
             (p->ship.death_particles+i)->lt_count = (p->ship.death_particles+i)->life_time;
             (p->ship.death_particles+i)->is_active = false;
         }
+
         Players::RespawnPlayer(p);
     }
 
     void LoadGameplayLevel(bool respawn){
-
-
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
         
@@ -143,6 +142,7 @@ namespace Gameplay{
             LoadPlayerOnLoadGameplayLevelRespawn(&(GameManager::game_status.actual_game->p1));
             LoadPlayerOnLoadGameplayLevelRespawn(&(GameManager::game_status.actual_game->p2));
         }
+
 
         switch(GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::MP_COOP:
@@ -459,7 +459,6 @@ namespace Gameplay{
 
     //Gameplay LOAD
     
-
     //Loads the Gameplay
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr){
         TList::ListInfo aux_game_info = {NULL};
@@ -807,7 +806,9 @@ namespace Gameplay{
         Ufo::DrawUfo(ufo);
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             DrawPowerUps();
+            // printf("DrawPowerUps\n");
             DrawPlayers(*(GameManager::game_status.actual_game));
+            printf("DrawPlayers\n");
             DrawGameUI(*(GameManager::game_status.actual_game));
             //Draw Game over while counter is smaller than the life time
             if(gameover_title_ltc < gameover_title_lt){

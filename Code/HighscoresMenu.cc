@@ -343,9 +343,7 @@ namespace HighscoresMenu{
         JMATH::Vec2 margin_v = {0,65};
 
         for(TList::ListNode *p = (TList::ListNode*) top_games; p!=nullptr; p = p->next, i++){
-            if(p->info.game_info.game_id >= 0){
-                DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, p->info.game_info);
-            }
+            DrawHighScore(JMATH::Vec2Sum(base_coord,JMATH::Vec2Scale(margin_v,i)), list_font_size, p->info.game_info);
         }
     }
 
