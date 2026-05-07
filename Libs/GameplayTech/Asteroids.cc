@@ -173,6 +173,12 @@ namespace Asteroids{
         TList::ListNode** particle_list_aux = (TList::ListNode**) particle_list;
         // printf("LIST 2 %p\n",*asteroid_list_aux);
         TList::ListInfo aux_asteroid_info = {NULL};
+
+        // 2% chance of dropping a powerUp (3/100)
+        if(Utils::GenerateRandomNumber(100)+1 <= 3){
+            PowerUps::GeneratePowerUp((void*)asteroid);
+        }
+
         aux_asteroid_info.asteroid_info = *asteroid; 
         // printf("ASTEROID TO DELETE ID %d\n",aux_asteroid_info.asteroid_info.id);
 

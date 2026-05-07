@@ -44,7 +44,7 @@ namespace Collisions{
 
     bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player);
 
-    bool PlayerShotsPlayerCollision(Players::Player *player_shooting, Players::Player *other_player);
+    bool CollisionPlayerShotsPlayer(Players::Player *player_shooting, Players::Player *other_player);
 
     
     //DEBUG COLLISIONS

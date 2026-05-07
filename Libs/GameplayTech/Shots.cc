@@ -44,6 +44,11 @@ namespace Shots{
         PolyLibJMATH::SaveDrawCoords(&(shot->bullet));
     }
 
+    void DestroyShot(Shot *shot){
+        shot->is_active = false;
+        shot->lt_count = shot->life_time;
+    }
+
     void UpdateShot(Shot *shot){
         if(shot->is_active){
             PolyLibJMATH::MovePoly(&(shot->bullet), (shot->speed_v));

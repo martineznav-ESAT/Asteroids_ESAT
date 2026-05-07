@@ -216,8 +216,8 @@ namespace PlayedGames{
 
         *(gamemode_texts+Gamemode::SP) = "SINGLE PLAYER";
         *(gamemode_texts+Gamemode::MP_ALT) = "MP ALTERNATE";
-        *(gamemode_texts+Gamemode::MP_COOP) = "MP VERSUS";
-        *(gamemode_texts+Gamemode::MP_VS) = "MP COOPERATIVE";
+        *(gamemode_texts+Gamemode::MP_VS) = "MP VERSUS";
+        *(gamemode_texts+Gamemode::MP_COOP) = "MP COOPERATIVE";
 
         LoadGameList();
     }

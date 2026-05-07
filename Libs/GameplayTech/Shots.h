@@ -20,6 +20,8 @@ namespace Shots{
 
     void FireShot(Shot *shot, JMATH::Vec2 spawn_point, float rotation, JMATH::Vec3 direction_v, float speed);
 
+    void DestroyShot(Shot *shot);
+
     void UpdateShot(Shot *shot);
 
     void DrawShot(Shot *shot);

@@ -144,11 +144,7 @@ namespace Collisions{
                 // printf("LIST %p\n",*asteroid_list);
                 // printf("Asteroid %d\n",asteroid->id);
                 // printf("Bullet %d\n\n",i);
-                (player->ship.shots+i)->is_active = false;
-                // 2% chance of dropping a powerUp (2/100)
-                if(Utils::GenerateRandomNumber(100)+1 <= 2){
-                    PowerUps::GeneratePowerUp((void*)asteroid);
-                }
+                Shots::DestroyShot((player->ship.shots+i));
 
                 Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
                 collision = true;
@@ -160,7 +156,7 @@ namespace Collisions{
 
     bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionAsteroidPlayer\n");
         if(!Players::IsPlayerDead(*player) && !Players::IsPlayerImmune(*player) && CollisionPolyPoly(player->ship.figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, player);
             Players::KillPlayer(player);
@@ -172,10 +168,11 @@ namespace Collisions{
 
     bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionAsteroidUfoShot\n");
         if(ufo->shot.is_active && CollisionPolyPoly(ufo->shot.bullet, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
-            ufo->shot.is_active = false;
+            Shots::DestroyShot(&(ufo->shot));
+            
             collision = true;
         }
         
@@ -184,7 +181,7 @@ namespace Collisions{
 
     bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionAsteroidUfo\n");
         if(ufo->type != Ufo::UfoType::NONE && CollisionPolyPoly(ufo->figure, asteroid->figure)){
             Asteroids::DestroyAsteroid((void**)asteroid_list, (void**)particle_list, asteroid, nullptr);
             Ufo::DestroyUfo(ufo);
@@ -196,7 +193,7 @@ namespace Collisions{
 
     bool CollisionUfoPlayer(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionUfoPlayer\n");
         if(ufo->type != Ufo::UfoType::NONE && 
             !Players::IsPlayerDead(*player) && 
             !Players::IsPlayerImmune(*player) && 
@@ -211,7 +208,7 @@ namespace Collisions{
 
     bool CollisionUfoPlayerShots(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionUfoPlayerShots\n");
         if(ufo->type != Ufo::UfoType::NONE){
             for (int i = 0; i < Players::max_player_shots && !collision; i++){
                 if((player->ship.shots+i)->is_active && CollisionPolyPoly((player->ship.shots+i)->bullet, ufo->figure)){
@@ -225,7 +222,8 @@ namespace Collisions{
                     }
 
                     Ufo::DestroyUfo(ufo);
-                    (player->ship.shots+i)->is_active = false;
+                    Shots::DestroyShot((player->ship.shots+i));
+
                     collision = true;
                 }
             }
@@ -236,13 +234,14 @@ namespace Collisions{
 
     bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionUfoShotPlayer\n");
         if(ufo->shot.is_active && 
             !Players::IsPlayerDead(*player) && 
             !Players::IsPlayerImmune(*player) && 
             CollisionPolyPoly(ufo->shot.bullet, player->ship.figure)
         ){
-            ufo->shot.is_active = false;
+            Shots::DestroyShot(&(ufo->shot));
+
             Players::KillPlayer(player);
             collision = true;
         }
@@ -254,7 +253,7 @@ namespace Collisions{
     bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player){
         TList::ListInfo aux_info = {NULL};
         bool collision = false;
-        // printf("CollisionAsteroidPlayerShots\n");
+        // printf("CollisionPowerUpPlayer\n");
         if(PowerUps::IsPowerUpActive(*pu) && 
             !Players::IsPlayerDead(*player) && 
             !Players::IsPlayerImmune(*player) && 
@@ -262,7 +261,7 @@ namespace Collisions{
         ){
             switch (pu->type){
                 case PowerUps::PU_Type::FRIENDLY_FIRE:
-                    printf("FRIENDLY FIRE PICKED UP\n");
+                    // printf("FRIENDLY FIRE PICKED UP\n");
                     (player->pu_tags + PowerUps::PU_Type::FRIENDLY_FIRE)->duration_ltc = 0;
                 break;
             }
@@ -275,7 +274,7 @@ namespace Collisions{
         return collision;
     }
 
-    bool PlayerShotsPlayerCollision(Players::Player *player_shooting, Players::Player *other_player){
+    bool CollisionPlayerShotsPlayer(Players::Player *player_shooting, Players::Player *other_player){
         bool collision = false;
         // printf("CollisionPlayerShotsPlayer\n");
         if(!Players::IsPlayerDead(*other_player) && !IsPlayerImmune(*other_player)){
@@ -284,7 +283,8 @@ namespace Collisions{
                     RemovePoints(other_player, 1000);
                     other_player->lifes++;
                     Players::KillPlayer(other_player);
-                    (player_shooting->ship.shots+i)->is_active = false;
+                    Shots::DestroyShot((player_shooting->ship.shots+i));
+
                     collision = true;
                 }
             }
@@ -293,10 +293,4 @@ namespace Collisions{
         return collision;
     }
 
-
-    //DEBUG COLLISIONS
-    //CREATED FOR TESTING PURPOSES
-    bool CollisionPolyOnRClick(PolyLibJMATH::Poly p1){
-        return esat::MouseButtonDown(1);
-    }
 }

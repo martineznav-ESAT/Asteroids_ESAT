@@ -417,7 +417,7 @@ namespace Players{
                     //FRIENDLY_FIRE COLLISIONS IF POWER UP ACTIVE
                     if(PowerUps::IsPowerUpActive(*(player->pu_tags+PowerUps::PU_Type::FRIENDLY_FIRE))){
                         // printf("ACTUALIZANDO COLISIONES DISPAROS POWERUP FRIENDLY_FIRE\n");
-                        Collisions::PlayerShotsPlayerCollision(player, GameManager::GetOtherPlayer(player));
+                        Collisions::CollisionPlayerShotsPlayer(player, GameManager::GetOtherPlayer(player));
                     }
                 break;
             }

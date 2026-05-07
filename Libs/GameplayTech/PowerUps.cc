@@ -171,7 +171,13 @@ namespace PowerUps{
         return (powerUp.duration_ltc >= powerUp.duration_lt-3000);
     }
 
+
     void GeneratePowerUp(void* asteroid){
+        //At the moment, only when an asteroid is destroyed, power ups are generated.
+        //But when incluiding Asteroids to the .h file there's an error, so is passed as void.
+        //For the future, in case powerUps cane spawn with different conditions, void* could be useful
+        //with a switch and an extra type parameter.
+        
         Asteroids::Asteroid aux_asteroid = *((Asteroids::Asteroid*)asteroid);
         TList::ListInfo aux_info = {NULL};
 
