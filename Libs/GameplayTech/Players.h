@@ -64,6 +64,8 @@ namespace Players{
 
     bool IsPlayerImmune(Players::Player player);
 
+    int GetPlayerActiveShots(Player *p);
+    
     void UpdatePlayer(Players::Player* player);
     
     void DrawPlayerShots(Players::Player player);

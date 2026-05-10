@@ -102,17 +102,40 @@ namespace Players{
         );
     }
 
-    void ShipShoot(Ship *ship){
+    void ShipShoot(Player *player){
         int i;
         bool exists_unshot = false;
 
         for(i = 0; i < max_player_shots && !exists_unshot; i++){
-            exists_unshot = !(ship->shots+i)->is_active;
+            exists_unshot = !(player->ship.shots+i)->is_active;
         }
 
         if(exists_unshot){
             i--;
-            Shots::FireShot((ship->shots)+i, GetShipHeadPoint(ship), ship->figure.transform.rotation, ship->fwd, ship->max_speed*3);
+            Shots::FireShot((player->ship.shots+i), GetShipHeadPoint(&(player->ship)), player->ship.figure.transform.rotation, player->ship.fwd, player->ship.max_speed*3);
+        }
+    }
+
+    void ShipShotgunShoot(Player *player){
+        JMATH::Vec3 aim_v;
+        // printf("ShipShotgunShoot\n");
+        if(Players::GetPlayerActiveShots(player) <= 0){
+            for(int i = 0, j = -16; i < Players::max_player_shots; i++, j+=8){
+                aim_v = JMATH::Mat3MultVec3(
+                    JMATH::Mat3Rotate(JMATH::DegreesToRadians(j)), 
+                    player->ship.fwd
+                );
+
+                Shots::FireShot(
+                    (player->ship.shots+i), 
+                    GetShipHeadPoint(&(player->ship)), 
+                    player->ship.figure.transform.rotation, 
+                    aim_v, 
+                    player->ship.max_speed*3
+                );
+
+                (player->ship.shots+i)->lt_count = (player->ship.shots+i)->life_time*0.6f;
+            }
         }
     }
 
@@ -278,18 +301,24 @@ namespace Players{
             }
 
             if(!IsPlayerImmune(*p) ){
-                if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) < 3){
-                    // printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%100) <= 25){
-                        // printf("esat::Time\n");
-                        ShipShoot(&(p->ship));
-                        // printf("ShipShoot\n");
+                if(PowerUps::IsPowerUpActive(*(p->pu_tags+PowerUps::PU_Type::SHOTGUN))){
+                    if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space)){
+                        ShipShotgunShoot(p);
                     }
                 }else{
-                    if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) >= 3){
-                        // printf("IsSpecialKeyDown\n");
-                        ShipShoot(&(p->ship));
-                        // printf("ShipShoot\n");
+                    if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) < 3){
+                        // printf("IsSpecialKeyPressed\n");
+                        if(((int)esat::Time()%100) <= 25){
+                            // printf("esat::Time\n");
+                            ShipShoot(p);
+                            // printf("ShipShoot\n");
+                        }
+                    }else{
+                        if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Space) && GetPlayerActiveShots(p) >= 3){
+                            // printf("IsSpecialKeyDown\n");
+                            ShipShoot(p);
+                            // printf("ShipShoot\n");
+                        }
                     }
                 }
             }
@@ -332,19 +361,25 @@ namespace Players{
             }
 
             if(!IsPlayerImmune(*p) ){
-                if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) < 3){
-                    // printf("IsSpecialKeyPressed\n");
-                    if(((int)esat::Time()%100) <= 25){
-                        // printf("esat::Time\n");
-                        ShipShoot(&(p->ship));
-                        // printf("ShipShoot\n");
+                if(PowerUps::IsPowerUpActive(*(p->pu_tags+PowerUps::PU_Type::SHOTGUN))){
+                    if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter)){
+                        ShipShotgunShoot(p);
                     }
-                }
-
-                if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) >= 3){
-                    // printf("IsSpecialKeyDown\n");
-                    ShipShoot(&(p->ship));
-                    // printf("ShipShoot\n");
+                }else{
+                    if(esat::IsSpecialKeyPressed(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) < 3){
+                        // printf("IsSpecialKeyPressed\n");
+                        if(((int)esat::Time()%100) <= 25){
+                            // printf("esat::Time\n");
+                            ShipShoot(p);
+                            // printf("ShipShoot\n");
+                        }
+                    }else{
+                        if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Enter) && GetPlayerActiveShots(p) >= 3){
+                            // printf("IsSpecialKeyDown\n");
+                            ShipShoot(p);
+                            // printf("ShipShoot\n");
+                        }
+                    }
                 }
             }
 

@@ -48,18 +48,27 @@ namespace PowerUps{
 
     void BuildShotgunIcons(PowerUp *p_up){
         JMATH::Mat3 tr_aux;
+        float j = -0.5f;
         p_up->icon_figures = (PolyLibJMATH::Poly*) malloc(sizeof(PolyLibJMATH::Poly)*ShotgunIcons::SG_TOTAL_ICONS);
 
-        for(int i = 0; i < ShotgunIcons::SG_TOTAL_ICONS; i++){
+        for(int i = 0 , angle = -35; i < ShotgunIcons::SG_TOTAL_ICONS; i++, j += 0.5f, angle+=35){
             PolyLibJMATH::InitPoly(
                 (p_up->icon_figures+i),
                 2,
                 p_up->base_figure.transform.scale,
-                p_up->base_figure.transform.rotation+(i*10),
+                0,
                 p_up->base_figure.transform.translation,
                 p_up->base_figure.color,
-                {0,0}
+                {-1.0f, 0.0f}
             );
+
+            tr_aux = JMATH::Mat3Identity();
+            tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Translate(1.5f,j),tr_aux);
+            tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(angle)), tr_aux);
+            for(int v = 0; v < 2; v++){
+                *(((p_up->icon_figures+i)->local_coords)+v) = JMATH::Mat3MultVec3(tr_aux, {(((p_up->icon_figures+i)->local_coords)+v)->x, (((p_up->icon_figures+i)->local_coords)+v)->y, 1.0f});
+                // printf("Coord Update local_coords ICON %d: %f - %f\n",i, (*((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords+i)).x, (*((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords+i)).y);
+            }
         }
     }
 
@@ -129,7 +138,7 @@ namespace PowerUps{
         switch (p_up->type){
             case SHOTGUN:
                 for (int i = 0; i < ShotgunIcons::SG_TOTAL_ICONS; i++){
-                    (p_up->icon_figures+i)->transform.scale = JMATH::Vec2Scale(p_up->base_figure.transform.scale,0.5f);
+                    (p_up->icon_figures+i)->transform.scale = JMATH::Vec2Scale(p_up->base_figure.transform.scale,0.25f);
                     (p_up->icon_figures+i)->transform.rotation = p_up->base_figure.transform.rotation;
                     (p_up->icon_figures+i)->transform.translation = p_up->base_figure.transform.translation;
                     PolyLibJMATH::UpdatePoly((p_up->icon_figures+i));
@@ -168,6 +177,7 @@ namespace PowerUps{
         new_powerUp.duration_ltc = 0;
 
         UpdateIcon(&new_powerUp);
+        PolyLibJMATH::SaveDrawCoords(&new_powerUp.base_figure);
 
         // printf("NEW POWER UP CREATED %d\n",new_powerUp.id);
         return new_powerUp;
@@ -179,6 +189,9 @@ namespace PowerUps{
         new_powerUpTag.type = type;
 
         switch(type){
+            case SHOTGUN:
+                new_powerUpTag.duration_lt = 7000;
+            break;
             default:
                 new_powerUpTag.duration_lt = 5000; //5s default
             break;

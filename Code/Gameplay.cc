@@ -812,7 +812,7 @@ namespace Gameplay{
             DrawPowerUps();
             // printf("DrawPowerUps\n");
             DrawPlayers(*(GameManager::game_status.actual_game));
-            printf("DrawPlayers\n");
+            // printf("DrawPlayers\n");
             DrawGameUI(*(GameManager::game_status.actual_game));
             //Draw Game over while counter is smaller than the life time
             if(gameover_title_ltc < gameover_title_lt){

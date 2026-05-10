@@ -179,7 +179,7 @@ namespace Asteroids{
 
         if(player != nullptr){
             // 3% chance of dropping a powerUp for every destroyed asteroid (3/100) by a player
-            if(Utils::GenerateRandomNumber(99)+1 <= 100){
+            if(Utils::GenerateRandomNumber(100)+1 <= 3){
                 PowerUps::GeneratePowerUp((void*)asteroid);
             }
 
