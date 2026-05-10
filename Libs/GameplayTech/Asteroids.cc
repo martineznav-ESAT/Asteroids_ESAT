@@ -174,15 +174,15 @@ namespace Asteroids{
         // printf("LIST 2 %p\n",*asteroid_list_aux);
         TList::ListInfo aux_asteroid_info = {NULL};
 
-        // 2% chance of dropping a powerUp (3/100)
-        if(Utils::GenerateRandomNumber(100)+1 <= 3){
-            PowerUps::GeneratePowerUp((void*)asteroid);
-        }
-
         aux_asteroid_info.asteroid_info = *asteroid; 
         // printf("ASTEROID TO DELETE ID %d\n",aux_asteroid_info.asteroid_info.id);
 
         if(player != nullptr){
+            // 3% chance of dropping a powerUp for every destroyed asteroid (3/100) by a player
+            if(Utils::GenerateRandomNumber(99)+1 <= 100){
+                PowerUps::GeneratePowerUp((void*)asteroid);
+            }
+
             AddAsteroidPoints(asteroid->size_level, player);
         }
         GenerateAsteroidsFromAsteroid(asteroid_list_aux, particle_list_aux, asteroid);

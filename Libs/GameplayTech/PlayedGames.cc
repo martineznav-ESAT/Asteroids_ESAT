@@ -78,6 +78,7 @@ namespace PlayedGames{
             // printf("Saved user.username %s\n", UserManager::empty_user.username);
         }else{
             aux_user_info.user_info = *user;
+            // printf("Saving aux_user_info.user_info\n");
             if(TList::FindInList((TList::ListNode*)UserManager::user_list, aux_user_info) == nullptr){
                 // printf("Saving user.username\n");
                 fwrite(UserManager::empty_user.username, sizeof(char), UserManager::kDefaultStrL + 1, dat_file);
@@ -113,7 +114,7 @@ namespace PlayedGames{
         //char* values are writen with +1 length to ensure '\0' character has space to be saved 
         //(Should have been written the same way previously)
         //Saved separately because User values are memory pointers, therefore the only needed value is de username (id value)
-        //Player values only register lifes and score since their ship will get generated on game load
+        //Player values only register lifes, score, life-up score and round since their ship will get generated on game load
         if(dat_file != NULL){
             
             //printf("Saving game.game_id\n");

@@ -43,6 +43,7 @@ void InitGame(){
 
     PlayedGames::Init();
     HighscoresMenu::Init();
+    printf("INIT GAME END\n");
 }
 
 void UpdateGame(){

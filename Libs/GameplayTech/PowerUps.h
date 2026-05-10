@@ -14,12 +14,13 @@ namespace PowerUps{
 
     enum PU_Type{
         //SP
+        SHOTGUN,
 
         //MP (Includes SP PowerUps)
         FRIENDLY_FIRE,
-        TOTAL_PU_SP_TYPES = 0,
-        TOTAL_PU_MP_TYPES = 1,
-        TOTAL_PU_TYPES = 1,
+        TOTAL_PU_SP_TYPES = 1,
+        TOTAL_PU_MP_TYPES = 2,
+        TOTAL_PU_TYPES = 2,
     };
 
     enum FFIconsVertices{
@@ -28,9 +29,16 @@ namespace PowerUps{
     };
 
     enum FFIcons{
-        ICON_1,
-        ICON_2,
-        TOTAL_ICONS
+        FF_ICON_1,
+        FF_ICON_2,
+        FF_TOTAL_ICONS
+    };
+
+    enum ShotgunIcons{
+        SG_ICON_1,
+        SG_ICON_2,
+        SG_ICON_3,
+        SG_TOTAL_ICONS
     };
 
     struct PowerUp{

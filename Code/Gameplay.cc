@@ -426,6 +426,7 @@ namespace Gameplay{
             TList::ClearList(&asteroid_particles);
             TList::ClearList(&spawned_power_ups);
 
+            printf("GAME OVER\n");
             MainMenu::Load();
         }
     }
@@ -463,12 +464,13 @@ namespace Gameplay{
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr){
         TList::ListInfo aux_game_info = {NULL};
         PlayedGames::PlayedGame *aux_actual_game = nullptr;
+        TList::ClearList(&spawned_power_ups);
 
         GameManager::game_status.level = GameManager::Level::GAMEPLAY;
 
         //CREATE NEW GAME
         aux_game_info.game_info = PlayedGames::LoadBaseGameManager(gm, p2);
-
+        
         TList::InsertList(((TList::ListNode**)(&(PlayedGames::game_list))), TList::ListType::PLAYED_GAME, aux_game_info);
         TList::SaveList(((TList::ListNode**)(&(PlayedGames::game_list))), PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
 
@@ -511,6 +513,8 @@ namespace Gameplay{
         TList::ListInfo aux_game_info = {NULL};
         aux_game_info.game_info = loaded_game;
         PlayedGames::PlayedGame *aux_actual_game = nullptr;
+        TList::ClearList(&spawned_power_ups);
+
 
         //LOADS LOADED GAME AS THE ACTUAL GAME IF FOUND ON GAME_LIST
         aux_actual_game = &(TList::FindInList((TList::ListNode*)PlayedGames::game_list, aux_game_info)->info.game_info);

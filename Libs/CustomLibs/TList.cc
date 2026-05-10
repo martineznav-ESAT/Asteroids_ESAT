@@ -22,48 +22,49 @@ namespace TList{
     //Searches for a node by value
     ListNode* FindInList(ListNode *list, ListInfo info){
         ListNode *aux = nullptr;
-        
-        switch (list->type){
-            case ListType::INT:
-                for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
-            break;
-        
-            case ListType::CHAR:
-                for(aux = list; aux != nullptr && aux->info.char_info != info.char_info; aux = aux->next);
-            break;
+        // printf("FindInList\n");
+        if(list != nullptr){
+            switch (list->type){
+                case ListType::INT:
+                    for(aux = list; aux != nullptr && aux->info.int_info != info.int_info; aux = aux->next);
+                break;
+            
+                case ListType::CHAR:
+                    for(aux = list; aux != nullptr && aux->info.char_info != info.char_info; aux = aux->next);
+                break;
 
-            case ListType::USER:
-                // printf("\n-----Searching %s in\n",info.user_info.username);
-                // PrintList(list);
-                for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) != 0; aux = aux->next);
-            break;
+                case ListType::USER:
+                    // printf("\n-----Searching %s in\n",info.user_info.username);
+                    // PrintList(list);
+                    for(aux = list; aux != nullptr && strcmp(aux->info.user_info.username, info.user_info.username) != 0; aux = aux->next);
+                break;
 
-            case ListType::PLAYED_GAME:
-                // printf("\n-----REGISTERED GAMES\n");
-                // PrintList(list);
-                for(aux = list; aux != nullptr && aux->info.game_info.game_id != info.game_info.game_id; aux = aux->next);
-            break;
+                case ListType::PLAYED_GAME:
+                    // printf("\n-----REGISTERED GAMES\n");
+                    // PrintList(list);
+                    for(aux = list; aux != nullptr && aux->info.game_info.game_id != info.game_info.game_id; aux = aux->next);
+                break;
 
-            case ListType::ASTEROID:
-                // printf("\n-----ASTEROIDS\n");
-                // PrintList(list);
-                for(aux = list; aux != nullptr && aux->info.asteroid_info.id != info.asteroid_info.id; aux = aux->next);
-            break;
+                case ListType::ASTEROID:
+                    // printf("\n-----ASTEROIDS\n");
+                    // PrintList(list);
+                    for(aux = list; aux != nullptr && aux->info.asteroid_info.id != info.asteroid_info.id; aux = aux->next);
+                break;
 
-            case ListType::PARTICLE:
-                // printf("\n-----PARTICLES\n");
-                // PrintList(list);
-                for(aux = list; aux != nullptr && aux->info.particle_info->id != info.particle_info->id; aux = aux->next);
-            break;
+                case ListType::PARTICLE:
+                    // printf("\n-----PARTICLES\n");
+                    // PrintList(list);
+                    for(aux = list; aux != nullptr && aux->info.particle_info->id != info.particle_info->id; aux = aux->next);
+                break;
 
-            case ListType::POWER_UP:
-                // printf("\n-----POWER_UPS\n");
-                // PrintList(list);
-                for(aux = list; aux != nullptr && aux->info.powerUp_info.id != info.powerUp_info.id; aux = aux->next);
-            break;
+                case ListType::POWER_UP:
+                    // printf("\n-----POWER_UPS\n");
+                    // PrintList(list);
+                    for(aux = list; aux != nullptr && aux->info.powerUp_info.id != info.powerUp_info.id; aux = aux->next);
+                break;
+            }
         }
-
-
+        
         return aux;
     }
 
@@ -158,7 +159,9 @@ namespace TList{
 
     ListNode* GetLastListNode(ListNode *list){
         ListNode *aux = nullptr;
-        for(aux = list; aux->next != nullptr; aux = aux->next);
+        if(list != nullptr){
+            for(aux = list; aux->next != nullptr; aux = aux->next);
+        }
         return aux;
     }
 
@@ -300,7 +303,9 @@ namespace TList{
                 break;
 
                 case ListType::PLAYED_GAME:
+                    // printf("SAVING PLAYED GAME");
                     PlayedGames::SaveGame(list->info.game_info, file);
+                    // printf("SAVED PLAYED GAME");
                 break;
             }
         }
@@ -310,18 +315,18 @@ namespace TList{
         ListNode *aux = GetLastListNode(*list);
         dat_file = fopen(dat_path, "wb");
 
-        // printf("SAVING LIST:\n");
+        printf("SAVING LIST:\n");
         PrintList(*list);
 
-        //Saved backwards to mantain consistency when loaded again
+        // Saved backwards to mantain consistency when loaded again
         for(ListNode *p = aux; p!=nullptr; p = p->prev){
-            // printf("SavingNode\n");
+            printf("SavingNode\n");
             SaveNode(p, dat_file);
-            // printf("SavedNode\n");
+            printf("SavedNode\n");
         }
         fclose(dat_file);
         dat_file = nullptr;
-        // printf("LIST SAVED CORRECTLY\n");
+        printf("LIST SAVED CORRECTLY\n");
     }
 
     bool LoadList(ListNode **list_to_load, ListType list_type, FILE *dat_file, char* dat_path){

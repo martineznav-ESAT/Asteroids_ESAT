@@ -613,7 +613,7 @@ namespace RegisterMenu{
         prev_level = level_p;
         error_dialog_ltc = error_dialog_lt;
 
-        if(TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0){
+        if(UserManager::user_list == nullptr || TList::ListLength((TList::ListNode*) (UserManager::user_list)) <= 0){
             //First ever game execution opens ADMIN REGISTRATION 
             (menu_items+((int)RegisterItems::ADMIN_CHK))->item.chk_item.is_checked = true;
             (menu_items+((int)RegisterItems::BACK_BTN))->item.btn_item.is_visible = false;
@@ -625,7 +625,7 @@ namespace RegisterMenu{
 
             form_user.is_admin = false;
         }
-
+        
         if(user_edit == nullptr){
             edit_mode = false;
             CleanForm(form_user.is_admin);

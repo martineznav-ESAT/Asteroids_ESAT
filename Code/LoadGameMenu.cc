@@ -68,16 +68,23 @@ namespace LoadGameMenu{
         TList::ListInfo aux_info = {NULL};
         aux_info.game_info = *((PlayedGames::PlayedGame*) game);
         
-        if(TList::ListLength(loaded_games_page) <= 1){
+        if(TList::ListLength(loaded_games_page) <= 1 && page_number > 0){
             //The actual page will be empty. So before deleting the element
             //and update/save the deletion, the previous page is loaded 
-            //so loaded_games_page does not miss its pointer
+            //so loaded_games_page does not miss its pointer in case we are on a 
+            //page further than the first one
+            printf("ASDASDASDASD1\n");
             LoadGamesPage(--page_number);
         }
+        printf("ASDASDASDASD2\n");
         TList::DeleteElement(aux_list, aux_info);
+        printf("ASDASDASDASD3\n");
         TList::DeleteElement(&user_games, aux_info);
+        printf("ASDASDASDASD3\n");
         TList::SaveList(aux_list, PlayedGames::game_list_dat, PlayedGames::game_list_dat_path);
+        printf("ASDASDASDASD3\n");
         LoadGamesPage(page_number);
+        printf("ASDASDASDASD4\n");
     }
 
     void PrevPageAction(){

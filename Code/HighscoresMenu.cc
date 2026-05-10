@@ -101,8 +101,9 @@ namespace HighscoresMenu{
                 TList::InsertList(&top_games, TList::ListType::PLAYED_GAME, aux_info);
             }
             UpdateHighScores();
+            printf("SAVE UpdateHighScores\n");
             TList::SaveList(&top_games, highscores_dat, highscores_dat_path);
-            // printf("SavedList\n");
+            printf("SAVEED UpdateHighScores\n");
         }
     }
 

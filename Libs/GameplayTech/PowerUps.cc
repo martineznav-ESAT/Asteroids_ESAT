@@ -16,29 +16,29 @@ namespace PowerUps{
     int last_pu_id = -1;
 
     void InitFriendlyFireIcon(){
-        friendly_fire_icon_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*) * ((int)FFIcons::TOTAL_ICONS));
+        friendly_fire_icon_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*) * ((int)FFIcons::FF_TOTAL_ICONS));
 
         // Ship Bottom Half figure
-        *(friendly_fire_icon_coords+FFIcons::ICON_1) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_1);
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+0) =    {-0.6f, -0.3f, 1.0f};     // 1
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+1) =    {-1.0f, -0.6f, 1.0f};     // 2
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+2) =    {0.0f, -0.3f, 1.0f};      // 3
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+3) =    {-0.2f, -0.2f, 1.0f};     // 4
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+4) =    {0.2f, 0.0f, 1.0f};       // 5
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+6) =    {0.0f, 0.3f, 1.0f};       // 7
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+7) =    {-1.0f, 0.6f, 1.0f};      // 8
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_1)+8) =    {-0.6f, 0.3f, 1.0f};      // 9
+        *(friendly_fire_icon_coords+FFIcons::FF_ICON_1) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_1);
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+0) =    {-0.6f, -0.3f, 1.0f};     // 1
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+1) =    {-1.0f, -0.6f, 1.0f};     // 2
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+2) =    {0.0f, -0.3f, 1.0f};      // 3
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+3) =    {-0.2f, -0.2f, 1.0f};     // 4
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+4) =    {0.2f, 0.0f, 1.0f};       // 5
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+6) =    {0.0f, 0.3f, 1.0f};       // 7
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+7) =    {-1.0f, 0.6f, 1.0f};      // 8
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_1)+8) =    {-0.6f, 0.3f, 1.0f};      // 9
 
         
         // Ship Top Half figure
-        *(friendly_fire_icon_coords+FFIcons::ICON_2) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_2);
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+0) =    {0.2f, 0.0f, 1.0f};       // 1
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+1) =    {-0.2f, -0.2f, 1.0f};     // 2
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+2) =    {0.0f, -0.3f, 1.0f};      // 3
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+3) =    {1.0f, 0.0f, 1.0f};       // 4
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+4) =    {0.0f, 0.3f, 1.0f};       // 5
-        *(*(friendly_fire_icon_coords+FFIcons::ICON_2)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
+        *(friendly_fire_icon_coords+FFIcons::FF_ICON_2) = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*FFIconsVertices::V_ICON_2);
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+0) =    {0.2f, 0.0f, 1.0f};       // 1
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+1) =    {-0.2f, -0.2f, 1.0f};     // 2
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+2) =    {0.0f, -0.3f, 1.0f};      // 3
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+3) =    {1.0f, 0.0f, 1.0f};       // 4
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+4) =    {0.0f, 0.3f, 1.0f};       // 5
+        *(*(friendly_fire_icon_coords+FFIcons::FF_ICON_2)+5) =    {-0.2f, 0.2f, 1.0f};      // 6
 
     }
 
@@ -46,14 +46,32 @@ namespace PowerUps{
         InitFriendlyFireIcon();
     }
 
+    void BuildShotgunIcons(PowerUp *p_up){
+        JMATH::Mat3 tr_aux;
+        p_up->icon_figures = (PolyLibJMATH::Poly*) malloc(sizeof(PolyLibJMATH::Poly)*ShotgunIcons::SG_TOTAL_ICONS);
+
+        for(int i = 0; i < ShotgunIcons::SG_TOTAL_ICONS; i++){
+            PolyLibJMATH::InitPoly(
+                (p_up->icon_figures+i),
+                2,
+                p_up->base_figure.transform.scale,
+                p_up->base_figure.transform.rotation+(i*10),
+                p_up->base_figure.transform.translation,
+                p_up->base_figure.color,
+                {0,0}
+            );
+        }
+    }
+
+    
     void BuildFriendlyFireIcons(PowerUp *p_up){
         JMATH::Mat3 tr_aux;
-        p_up->icon_figures = (PolyLibJMATH::Poly*) malloc(sizeof(PolyLibJMATH::Poly)*FFIcons::TOTAL_ICONS);
+        p_up->icon_figures = (PolyLibJMATH::Poly*) malloc(sizeof(PolyLibJMATH::Poly)*FFIcons::FF_TOTAL_ICONS);
 
         PolyLibJMATH::InitPoly(
-            (p_up->icon_figures+FFIcons::ICON_1),
+            (p_up->icon_figures+FFIcons::FF_ICON_1),
             FFIconsVertices::V_ICON_1,
-            *(friendly_fire_icon_coords+((int)FFIcons::ICON_1)),
+            *(friendly_fire_icon_coords+((int)FFIcons::FF_ICON_1)),
             p_up->base_figure.transform.scale,
             p_up->base_figure.transform.rotation,
             p_up->base_figure.transform.translation,
@@ -64,9 +82,9 @@ namespace PowerUps{
         
 
         PolyLibJMATH::InitPoly(
-            (p_up->icon_figures+FFIcons::ICON_2),
+            (p_up->icon_figures+FFIcons::FF_ICON_2),
             FFIconsVertices::V_ICON_2,
-            *(friendly_fire_icon_coords+((int)FFIcons::ICON_2)),
+            *(friendly_fire_icon_coords+((int)FFIcons::FF_ICON_2)),
             p_up->base_figure.transform.scale,
             p_up->base_figure.transform.rotation,
             p_up->base_figure.transform.translation,
@@ -77,22 +95,25 @@ namespace PowerUps{
         //Rotates base local_coords permanently to draw the Bottom Half figure icon properly
         tr_aux = JMATH::Mat3Identity();
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(10)), tr_aux);
-        for(int i = 0; i < (p_up->icon_figures+(int)FFIcons::ICON_1)->t_vertices; i++){
-            *(((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords)+i) = JMATH::Mat3MultVec3(tr_aux, {(((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords)+i)->x, (((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords)+i)->y, 1.0f});
+        for(int i = 0; i < (p_up->icon_figures+(int)FFIcons::FF_ICON_1)->t_vertices; i++){
+            *(((p_up->icon_figures+(int)FFIcons::FF_ICON_1)->local_coords)+i) = JMATH::Mat3MultVec3(tr_aux, {(((p_up->icon_figures+(int)FFIcons::FF_ICON_1)->local_coords)+i)->x, (((p_up->icon_figures+(int)FFIcons::FF_ICON_1)->local_coords)+i)->y, 1.0f});
             // printf("Coord Update local_coords ICON %d: %f - %f\n",i, (*((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords+i)).x, (*((p_up->icon_figures+(int)FFIcons::ICON_1)->local_coords+i)).y);
         }
 
         //Rotates base local_coords permanently to draw the Top Half figure icon properly
         tr_aux = JMATH::Mat3Identity();
         tr_aux = JMATH::Mat3MultMat3(JMATH::Mat3Rotate(JMATH::DegreesToRadians(-10)), tr_aux);
-        for(int i = 0; i < (p_up->icon_figures+(int)FFIcons::ICON_2)->t_vertices; i++){
-            *(((p_up->icon_figures+(int)FFIcons::ICON_2)->local_coords)+i) = JMATH::Mat3MultVec3(tr_aux, {(((p_up->icon_figures+(int)FFIcons::ICON_2)->local_coords)+i)->x, (((p_up->icon_figures+(int)FFIcons::ICON_2)->local_coords)+i)->y, 1.0f});
+        for(int i = 0; i < (p_up->icon_figures+(int)FFIcons::FF_ICON_2)->t_vertices; i++){
+            *(((p_up->icon_figures+(int)FFIcons::FF_ICON_2)->local_coords)+i) = JMATH::Mat3MultVec3(tr_aux, {(((p_up->icon_figures+(int)FFIcons::FF_ICON_2)->local_coords)+i)->x, (((p_up->icon_figures+(int)FFIcons::FF_ICON_2)->local_coords)+i)->y, 1.0f});
             // printf("Coord Update local_coords ICON %d: %f - %f\n",i, (*((p_up->icon_figures+(int)FFIcons::ICON_2)->local_coords+i)).x, (*((p_up->icon_figures+(int)FFIcons::ICON_2)->local_coords+i)).y);
         }
     }
 
     void BuildIcons(PowerUp *p_up){
         switch(p_up->type){
+            case SHOTGUN:
+                BuildShotgunIcons(p_up);
+            break;
             case FRIENDLY_FIRE:
                 BuildFriendlyFireIcons(p_up);
             break;
@@ -106,8 +127,17 @@ namespace PowerUps{
     void UpdateIcon(PowerUp *p_up){
         PolyLibJMATH::UpdatePoly(&(p_up->base_figure));
         switch (p_up->type){
+            case SHOTGUN:
+                for (int i = 0; i < ShotgunIcons::SG_TOTAL_ICONS; i++){
+                    (p_up->icon_figures+i)->transform.scale = JMATH::Vec2Scale(p_up->base_figure.transform.scale,0.5f);
+                    (p_up->icon_figures+i)->transform.rotation = p_up->base_figure.transform.rotation;
+                    (p_up->icon_figures+i)->transform.translation = p_up->base_figure.transform.translation;
+                    PolyLibJMATH::UpdatePoly((p_up->icon_figures+i));
+                }
+            break;
+
             case PU_Type::FRIENDLY_FIRE:
-                for (int i = 0; i < FFIcons::TOTAL_ICONS; i++){
+                for (int i = 0; i < FFIcons::FF_TOTAL_ICONS; i++){
                     (p_up->icon_figures+i)->transform.scale = JMATH::Vec2Scale(p_up->base_figure.transform.scale,0.5f);
                     (p_up->icon_figures+i)->transform.rotation = p_up->base_figure.transform.rotation;
                     (p_up->icon_figures+i)->transform.translation = p_up->base_figure.transform.translation;
@@ -282,8 +312,13 @@ namespace PowerUps{
         PolyLibJMATH::DrawPoly(powerUp.base_figure, true, {255,255,255});
 
         switch (powerUp.type){
+            case PU_Type::SHOTGUN:
+                for (int i = 0; i < ShotgunIcons::SG_TOTAL_ICONS; i++){
+                    PolyLibJMATH::DrawPoly(*(powerUp.icon_figures+i), false, {255,255,255});
+                }
+            break;
             case PU_Type::FRIENDLY_FIRE:
-                for (int i = 0; i < FFIcons::TOTAL_ICONS; i++){
+                for (int i = 0; i < FFIcons::FF_TOTAL_ICONS; i++){
                     PolyLibJMATH::DrawPoly(*(powerUp.icon_figures+i), false, {255,255,255});
                 }
             break;
@@ -308,7 +343,7 @@ namespace PowerUps{
         PolyLibJMATH::EmptyPolyMemory(&(powerUp->base_figure));
         switch(powerUp->type){
             case FRIENDLY_FIRE:
-                for (int i = 0; i < FFIcons::TOTAL_ICONS; i++){
+                for (int i = 0; i < FFIcons::FF_TOTAL_ICONS; i++){
                     PolyLibJMATH::EmptyPolyMemory((powerUp->icon_figures+i));
                 }
                 free(powerUp->icon_figures);
@@ -321,7 +356,7 @@ namespace PowerUps{
         for (int type = 0; type < (int)PU_Type::TOTAL_PU_TYPES; type++){
             switch ((PU_Type)type){
                 case PU_Type::FRIENDLY_FIRE:
-                    for (int i = 0; i < FFIcons::TOTAL_ICONS; i++){
+                    for (int i = 0; i < FFIcons::FF_TOTAL_ICONS; i++){
                         free(*(friendly_fire_icon_coords+i));
                     }
                     free(friendly_fire_icon_coords);

@@ -41,7 +41,12 @@ namespace AdminMenu{
 
         for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
             aux_user_node = TList::GetIndexListNode(user_page,u);
-            (menu_items+i)->item.btn_pa_item.is_visible = u<TList::ListLength(user_page);
+            (menu_items+i)->item.btn_pa_item.is_visible = (
+                u < TList::ListLength(user_page) &&
+                strcmp(aux_user_node->info.user_info.username, GameManager::game_status.logged_user->username) &&
+                i%2 != 0
+            );
+
             if((menu_items+i)->item.btn_pa_item.is_visible){
                 (menu_items+i)->item.btn_pa_item.action_p = &(aux_user_node->info.user_info);
             }
@@ -285,9 +290,9 @@ namespace AdminMenu{
 
     //Loads the Admin menu
     void Load(){
-        LoadUserPage();
         page_number = 0;
         selected_item = -1;
+        LoadUserPage();
         GameManager::game_status.level = GameManager::Level::ADMIN_MENU;
     }
 

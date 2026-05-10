@@ -260,6 +260,10 @@ namespace Collisions{
             CollisionPolyPoly(pu->base_figure, player->ship.figure)
         ){
             switch (pu->type){
+                case PowerUps::PU_Type::SHOTGUN:
+                    // printf("SHOTGUN PICKED UP\n");
+                    (player->pu_tags + PowerUps::PU_Type::SHOTGUN)->duration_ltc = 0;
+                break;
                 case PowerUps::PU_Type::FRIENDLY_FIRE:
                     // printf("FRIENDLY FIRE PICKED UP\n");
                     (player->pu_tags + PowerUps::PU_Type::FRIENDLY_FIRE)->duration_ltc = 0;
