@@ -10,6 +10,7 @@
 
 #include "./Libs/CustomLibs/TList.h"
 #include "./Libs/CustomLibs/Utils.h"
+#include "./Libs/CustomLibs/AudioLib.h"
 
 #include "./Code/GameManager.h"
 #include "./Code/LoginMenu.h"
@@ -24,6 +25,8 @@
 #include "./Libs/GameplayTech/GameplayTech.h"
 
 void InitGame(){
+    AudioLib::Init();
+
     UserManager::Init();
     Players::Init();
     Asteroids::Init();
@@ -43,7 +46,7 @@ void InitGame(){
 
     PlayedGames::Init();
     HighscoresMenu::Init();
-    printf("INIT GAME END\n");
+    // printf("INIT GAME END\n");
 }
 
 void UpdateGame(){
@@ -157,6 +160,9 @@ void EmptyMemory(){
 
     UserManager::EmptyMemory();
     //printf("UserManager FINO\n");
+
+    AudioLib::EmptyMemory();
+    //printf("AudioLib FINO\n");
 }
 
 void CloseFiles(){
@@ -211,7 +217,7 @@ int esat::main(int argc, char **argv) {
     EmptyMemory();
     // printf("EmptyMemory FINO\n");
     
-    printf("GAME CLOSED CORRECTLY\n");
+    // printf("GAME CLOSED CORRECTLY\n");
     
     esat::WindowDestroy();
 
