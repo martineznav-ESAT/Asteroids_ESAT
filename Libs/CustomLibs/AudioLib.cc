@@ -1,22 +1,6 @@
-#include <esat_extra/soloud/soloud.h>
-#include <esat_extra/soloud/soloud_wav.h>
+#include "AudioLib.h"
 
 namespace AudioLib{
-
-    enum SoundsType{
-        ACTION,
-        BANG_LARGE,
-        BANG_MEDIUM,
-        BANG_SMALL,
-        BEAT_1,
-        BEAT_2,
-        EXTRA_SHIP,
-        FIRE,
-        UFO_BIG,
-        UFO_SMALL,
-        THRUST,
-        TOTAL_SOUNDS
-    };
 
     SoLoud::Soloud audio_channel;
 

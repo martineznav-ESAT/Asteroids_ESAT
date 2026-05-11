@@ -4,6 +4,7 @@
 #ifndef AudioLib_H
 #define AudioLib_h
 
+
 namespace AudioLib{
 
     enum SoundsType{
@@ -20,10 +21,6 @@ namespace AudioLib{
         THRUST,
         TOTAL_SOUNDS
     };
-
-    SoLoud::Soloud audio_channel;
-
-    SoLoud::Wav *sounds;
 
     void Init();
 
