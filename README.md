@@ -83,7 +83,7 @@ Se debe tener en cuenta que las partidas van relacionadas con los usuarios, por 
 
 Si se detecta que no hay usuarios registrados, la primera pantalla al abrir el juego se abrirá en modo registro donde se permitirá crear al primer usuario que a su vez será administrador
 
-<img width="1000" height="801" alt="image" src="https://github.com/user-attachments/assets/5a77f3ed-6e4b-4e46-a2b7-f4c87baa38e3" />
+<img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/5a77f3ed-6e4b-4e46-a2b7-f4c87baa38e3" />
 
 
 
