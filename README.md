@@ -68,6 +68,7 @@ Compilación correcta:
 
 
 Una vez compilado, debería generar un archivo “main.exe” junto a otros archivos más como se ve en la imagen inferior:	
+
 <img width="889" height="582" alt="image" src="https://github.com/user-attachments/assets/2c92d024-33ee-4610-a7e1-71ff29757046" />
 
 
