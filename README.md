@@ -72,6 +72,20 @@ Una vez compilado, debería generar un archivo “main.exe” junto a otros arch
 <img width="889" height="582" alt="image" src="https://github.com/user-attachments/assets/2c92d024-33ee-4610-a7e1-71ff29757046" />
 
 
+Los archivos de guardado se ubican en ./Assets/Files/Data. Si son eliminados se generarán nuevos en la próxima ejecución.
+Estos archivos incluyen:
+  - La lista de partidas (game_list.dat)
+  - La lista de las mejores 10 puntuaciones (highscores.dat)
+  - La lista de usuarios registrados (user_list.dat)
+<img width="699" height="180" alt="image" src="https://github.com/user-attachments/assets/bd74feb7-3e5b-45d2-b9a0-93635694b613" />
+
+Se debe tener en cuenta que las partidas van relacionadas con los usuarios, por lo que si se elimina la lista de usuarios, lo mas probable es que la lista de partidas y puntuaciones máximas pase a ser inutilizable.
+
+Si se detecta que no hay usuarios registrados, la primera pantalla al abrir el juego se abrirá en modo registro donde se permitirá crear al primer usuario que a su vez será administrador
+
+<img width="1000" height="801" alt="image" src="https://github.com/user-attachments/assets/5a77f3ed-6e4b-4e46-a2b7-f4c87baa38e3" />
+
+
 
 **Bibliografía**
 
