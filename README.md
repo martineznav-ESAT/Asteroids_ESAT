@@ -34,14 +34,14 @@ CONTROLES:
   - En gameplay
       - M     Volver al menú
 
-        Jugador 1:
+        **Jugador 1:**
     - W          Acelerar
     - A          Girar a izquierda
     - D          Girar a derecha
     - SpaceBar   Disparar
     - G          Salto Hyperspacial
 
-        Jugador 2:
+        **Jugador 2:**
     - Flecha Arriba       (🡩)  Acelerar
     - Flecha Izquierda    (**🡐**)  Girar a izquierda
     - Flecha Derecha      (➔)  Girar a derecha
