@@ -81,10 +81,12 @@ Estos archivos incluyen:
 
 Se debe tener en cuenta que las partidas van relacionadas con los usuarios, por lo que si se elimina la lista de usuarios, lo mas probable es que la lista de partidas y puntuaciones máximas pase a ser inutilizable.
 
-Si se detecta que no hay usuarios registrados, la primera pantalla al abrir el juego se abrirá en modo registro donde se permitirá crear al primer usuario que a su vez será administrador
+Si se detecta que no hay usuarios registrados, la primera pantalla al abrir el juego se abrirá en modo registro donde se permitirá crear al primer usuario que a su vez será administrador. 
 
 <img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/5a77f3ed-6e4b-4e46-a2b7-f4c87baa38e3" />
 
+Si hay usuarios se iniciará la pantalla de Login
+<img width="600" height="490" alt="image" src="https://github.com/user-attachments/assets/b52fd541-48fa-431b-80a2-508df803cff3" />
 
 
 **Bibliografía**
