@@ -86,7 +86,7 @@ Si se detecta que no hay usuarios registrados, la primera pantalla al abrir el j
 <img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/5a77f3ed-6e4b-4e46-a2b7-f4c87baa38e3" />
 
 Si hay usuarios se iniciará la pantalla de Login
-<img width="600" height="490" alt="image" src="https://github.com/user-attachments/assets/b52fd541-48fa-431b-80a2-508df803cff3" />
+<img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/b52fd541-48fa-431b-80a2-508df803cff3" />
 
 
 **Bibliografía**
