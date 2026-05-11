@@ -68,8 +68,12 @@ Compilación correcta:
 
 
 **Bibliografía**
+
+
 The FontStruction “Asteroids Display”
 (https://fontstruct.com/fontstructions/show/1534627) by John Harris is licensed
 under a Creative Commons Attribution license
 (http://creativecommons.org/licenses/by/3.0/).
 [ancestry]
+
+https://www.dafont.com/es/neuropol.font
