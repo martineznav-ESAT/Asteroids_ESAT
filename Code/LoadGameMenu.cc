@@ -12,6 +12,7 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/AudioLib.h"
 
 #include "../Libs/GameplayTech/GameplayTech.h"
 
@@ -327,6 +328,9 @@ namespace LoadGameMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
+
             do{
                 if(selected_item <= 0){
                     selected_item = ((int)LoadGameMenuItems::TOTAL_ITEMS) - 1;
@@ -336,6 +340,7 @@ namespace LoadGameMenu{
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             do{
                 ++selected_item %= (int)LoadGameMenuItems::TOTAL_ITEMS;
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)));

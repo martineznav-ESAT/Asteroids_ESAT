@@ -277,12 +277,12 @@ namespace TList{
     }
 
     void ClearList(ListNode **list){
-        printf("CLEAR LIST\n");
+        // printf("CLEAR LIST\n");
         for(ListNode *act = *list; !IsEmptyList(list); act = *list){
             DeleteElement(list, act);
         }
         *list = CreateList();
-        printf("CLEAR LIST COMPLETED\n");
+        // printf("CLEAR LIST COMPLETED\n");
     }
 
     void SaveNode(ListNode *list, FILE *file){
@@ -320,9 +320,9 @@ namespace TList{
 
         // Saved backwards to mantain consistency when loaded again
         for(ListNode *p = aux; p!=nullptr; p = p->prev){
-            printf("SavingNode\n");
+            // printf("SavingNode\n");
             SaveNode(p, dat_file);
-            printf("SavedNode\n");
+            // printf("SavedNode\n");
         }
         fclose(dat_file);
         dat_file = nullptr;

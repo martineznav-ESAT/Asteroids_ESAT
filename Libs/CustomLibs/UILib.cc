@@ -11,6 +11,7 @@
 
 #include "./Utils.h"
 #include "./UILib.h"
+#include "./AudioLib.h"
 #include "../../Code/GameManager.h"
 #include "../../Code/UserManager.h"
 
@@ -114,6 +115,7 @@ namespace UILib{
     //Mainly thought for buttons or similar action-like UI elements and keyboard inputs
     void LaunchAction(void (*action)()){
         if(action != nullptr){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             action();
         }else{
             printf("Action WIP\n");
@@ -122,6 +124,7 @@ namespace UILib{
 
     void LaunchActionPA(void (*action)(void *), void* action_pa){
         if(action != nullptr){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             action(action_pa);
         }else{
             printf("Action WIP\n");

@@ -12,6 +12,7 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/AudioLib.h"
 
 #include "./GameManager.h"
 #include "./UserManager.h"
@@ -362,6 +363,9 @@ namespace LoginMenu{
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
             esat::ResetBufferdKeyInput();
+
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
+            
             if(selected_item <= 0){
                 selected_item = ((int)LoginItems::TOTAL_ITEMS) - 1;
             }else{
@@ -370,6 +374,7 @@ namespace LoginMenu{
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
             esat::ResetBufferdKeyInput();
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             ++selected_item %= (int)LoginItems::TOTAL_ITEMS;
         }
         

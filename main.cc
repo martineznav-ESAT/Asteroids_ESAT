@@ -10,7 +10,7 @@
 
 #include "./Libs/CustomLibs/TList.h"
 #include "./Libs/CustomLibs/Utils.h"
-// #include "./Libs/CustomLibs/AudioLib.h"
+#include "./Libs/CustomLibs/AudioLib.h"
 
 #include "./Code/GameManager.h"
 #include "./Code/LoginMenu.h"
@@ -25,7 +25,7 @@
 #include "./Libs/GameplayTech/GameplayTech.h"
 
 void InitGame(){
-    // AudioLib::Init();
+    AudioLib::Init();
 
     UserManager::Init();
     Players::Init();
@@ -161,7 +161,7 @@ void EmptyMemory(){
     UserManager::EmptyMemory();
     //printf("UserManager FINO\n");
 
-    // AudioLib::EmptyMemory();
+    AudioLib::EmptyMemory();
     //printf("AudioLib FINO\n");
 }
 

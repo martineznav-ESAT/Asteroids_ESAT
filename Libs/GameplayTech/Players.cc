@@ -7,6 +7,7 @@
 #include "../../Code/GameManager.h"
 #include "../../Code/MainMenu.h"
 #include "../CustomLibs/Utils.h"
+#include "../CustomLibs/AudioLib.h"
 
 #include "./GameplayTech.h"
 
@@ -120,6 +121,7 @@ namespace Players{
         JMATH::Vec3 aim_v;
         // printf("ShipShotgunShoot\n");
         if(Players::GetPlayerActiveShots(player) <= 0){
+
             for(int i = 0, j = -16; i < Players::max_player_shots; i++, j+=8){
                 aim_v = JMATH::Mat3MultVec3(
                     JMATH::Mat3Rotate(JMATH::DegreesToRadians(j)), 
@@ -143,6 +145,9 @@ namespace Players{
         player->life_up_score += points;
         // printf("LIFE UP SCORE %d\n", player->life_up_score/10000);
 
+        if(player->life_up_score/10000 > 0){
+            AudioLib::PlaySound(AudioLib::EXTRA_SHIP);
+        }
         player->lifes += player->life_up_score/10000;
         player->life_up_score %= 10000;
 
@@ -478,6 +483,11 @@ namespace Players{
 
             PlayerInput(player);
             DecelerateShip(&(player->ship));
+            if(player->is_moving){
+                if (AudioLib::IsSoundPaused(AudioLib::SoundsType::THRUST)){
+                    AudioLib::PlaySound(AudioLib::SoundsType::THRUST);
+                }
+            }
             // printf("SPEED V LENGTH = %.2f\n", JMATH::Vec3Length(player->ship.speed_v));
             // JMATH::Vec3Print(player->ship.speed_v);
             PolyLibJMATH::MovePoly(&(player->ship.figure), player->ship.speed_v);

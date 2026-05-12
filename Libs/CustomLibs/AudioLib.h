@@ -1,9 +1,9 @@
 #include <esat_extra/soloud/soloud.h>
 #include <esat_extra/soloud/soloud_wav.h>
+#undef DrawText
 
 #ifndef AudioLib_H
 #define AudioLib_h
-
 
 namespace AudioLib{
 
@@ -23,6 +23,8 @@ namespace AudioLib{
     };
 
     void Init();
+
+    bool IsSoundPaused(SoundsType type);
 
     void PlaySound(SoundsType type);
 

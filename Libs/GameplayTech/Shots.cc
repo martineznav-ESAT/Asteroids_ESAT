@@ -6,6 +6,7 @@
 #include "./Shots.h"
 
 #include "../CustomLibs/PolyLibJMATH.h"
+#include "../CustomLibs/AudioLib.h"
 
 #include "../../Code/Gameplay.h"
 
@@ -36,6 +37,7 @@ namespace Shots{
 
     void FireShot(Shot *shot, JMATH::Vec2 spawn_point, float rotation, JMATH::Vec3 direction_v, float speed){
         // printf("DISPARAR\n");
+        AudioLib::PlaySound(AudioLib::SoundsType::FIRE);
         shot->is_active = true;
         shot->lt_count = 0;
         shot->speed_v = JMATH::Vec3Scale(JMATH::Vec3Norm(direction_v), speed);

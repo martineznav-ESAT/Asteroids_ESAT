@@ -9,6 +9,7 @@
 #include "../CustomLibs/PolyLibJMATH.h"
 #include "../CustomLibs/JMATH.h"
 #include "../CustomLibs/Utils.h"
+#include "../CustomLibs/AudioLib.h"
 
 #include "../../Code/GameManager.h"
 #include "../../Code/Gameplay.h"
@@ -273,6 +274,7 @@ namespace Collisions{
             aux_info.powerUp_info = *pu;
             TList::DeleteElement(&Gameplay::spawned_power_ups, aux_info);
             collision = true;
+            AudioLib::PlaySound(AudioLib::ACTION);
         }
         
         return collision;

@@ -11,6 +11,7 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
+#include "../Libs/CustomLibs/AudioLib.h"
 
 #include "./GameManager.h"
 #include "./UserManager.h"
@@ -268,6 +269,9 @@ namespace MainMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
+
             if(selected_item <= 0){
                 selected_item = ((int)MainMenuItems::TOTAL_ITEMS) - 1;
             }else{
@@ -275,6 +279,7 @@ namespace MainMenu{
             }
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             ++selected_item %= (int)MainMenuItems::TOTAL_ITEMS;
         }
         

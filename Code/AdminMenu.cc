@@ -12,6 +12,7 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/AudioLib.h"
 
 #include "../Libs/GameplayTech/GameplayTech.h"
 
@@ -41,11 +42,14 @@ namespace AdminMenu{
 
         for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
             aux_user_node = TList::GetIndexListNode(user_page,u);
-            (menu_items+i)->item.btn_pa_item.is_visible = (
-                u < TList::ListLength(user_page) &&
-                strcmp(aux_user_node->info.user_info.username, GameManager::game_status.logged_user->username) &&
-                i%2 != 0
-            );
+            if(u < TList::ListLength(user_page)){
+                (menu_items+i)->item.btn_pa_item.is_visible = !(
+                    i%2 != 0 && 
+                    strcmp(aux_user_node->info.user_info.username, GameManager::game_status.logged_user->username) == 0
+                );
+            }else{
+                (menu_items+i)->item.btn_pa_item.is_visible = false;
+            }
 
             if((menu_items+i)->item.btn_pa_item.is_visible){
                 (menu_items+i)->item.btn_pa_item.action_p = &(aux_user_node->info.user_info);
@@ -311,6 +315,9 @@ namespace AdminMenu{
 
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
+
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
+
             do{
                 if(selected_item <= 0){
                     selected_item = ((int)AdminMenuItems::TOTAL_ITEMS) - 1;
@@ -320,6 +327,8 @@ namespace AdminMenu{
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
+
             do{
                 ++selected_item %= (int)AdminMenuItems::TOTAL_ITEMS;
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)));

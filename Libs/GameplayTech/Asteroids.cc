@@ -6,6 +6,7 @@
 #include "./Asteroids.h"
 
 #include "../CustomLibs/PolyLibJMATH.h"
+#include "../CustomLibs/AudioLib.h"
 
 #include "../../Code/Gameplay.h"
 
@@ -168,12 +169,27 @@ namespace Asteroids{
         // TList::PrintList(*asteroid_list);
     }
 
+    void PlayAsteroidDestroySound(Asteroid *asteroid){
+        switch (asteroid->size_level){
+            case 1:
+                AudioLib::PlaySound(AudioLib::SoundsType::BANG_SMALL);
+            break;
+            case 2:
+                AudioLib::PlaySound(AudioLib::SoundsType::BANG_MEDIUM);
+            break;
+            case 3:
+                AudioLib::PlaySound(AudioLib::SoundsType::BANG_LARGE);
+            break;
+        }
+    }
+
     void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroid *asteroid, Players::Player *player = nullptr){
         TList::ListNode** asteroid_list_aux = (TList::ListNode**) asteroid_list;
         TList::ListNode** particle_list_aux = (TList::ListNode**) particle_list;
         // printf("LIST 2 %p\n",*asteroid_list_aux);
         TList::ListInfo aux_asteroid_info = {NULL};
 
+        PlayAsteroidDestroySound(asteroid);
         aux_asteroid_info.asteroid_info = *asteroid; 
         // printf("ASTEROID TO DELETE ID %d\n",aux_asteroid_info.asteroid_info.id);
 

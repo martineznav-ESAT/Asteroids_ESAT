@@ -12,6 +12,7 @@
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/AudioLib.h"
 
 #include "./GameManager.h"
 #include "./UserManager.h"
@@ -686,6 +687,7 @@ namespace RegisterMenu{
         //Menu Key controls
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Up)){
             esat::ResetBufferdKeyInput();
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             do{
                 if(selected_item <= 0){
                     selected_item = ((int)RegisterItems::TOTAL_ITEMS) - 1;
@@ -695,6 +697,7 @@ namespace RegisterMenu{
             }while(!UILib::IsItemVisible(*(menu_items+selected_item)) || IsUneditable((RegisterItems)selected_item));
         }
         if(esat::IsSpecialKeyDown(esat::kSpecialKey_Down) || esat::IsSpecialKeyDown(esat::kSpecialKey_Tab)){
+            AudioLib::PlaySound(AudioLib::SoundsType::ACTION);
             esat::ResetBufferdKeyInput();
             do{
                 ++selected_item %= (int)RegisterItems::TOTAL_ITEMS;

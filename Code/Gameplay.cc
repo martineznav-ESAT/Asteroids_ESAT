@@ -11,8 +11,10 @@
 
 #include "../Libs/CustomLibs/Utils.h"
 #include "../Libs/CustomLibs/UILib.h"
-#include "../Libs/GameplayTech/GameplayTech.h"
 #include "../Libs/CustomLibs/TList.h"
+#include "../Libs/CustomLibs/AudioLib.h"
+
+#include "../Libs/GameplayTech/GameplayTech.h"
 
 #include "./GameManager.h"
 #include "./MainMenu.h"
@@ -29,6 +31,9 @@ namespace Gameplay{
 
     int gameover_title_lt = 5000;
     int gameover_title_ltc = gameover_title_lt;
+    int beat_lt = 1000;
+    int beat_ltc = beat_lt;
+    bool is_low_beat = true;
     bool new_highscore_p1 = false;
     bool new_highscore_p2 = false;
 
@@ -437,11 +442,28 @@ namespace Gameplay{
         }
     }
 
+    void UpdateBeat(){
+        if(beat_ltc < beat_lt){
+            beat_ltc += 1000/Utils::kFPS;
+        }else{
+            if (is_low_beat)
+            {
+                AudioLib::PlaySound(AudioLib::BEAT_1);
+            }else{
+                AudioLib::PlaySound(AudioLib::BEAT_2);
+            }
+
+            beat_ltc = 0;
+            is_low_beat = !is_low_beat;
+        }
+    }
+
     //Whole Gameplay update method
     void Update(){
 
         //GameOver Management
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            UpdateBeat();
             UpdatePowerUps();
             UpdatePlayers();
     

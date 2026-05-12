@@ -7,6 +7,7 @@
 
 #include "../CustomLibs/PolyLibJMATH.h"
 #include "../CustomLibs/TList.h"
+#include "../CustomLibs/AudioLib.h"
 
 #include "../../Code/Gameplay.h"
 
@@ -56,6 +57,14 @@ namespace Ufo{
     }
 
     void DestroyUfo(UfoShip* ufo){
+        switch (ufo->type){
+            case UfoType::BIG:
+                AudioLib::PlaySound(AudioLib::SoundsType::BANG_MEDIUM);
+            break;
+            case UfoType::SMALL:
+                AudioLib::PlaySound(AudioLib::SoundsType::BANG_SMALL);
+            break;
+        }
         for(int i = 0; i < 8; i++){
             Particles::LoadParticle(
                 (ufo->death_particles+i),
@@ -180,6 +189,7 @@ namespace Ufo{
         // printf("UPDATE UFO SHOT\n");
         if(!(ufo->shot.is_active)){
             // printf("FireShot\n");
+
             switch (ufo->type){
                 case UfoType::BIG:
                     FireShot(
@@ -312,6 +322,19 @@ namespace Ufo{
                 PolyLibJMATH::MovePoly(&(ufo->figure), ufo->fwd);
                 Collisions::BorderExitRellocation(&(ufo->figure));
                 PolyLibJMATH::UpdatePoly(&(ufo->figure));
+                switch (ufo->type){
+                    case UfoType::BIG:
+                        if (AudioLib::IsSoundPaused(AudioLib::SoundsType::UFO_BIG)){
+                            AudioLib::PlaySound(AudioLib::SoundsType::UFO_BIG);
+                        }
+                    break;
+
+                    case UfoType::SMALL:
+                        if (AudioLib::IsSoundPaused(AudioLib::SoundsType::UFO_SMALL)){
+                            AudioLib::PlaySound(AudioLib::SoundsType::UFO_SMALL);
+                        }
+                    break;
+                }
                 // printf("UPDATE UFO\n");
             }
         }
