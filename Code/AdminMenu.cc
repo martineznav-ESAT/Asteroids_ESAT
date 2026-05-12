@@ -43,9 +43,13 @@ namespace AdminMenu{
         for(int i = 0, u = 0; i < (int)AdminMenuItems::PREV_PAG_BTN; i++){
             aux_user_node = TList::GetIndexListNode(user_page,u);
             if(u < TList::ListLength(user_page)){
-                (menu_items+i)->item.btn_pa_item.is_visible = !(
-                    i%2 != 0 && 
-                    strcmp(aux_user_node->info.user_info.username, GameManager::game_status.logged_user->username) == 0
+                //Both buttons visible in case the user is not an admin
+                //In case the user is an admin, the edit button will be hidden and, in case the
+                //admin is the same as the one logged in, the delete button will be hidden as well
+                (menu_items+i)->item.btn_pa_item.is_visible = 
+                (
+                    !aux_user_node->info.user_info.is_admin ||
+                    aux_user_node->info.user_info.is_admin && i%2 != 0 && strcmp(aux_user_node->info.user_info.username, GameManager::game_status.logged_user->username) != 0
                 );
             }else{
                 (menu_items+i)->item.btn_pa_item.is_visible = false;

@@ -216,6 +216,74 @@ namespace Ufo{
 
     }
 
+    void UfoDirectionFollowPlayer(UfoShip* ufo){
+        JMATH::Vec2 aim_v;
+        switch (ufo->type){
+            case UfoType::SMALL:
+                switch (GameManager::game_status.actual_game->gamemode){
+                    case PlayedGames::Gamemode::SP:
+                        aim_v = JMATH::Vec2Norm(
+                            JMATH::Vec2Sub(
+                                GameManager::game_status.actual_game->p1.ship.figure.transform.translation,
+                                ufo->figure.transform.translation
+                            )
+                        );
+                    break;
+
+                    case PlayedGames::Gamemode::MP_ALT:
+                        if(GameManager::game_status.actual_game->is_player1_turn){
+                            aim_v = JMATH::Vec2Norm(
+                                JMATH::Vec2Sub(
+                                    GameManager::game_status.actual_game->p1.ship.figure.transform.translation,
+                                    ufo->figure.transform.translation
+                                )
+                            );
+                        }else{
+                            aim_v = JMATH::Vec2Norm(
+                                JMATH::Vec2Sub(
+                                    GameManager::game_status.actual_game->p2.ship.figure.transform.translation,
+                                    ufo->figure.transform.translation
+                                )
+                            );
+                        }
+                    break;
+
+                    case PlayedGames::Gamemode::MP_COOP:
+                    case PlayedGames::Gamemode::MP_VS:
+                        if(Utils::GenerateRandomNumber(2) == 0){
+                            aim_v = JMATH::Vec2Norm(
+                                JMATH::Vec2Sub(
+                                    GameManager::game_status.actual_game->p1.ship.figure.transform.translation,
+                                    ufo->figure.transform.translation
+                                )
+                            );
+                        }else{
+                            aim_v = JMATH::Vec2Norm(
+                                JMATH::Vec2Sub(
+                                    GameManager::game_status.actual_game->p2.ship.figure.transform.translation,
+                                    ufo->figure.transform.translation
+                                )
+                            );
+                        }
+                    break;
+                }
+
+                if(aim_v.y >= -0.1 && aim_v.y <= 0.1){
+                    // printf("Straight\n");
+                    ufo->fwd = {ufo->orientation*ufo->speed, 0.0f, 0.0f}; //Straight
+                }else{
+                    if(aim_v.y < 0){
+                        // printf("UP\n");
+                        ufo->fwd = JMATH::Vec3Scale(JMATH::Vec3Norm({(float)ufo->orientation, -1.0f, 0.0f}),ufo->speed); //Up
+                    }else{
+                        // printf("DOWN\n");
+                        ufo->fwd = JMATH::Vec3Scale(JMATH::Vec3Norm({(float)ufo->orientation, 1.0f, 0.0f}),ufo->speed); //Down
+                    }
+                }
+            break;
+        }
+    }
+
     void RandomDirection(UfoShip* ufo){
         int random = Utils::GenerateRandomNumber(250);
         // printf("RANDOM DIRECTION %d\n",random);
@@ -229,7 +297,10 @@ namespace Ufo{
             case 2:
                 ufo->fwd = {ufo->orientation*ufo->speed, 0.0f, 0.0f}; //Straight
             break;
-            // 3-249 Keeps current direction
+            case 3:
+                UfoDirectionFollowPlayer(ufo);
+            break;
+            // 4-249 Keeps current direction
         }
     }
 
