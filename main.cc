@@ -217,7 +217,7 @@ int esat::main(int argc, char **argv) {
     EmptyMemory();
     // printf("EmptyMemory FINO\n");
     
-    // printf("GAME CLOSED CORRECTLY\n");
+    printf("GAME CLOSED CORRECTLY\n");
     
     esat::WindowDestroy();
 

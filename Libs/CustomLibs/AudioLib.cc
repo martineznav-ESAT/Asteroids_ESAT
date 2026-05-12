@@ -39,7 +39,6 @@ namespace AudioLib{
     }
 
     void EmptyMemory(){
-        free(sounds);
         audio_channel.deinit();
     }
 }
