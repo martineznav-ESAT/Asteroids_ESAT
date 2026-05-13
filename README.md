@@ -4,10 +4,10 @@ Versión del videojuego arcade clásico de Atari Asteroids desarrollada por Jona
 -- Trata de ser lo mas fiel posible al original en cuanto a gameplay junto a manejo local de usuarios, guardado de partidas sin finalizar, power-ups y modos de juego multijugador.
 
 -- Dispone de 4 modos de juego:
-  -- Un jugador
-  -- Multijugador Alternando
-  -- Multijugador Simultaneao Versus
-  -- Multijugador Simultaneao Cooperativo
+  - Un jugador
+  - Multijugador Alternando
+  -  Multijugador Simultaneao Versus
+  -   Multijugador Simultaneao Cooperativo
 
 -- Funcionamiento óptimo a 60fps.
 
