@@ -77,6 +77,9 @@ Estos archivos incluyen:
   - La lista de partidas (game_list.dat)
   - La lista de las mejores 10 puntuaciones (highscores.dat)
   - La lista de usuarios registrados (user_list.dat)
+**Si descargas una versión de Release, no dispondrás de ninguno de los ficheros.**
+
+Pero si los necesitas, en la misma ubicación que las versiones de Release **podrás encontrar una descarga con el nombre "SaveFiles"** con unos ficheros que podrás utilizar por defecto. **Toda la información sobre los usuarios la encontrarás en la descripción de la descarga de los "SaveFiles"**
 <img width="699" height="180" alt="image" src="https://github.com/user-attachments/assets/bd74feb7-3e5b-45d2-b9a0-93635694b613" />
 
 Se debe tener en cuenta que las partidas van relacionadas con los usuarios, por lo que si se elimina la lista de usuarios, lo mas probable es que la lista de partidas y puntuaciones máximas pase a ser inutilizable.
