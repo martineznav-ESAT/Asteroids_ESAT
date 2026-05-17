@@ -373,10 +373,11 @@ namespace Ufo{
     void UpdateUfo(UfoShip *ufo){
 
         // printf("UPDATE UFO %d\n", ufo->type);
-        UpdateUfoShot(ufo);
-        UpdateUfoParticles(ufo);
         
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
+            UpdateUfoShot(ufo);
+            UpdateUfoParticles(ufo);
+            
             if(IsUfoSpawned(ufo) && ufo->type == UfoType::NONE){
                 SpawnUfo(ufo);
             }else{

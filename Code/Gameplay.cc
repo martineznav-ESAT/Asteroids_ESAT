@@ -425,7 +425,14 @@ namespace Gameplay{
     void UpdateGameOverScreen(){
         gameover_title_ltc += 1000/Utils::kFPS;
         if(gameover_title_ltc >= gameover_title_lt){
+            ufo.shot.is_active = false;
+            for (int i = 0; i < 8; i++){
+                (ufo.death_particles+i)->is_active = false;
+            }
+            Ufo::UpdateUfo(&ufo);
             ufo.type = Ufo::UfoType::NONE;
+            
+            
             ufo.spawn_ltc = 10000; 
             TList::ClearList(&asteroid_ingame);
             TList::ClearList(&asteroid_particles);

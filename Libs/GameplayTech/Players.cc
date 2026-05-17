@@ -141,15 +141,28 @@ namespace Players{
         }
     }
 
+    void AddLifes(Player* player){
+        if(player->lifes < 10){
+            if(player->life_up_score/10000 > 0){
+                AudioLib::PlaySound(AudioLib::EXTRA_SHIP);
+            }
+
+            player->lifes += player->life_up_score/10000;
+            
+            if(player->lifes >= 10){
+                player->life_up_score = 0;
+            }else{
+                player->life_up_score %= 10000;
+            }
+        }
+
+    }
+
     void AddPoints(Player* player, int points){
         player->life_up_score += points;
         // printf("LIFE UP SCORE %d\n", player->life_up_score/10000);
 
-        if(player->life_up_score/10000 > 0){
-            AudioLib::PlaySound(AudioLib::EXTRA_SHIP);
-        }
-        player->lifes += player->life_up_score/10000;
-        player->life_up_score %= 10000;
+        AddLifes(player);
 
         player->score += points;
         if(player->score > 999999){
@@ -339,7 +352,8 @@ namespace Players{
             }
 
             if(esat::IsKeyDown('Z')){
-                p->lifes++;
+                p->life_up_score = 10000;
+                AddLifes(p);
             }
 
 
@@ -398,7 +412,8 @@ namespace Players{
             }
 
             if(esat::IsKeyDown('L')){
-                p->lifes++;
+                p->life_up_score = 10000;
+                AddLifes(p);
             }
         }
     }
