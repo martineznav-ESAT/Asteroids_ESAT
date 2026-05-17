@@ -39,14 +39,14 @@ CONTROLES:
     - A          Girar a izquierda
     - D          Girar a derecha
     - SpaceBar   Disparar
-    - G          Salto Hyperspacial
+    - G          Salto Hiperspacial
 
         **Jugador 2:**
     - Flecha Arriba       (🡩)  Acelerar
     - Flecha Izquierda    (**🡐**)  Girar a izquierda
     - Flecha Derecha      (➔)  Girar a derecha
     - Enter               (⏎)  Disparar
-    - P                    Salto Hyperspacial
+    - P                    Salto Hiperspacial
        
 
 
