@@ -22,6 +22,7 @@ namespace PlayedGames{
 
     char **gamemode_texts;
 
+    //Creates a new game with default values
     PlayedGame NewGame(){
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
 
@@ -42,6 +43,7 @@ namespace PlayedGames{
         return new_game;
     }
 
+    // Instantiates a new game based on an already existing one
     PlayedGame NewGameCopy(PlayedGame *game){
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
 
@@ -59,6 +61,9 @@ namespace PlayedGames{
         return new_game;
     }
 
+    //Returns a new base game given a gamemode and a posible second user. 
+    //The main user will always be the currently logged user
+    //Mainly used to create a completely new game
     PlayedGame LoadBaseGameManager(Gamemode gm, UserManager::User* p2 = nullptr){
         PlayedGame new_game = NewGame();
         new_game.gamemode = gm;
@@ -68,6 +73,7 @@ namespace PlayedGames{
         return new_game;
     }
 
+    //Writes the needed values of the given game user on the given opened file
     void SaveGameUser(UserManager::User *user , FILE *dat_file){
         TList::ListInfo aux_user_info = {NULL};
         // printf("\n\nSaveGameUser\n");
@@ -91,6 +97,7 @@ namespace PlayedGames{
         }
     }
 
+    //Writes the needed values of the given game player on the given opened file
     void SaveGamePlayer(Players::Player player, FILE *dat_file){
         //printf("Saving player.lifes\n");
         fwrite(&(player.lifes), sizeof(int), 1, dat_file);
@@ -110,6 +117,7 @@ namespace PlayedGames{
         
     }
 
+    //Writes the needed values of the given game on the given opened file
     void SaveGame(PlayedGame game, FILE *dat_file){
         //char* values are writen with +1 length to ensure '\0' character has space to be saved 
         //(Should have been written the same way previously)
@@ -145,6 +153,9 @@ namespace PlayedGames{
         // UserManager::EmptyUserMemory(&aux_user_info.user_info);
     }
 
+    //Reads the game user saved values from the given opened file, 
+    //looks for a match in the userlist, 
+    //and loads the information on the given game 
     void LoadGameUsers(PlayedGame *loaded_game, FILE *dat_file){
         TList::ListInfo aux_info = {NULL};
         TList::ListNode *aux_node = nullptr;
@@ -170,6 +181,8 @@ namespace PlayedGames{
         UserManager::EmptyUserMemory(&aux_info.user_info);
     }
 
+    //Reads the game player saved values from the given opened file, 
+    //and loads the information on the given game player 
     void LoadGamePlayer(Players::Player *player, FILE *dat_file){
         fread(&(player->lifes), sizeof(int), 1, dat_file);
         fread(&(player->score), sizeof(int), 1, dat_file);
@@ -177,6 +190,9 @@ namespace PlayedGames{
         fread(&(player->round), sizeof(int), 1, dat_file);
     }
 
+    //Reads the values of a game in the given opened file and 
+    //instantiates a new PlayedGame struct with the loaded values which
+    //is returned as a result
     PlayedGame LoadGame(FILE *dat_file){
         PlayedGame loaded_game = NewGame();
 
@@ -204,6 +220,7 @@ namespace PlayedGames{
         return loaded_game;
     }
 
+    //Loads into game_list the totality of the games saved at the game_list_dat_path file
     bool LoadGameList(){
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
         bool is_loaded = TList::LoadList(aux_list, TList::ListType::PLAYED_GAME, game_list_dat, game_list_dat_path);
@@ -212,6 +229,7 @@ namespace PlayedGames{
         return is_loaded;
     }
 
+    //Initialization function for PlayedGames.cc
     void Init(){
         gamemode_texts = (char**) malloc(sizeof(char*)*4);
 
@@ -223,16 +241,24 @@ namespace PlayedGames{
         LoadGameList();
     }
 
+    //Used to ensures all PlayedGames.cc FILE variables are closed
     void CloseFiles(){
         if(game_list_dat != nullptr){
             fclose(game_list_dat);
         }
     }
 
+    //Releases all the dynamic memory used in the given game
     void EmptyGameMemory(PlayedGame *game){
-        
+        //Since the dynamic memory used in the PlayedGame structure is not
+        //PlayedGame exclusive at the moment since those values are the game Users
+        //Being this the case the User memory management is for the UserManager to take care of.
+        //Yet this function is preserved for posible future values such as "char* game_name" for instance
+        //Preserving the structure mainly for the TList branch that corresponds to 
+        //the PlayedGame list type management
     }
 
+    //Releases all the dynamic memoery of the PlayedGames.cc variables 
     void EmptyMemory(){
         TList::ClearList((TList::ListNode**)&game_list);
         free(gamemode_texts);
