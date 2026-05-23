@@ -16,7 +16,7 @@
 #include "../../Code/UserManager.h"
 
 namespace UILib{
-    //UI_ITEM
+    //Initializes UI_ITEM
     void InitItem(UI_Item* ui_item, ItemType it, Text name){
         *ui_item = {
             it,
@@ -91,6 +91,7 @@ namespace UILib{
         }
     }
     
+    //Draws the item based on its type
     void DrawItem(UI_Item ui_item){
         switch (ui_item.item_type){
             case UILib::ItemType::BUTTON:
@@ -160,7 +161,7 @@ namespace UILib{
     }
 
     //Changes button color in case the mouse is hovering on it
-    //and grants acces to click the button if that's the case
+    //and grants access to click the button if that's the case
     void OnButtonHover(Button *b){
         if(b->is_visible && Utils::MouseInCollider(b->collider)){
             //OnHover
@@ -178,6 +179,8 @@ namespace UILib{
         }
     }
 
+    //Changes button color in case the mouse is hovering on it
+    //and grants access to click the button if that's the case
     void OnButtonHover(Button_PA *b){
         if(b->is_visible && Utils::MouseInCollider(b->collider)){
             //OnHover
@@ -210,6 +213,7 @@ namespace UILib{
         }
     }
 
+    //Given a button_PA, it gets checked to manage workability
     void UpdateButtonPA(Button_PA *button){
         if(button->is_visible){
             OnButtonHover(button);
@@ -260,7 +264,7 @@ namespace UILib{
 
     //TEXT_INPUT
 
-    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    //Given a text_input as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitTextInput(UILib::TextInput *ti, Utils::Collider tag_box, Utils::Collider input_box, Utils::Color border_color, Utils::Color fill_color, UILib::Text ti_text, bool is_visible, bool is_tag_v, bool is_number_only, bool is_passwd, int max_length){
         //The char memory block has 1 extra space for the blinking effect to work when selected 
         ti_text.text = (char*) malloc(sizeof(char) * (max_length+1));
@@ -336,6 +340,7 @@ namespace UILib{
         return is_input;
     }
 
+    //Adjusts the pointer position inside the TextInput
     void AdjustPointerLength(UILib::TextInput* ti){
         // printf("ADJUST %d\n",strlen(ti->input_text.text));
         Utils::StringFillWithChar(ti->pointer, UserManager::kDefaultStrL,' ', strlen(ti->input_text.text));
@@ -344,7 +349,7 @@ namespace UILib{
         *(ti->pointer+strlen(ti->input_text.text)+1) = '\0';
     }
 
-
+    //Manages the TextInput pointer blink when selected
     void BlinkPointer(TextInput *ti){
         if(Utils::current_time-(ti->blink_timer) >= 500){
             ti->blink_timer = esat::Time();
@@ -352,6 +357,7 @@ namespace UILib{
         }
     }
 
+    //Updates the state of the TextInput pointer
     void UpdateTextInputPointer(TextInput *ti){
         for(int i = 0; i < strlen(ti->input_text.text)+2;i++){
             if(i>=strlen(ti->input_text.text)){
@@ -489,7 +495,7 @@ namespace UILib{
 
     //CHECKBOX
 
-    //Given a button as parameter, fills it with the rest of the parameters. Created mainly for readability
+    //Given a checkbox as parameter, fills it with the rest of the parameters. Created mainly for readability
     void InitCheckbox(Checkbox *chk, Utils::Collider tag_box, Utils::Collider collider, Utils::Color border_color, Utils::Color fill_color, Text chk_text, bool is_checked, bool is_visible, bool is_tag_v){
         *chk = {
             tag_box,
@@ -526,7 +532,7 @@ namespace UILib{
         }
     }
 
-    //Given a chexkbox, it gets checked to manage workability
+    //Given a checkbox, it gets checked to manage workability
     void UpdateCheckbox(Checkbox *chk){
         if(chk->is_visible){
             OnCheckboxHover(chk);
@@ -572,6 +578,7 @@ namespace UILib{
         }
     }
 
+    //Releases the occupied memory of the given item based on its type.
     void EmptyItemMemory(UI_Item *item){
         switch (item->item_type){
             case UILib::ItemType::BUTTON:

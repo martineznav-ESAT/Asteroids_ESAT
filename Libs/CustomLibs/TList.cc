@@ -11,10 +11,12 @@
 
 namespace TList{
 
+    //List constructor
     ListNode* CreateList(){
         return nullptr;
     }
 
+    //Returns a boolean that determines if the given list is empty or not
     bool IsEmptyList(ListNode **list){
         return (*list == nullptr);
     }
@@ -68,7 +70,8 @@ namespace TList{
         return aux;
     }
 
-    //Adds a value at the beginning of the list
+    //Adds a value at the beginning of the list. 
+    //Returns a bool that determines if the value was properly inserted
     bool InsertList(ListNode **list, ListType type, ListInfo info){
         bool is_inserted = true;
         if(!IsEmptyList(list) && FindInList(*list, info)){
@@ -157,6 +160,7 @@ namespace TList{
         printf("\n");
     }
 
+    //Returns the last node of the given list
     ListNode* GetLastListNode(ListNode *list){
         ListNode *aux = nullptr;
         if(list != nullptr){
@@ -165,6 +169,7 @@ namespace TList{
         return aux;
     }
 
+    //Returns the node of a list based on the given index
     ListNode* GetIndexListNode(ListNode *list, int index){
         ListNode *aux = nullptr;
         int i = 0;
@@ -172,6 +177,7 @@ namespace TList{
         return aux;
     }
 
+    //Returns a random node of the given list
     ListNode* GetRandomListNode(ListNode *list){
         ListNode *aux = nullptr;
         int random_i = rand()%ListLength(list);
@@ -276,6 +282,7 @@ namespace TList{
         DeleteElement(list, aux);
     }
 
+    //Cleans a list completely deleting all the nodes inside it 
     void ClearList(ListNode **list){
         // printf("CLEAR LIST\n");
         for(ListNode *act = *list; !IsEmptyList(list); act = *list){
@@ -285,6 +292,7 @@ namespace TList{
         // printf("CLEAR LIST COMPLETED\n");
     }
 
+    //Saves a node in the given opened file
     void SaveNode(ListNode *list, FILE *file){
         if(file != NULL && !IsEmptyList(&list)){
             fwrite(&(list->type), sizeof(list->type), 1, file);
@@ -311,6 +319,7 @@ namespace TList{
         }
     }
 
+    //Saves the whole list on the given file/file_path
     void SaveList(ListNode **list, FILE *dat_file, char* dat_path){
         ListNode *aux = GetLastListNode(*list);
         dat_file = fopen(dat_path, "wb");
@@ -329,6 +338,7 @@ namespace TList{
         printf("LIST SAVED CORRECTLY\n");
     }
 
+    //Reads a whole list from a given file
     bool LoadList(ListNode **list_to_load, ListType list_type, FILE *dat_file, char* dat_path){
         bool is_loaded = true;
         *list_to_load = CreateList();
