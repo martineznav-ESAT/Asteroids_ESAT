@@ -6,9 +6,6 @@
 
 #include "./JMATH.h"
 #include "./PolyLibJMATH.h"
-#include "./Utils.h"
-
-#include "../GameplayTech/GameplayTech.h"
 
 namespace PolyLibJMATH{
     void InitPoly(Poly *p, int vertices, JMATH::Vec2 scale, float rotation, JMATH::Vec2 translation, JMATH::Vec3 color, JMATH::Vec2 center_offset){

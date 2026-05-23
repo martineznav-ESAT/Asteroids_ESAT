@@ -24,6 +24,7 @@
 
 #include "./Libs/GameplayTech/GameplayTech.h"
 
+// Launches all Initialization functions needed from all the imported resources.
 void InitGame(){
     AudioLib::Init();
 
@@ -49,6 +50,7 @@ void InitGame(){
     // printf("INIT GAME END\n");
 }
 
+// Launches the current screen/level update functions needed 
 void UpdateGame(){
     GameManager::DebugUpdate();
     switch(GameManager::game_status.level){
@@ -87,6 +89,7 @@ void UpdateGame(){
     }
 }
 
+// Launches the current screen/level draw functions needed 
 void DrawGame(){
     esat::DrawClear(0,0,0);
     switch(GameManager::game_status.level){
@@ -125,6 +128,7 @@ void DrawGame(){
     }
 }
 
+//Returns a boolean that determines if the conditions to close the game are succeeded
 bool CloseGameCondition(){
     return (
         esat::WindowIsOpened() && 
@@ -133,6 +137,7 @@ bool CloseGameCondition(){
     );
 }
 
+// Launches all memory releasing functions needed from all the imported resources.
 void EmptyMemory(){
     //printf("EmptyMemory FINO?\n");
     LoginMenu::EmptyMemory();
@@ -165,6 +170,7 @@ void EmptyMemory(){
     //printf("AudioLib FINO\n");
 }
 
+//Ensures all the posibly used files are closed
 void CloseFiles(){
     UserManager::CloseFiles();
     HighscoresMenu::CloseFiles();
@@ -188,10 +194,10 @@ int esat::main(int argc, char **argv) {
         esat::DrawClear(0,0,0);
         
         //DEBUGGING CONTROLS
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_Alt)){
-            printf("TOGGLE COLLIDERS\n");
-            Collisions::show_colliders = !(Collisions::show_colliders);
-        }
+        // if(esat::IsSpecialKeyDown(esat::kSpecialKey_Alt)){
+        //     printf("TOGGLE COLLIDERS\n");
+        //     Collisions::show_colliders = !(Collisions::show_colliders);
+        // }
 
         UpdateGame();
         // printf("Update FINO\n");
