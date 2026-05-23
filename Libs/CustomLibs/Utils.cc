@@ -19,51 +19,41 @@ namespace Utils{
 
     double current_time,last_time;
 
-    // Genera nueva semilla en base al 
-    // ms del reloj del sistema
+    //Generates a new seed for random numbers generation based on the system clock ms
     void GenerateRandomSeed(){
         srand(time(NULL)); 
     }
     
-    //Genera un número del 0 al límite indicado sin incluirlo
-    int GenerateRandomNumber(int limite){
-        return (rand()%limite);
+    //Generates a random number between 0 and the given limit without including this last one
+    int GenerateRandomNumber(int limit){
+        return (rand()%limit);
     }
 
-    //Genera un número del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
-    int GenerateRandomNumberNegative(int limite){
-        return (GenerateRandomNumber(limite)) * (GenerateRandomNumber(2) == 0 ? -1 : 1);
+    //Generates a number between the given limit and this same limit in negative 
+    //including the 0 but not including the limit neither in positive nor negative
+    int GenerateRandomNumberNegative(int limit){
+        return (GenerateRandomNumber(limit)) * (GenerateRandomNumber(2) == 0 ? -1 : 1);
     }
 
-    //Genera un número decimal (2 decimales) del 0 al límite indicado sin incluirlo
-    float GenerateRandomFloat(int limite){
-        return (GenerateRandomNumber(limite*100)/100.0f);
+    //Generate a decimal number with precision 2 between 0 and the given limit without including it
+    float GenerateRandomFloat(int limit){
+        return (GenerateRandomNumber(limit*100)/100.0f);
     }
 
-    //Genera un número decimal (2 decimales) del limite indicado al limite en negativo pasando por el 0 sin incluir el limite 
-    float GenerateRandomFloatNegative(int limite){
-        return (GenerateRandomFloat(limite) * (GenerateRandomNumber(2) == 0 ? -1 : 1));
+    //Generates a decimal number with precision 2 between the given limit and this same limit in negative 
+    //including the 0 but not including the limit neither in positive nor negative
+    float GenerateRandomFloatNegative(int limit){
+        return (GenerateRandomFloat(limit) * (GenerateRandomNumber(2) == 0 ? -1 : 1));
     }
 
-    int GetPointerIndex(int row, int col_t, int col){
-        return ((row*col_t)+col);
-    }
-
-    int GetPointerRowFromIndex(int i, int col_t){
-        return (i/col_t);
-    }
-
-    int GetPointerColFromIndex(int i, int col_t){
-        return (i%col_t);
-    }
-
+    //Manages the maximum FPS at which the application can run
     void ControlFps(){
         do{
             current_time = esat::Time();
         }while((current_time-last_time)<=1000.0/kFPS);
     }
 
-    //Detects if the mouse is inside the collider area
+    //Detects if the mouse is inside the given collider area
     bool MouseInCollider(Collider c){
         return (
             c.P1.x < esat::MousePositionX() &&
@@ -73,6 +63,7 @@ namespace Utils{
         );
     }
 
+    //Draws the given collider with the given collors
     void DrawCollider(Collider c, Color border_color, Color fill_color){
         //Generates draw coords and draws de button collider with the button values
         JMATH::Vec2 *draw_coords = (JMATH::Vec2*) malloc(sizeof(JMATH::Vec2) * 5);
@@ -90,6 +81,7 @@ namespace Utils{
         free(draw_coords);
     }
 
+    //Searches a specified character inside an String (char*) and returns the first index in which it is found
     int FindCharIndexInString(char* string, char find_char){
         int count;
         bool is_found = false;
@@ -103,8 +95,14 @@ namespace Utils{
     //Fills the string with the character used as parameter up to the introduced limit
     //Limit -1 implies the whole text will be filled
     void StringFillWithChar(char* string, int str_length, char character, int limit = -1){
-        for(int i = 0; i < str_length && i < limit; i++){
-            *(string+i) = character;
+        if(limit <= -1){
+            for(int i = 0; i < str_length; i++){
+                *(string+i) = character;
+            }
+        }else{
+            for(int i = 0; i < str_length && i < limit; i++){
+                *(string+i) = character;
+            }
         }
     }
 

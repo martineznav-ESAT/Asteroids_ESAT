@@ -14,6 +14,8 @@ namespace Asteroids{
     JMATH::Vec3 **asteroids_coords = nullptr;
     int last_asteroid_id = -1;
 
+
+    //Given an Asteroid Type, returns the corresponding vertices count
     int GetAsteroidTypeVertices(AsteroidType type){
         int res = 0;
         switch (type){
@@ -34,6 +36,7 @@ namespace Asteroids{
         return res;
     }
 
+    //Asteroids.cc initialization function 
     void Init(){
         asteroids_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*)*AsteroidType::TOTAL_ASTEROIDS);
 
@@ -96,6 +99,7 @@ namespace Asteroids{
         *(*(asteroids_coords+3)+11) = {-0.180f, -0.374f, 1.0f};  // 12
     }
 
+    //Creates a new Asteroid based on the given parameters
     Asteroid NewAsteroid(AsteroidType type, int size_level){
         Asteroid new_ast;
         new_ast.id = ++last_asteroid_id;
@@ -125,6 +129,7 @@ namespace Asteroids{
         return new_ast;
     }
 
+    //Adds points to the player given as parameter based on the asteroid size_level given
     void AddAsteroidPoints(int size_level, Players::Player* player){
         switch (size_level){
             case 1:
@@ -139,7 +144,7 @@ namespace Asteroids{
         }
     }
 
-
+    //Manages the creation of the new asteroids when one is destroyed based on its size level and its particle generation.
     void GenerateAsteroidsFromAsteroid(TList::ListNode **asteroid_list, TList::ListNode **particle_list, Asteroid *asteroid){
         TList::ListInfo asteroid_aux_info = {NULL};
         TList::ListInfo particle_aux_info = {NULL};
@@ -169,6 +174,7 @@ namespace Asteroids{
         // TList::PrintList(*asteroid_list);
     }
 
+    //Plays the sound of the destroyed asteroid based on its size
     void PlayAsteroidDestroySound(Asteroid *asteroid){
         switch (asteroid->size_level){
             case 1:
@@ -183,6 +189,9 @@ namespace Asteroids{
         }
     }
 
+    //Manages the asteroid destruction given the asteroid list to which it belongs as well as the particle list 
+    //where we want the destruction particles to be managed from.
+    //It's also provided the player that destroyed the asteroid. nullptr value means no player destroyed it
     void DestroyAsteroid(void **asteroid_list, void **particle_list, Asteroid *asteroid, Players::Player *player = nullptr){
         TList::ListNode** asteroid_list_aux = (TList::ListNode**) asteroid_list;
         TList::ListNode** particle_list_aux = (TList::ListNode**) particle_list;
@@ -212,15 +221,17 @@ namespace Asteroids{
         TList::DeleteElement(asteroid_list_aux, aux_asteroid_info);
     }
     
+    //Releases the memory of the given asteroid
     void EmptyAsteroidMemory(Asteroid *asteroid){
         PolyLibJMATH::EmptyPolyMemory(&(asteroid->figure));
-        //The particle work separately on another list for them to be able to me shown
+        //The particle work separately on another list for them to be able to be shown
         //after the asteroid is destroyed since it will get removed from the list instantly on collision
 
         //THIS CODE IS ONLY FOR REMINDING PURPOSES. JUST MAKE SURE PARTICLES WORK PROPERLY ON THEIR INDEPENDENT GAMEPLAY LIST 
         // free(asteroid->destroy_particles);
     }
 
+    //Releases the memory of the Asteroids.cc file variables
     void EmptyMemory(){
         // printf("Free asteroids coords\n");
         for(int i = 0; i < (int)AsteroidType::TOTAL_ASTEROIDS; i++){

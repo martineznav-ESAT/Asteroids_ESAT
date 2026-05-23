@@ -17,6 +17,8 @@
 namespace Collisions{
     bool show_colliders = false;
 
+    //Checks if the given poly, gets past a window border completely and returns
+    //which border it traspassed form. If it does not traspass from anywher, it returns NONE 
     Border CollisionPolyWindowBorderExit(PolyLibJMATH::Poly poly){
         Border collided = Border::NONE;
         float aux_position_x = 0;
@@ -46,10 +48,10 @@ namespace Collisions{
         return collided;
     }
 
+    //Rellocates by teleportation the given poly to the oposite border it traspassed
     void BorderExitRellocation(PolyLibJMATH::Poly *poly){
         Border collided_border = Collisions::CollisionPolyWindowBorderExit(*poly);
         if(collided_border != Border::NONE){
-            //Saves coords before usual Update to prevent collision bug when rellocating
             switch (collided_border){
                 case Collisions::Border::TOP:
                     poly->transform.translation.y = Utils::kWindowHeight+(poly->transform.scale.y);
@@ -65,11 +67,13 @@ namespace Collisions{
                 break;
             }
 
+            //Saves coords before usual Update to prevent collision bug when rellocating
             PolyLibJMATH::SaveDrawCoords(poly);
         }
         
     }
 
+    //Checks if there's an accurate collision between polys and returns the result
     bool CollisionPolyPoly(PolyLibJMATH::Poly p1, PolyLibJMATH::Poly p2){
         bool is_colliding = false;
         int p1_i, p2_i;
@@ -136,6 +140,8 @@ namespace Collisions{
         return is_colliding;
     }
 
+    //Checks if there's collision between the given asteroid and any of the player shots and returns the result.
+    //This function also manages the collision event.
     bool CollisionAsteroidPlayerShots(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
         // printf("CollisionAsteroidPlayerShots\n");
@@ -155,6 +161,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given asteroid and the given player ship and returns the result.
+    //This function also manages the collision event.
     bool CollisionAsteroidPlayer(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Players::Player *player){
         bool collision = false;
         // printf("CollisionAsteroidPlayer\n");
@@ -167,6 +175,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given asteroid and the given ufo shot and returns the result.
+    //This function also manages the collision event.
     bool CollisionAsteroidUfoShot(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
         // printf("CollisionAsteroidUfoShot\n");
@@ -180,6 +190,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given asteroid and the given ufo and returns the result.
+    //This function also manages the collision event.
     bool CollisionAsteroidUfo(TList::ListNode** asteroid_list, TList::ListNode** particle_list, Asteroids::Asteroid *asteroid, Ufo::UfoShip *ufo){
         bool collision = false;
         // printf("CollisionAsteroidUfo\n");
@@ -192,6 +204,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given UFO and the given player ship and returns the result.
+    //This function also manages the collision event.
     bool CollisionUfoPlayer(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
         // printf("CollisionUfoPlayer\n");
@@ -207,6 +221,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given UFO and any of the given player shots and returns the result.
+    //This function also manages the collision event.
     bool CollisionUfoPlayerShots(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
         // printf("CollisionUfoPlayerShots\n");
@@ -233,6 +249,8 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between the given UFO shot and the given player ship and returns the result.
+    //This function also manages the collision event.
     bool CollisionUfoShotPlayer(Ufo::UfoShip *ufo, Players::Player *player){
         bool collision = false;
         // printf("CollisionUfoShotPlayer\n");
@@ -250,7 +268,8 @@ namespace Collisions{
         return collision;
     }
 
-
+    //Checks if there's collision between the given PowerUp and the given player ship and returns the result.
+    //This function also manages the collision event.
     bool CollisionPowerUpPlayer(PowerUps::PowerUp *pu, Players::Player *player){
         TList::ListInfo aux_info = {NULL};
         bool collision = false;
@@ -280,6 +299,9 @@ namespace Collisions{
         return collision;
     }
 
+    //Checks if there's collision between any of the first parameter player shots and the second parameter player ship and returns the result.
+    //Mainly used when the shooting player has the FriendlyFire power up active.
+    //This function also manages the collision event.
     bool CollisionPlayerShotsPlayer(Players::Player *player_shooting, Players::Player *other_player){
         bool collision = false;
         // printf("CollisionPlayerShotsPlayer\n");

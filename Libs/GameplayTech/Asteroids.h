@@ -15,6 +15,7 @@
 namespace Asteroids{
     extern int last_asteroid_id;
     
+    //Asteroids types based on its form
     enum AsteroidType{
         A1,
         A2,
@@ -23,6 +24,7 @@ namespace Asteroids{
         TOTAL_ASTEROIDS
     };
 
+    //Asteroids vertices for each of their forms
     enum AsteroidTypeVertices{
         A1_TV = 12,
         A2_TV = 11,
@@ -30,6 +32,7 @@ namespace Asteroids{
         A4_TV = 12
     };
 
+    //Asteroid struct for individual management
     struct Asteroid{
         int id = 0;
         AsteroidType type;
