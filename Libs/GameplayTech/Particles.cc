@@ -13,6 +13,7 @@ namespace Particles{
 
     int last_particle_id = -1;
 
+    //Creates a new particle struct based on the given type
     Particle NewParticle(ParticleType type){
         Particle new_particle;
         new_particle.id = ++last_particle_id;
@@ -60,6 +61,7 @@ namespace Particles{
         return new_particle;
     }
 
+    //Accelerates de given particle based on the accel field of the particle struct 
     void AccelerateParticle(Particle *particle){
         particle->speed_v = JMATH::Vec3Sum(particle->speed_v, JMATH::Vec3Scale(particle->fwd, particle->accel/Utils::kFPS));
         if(JMATH::Vec2Length(JMATH::Vec3ToVec2(particle->speed_v)) > particle->max_speed){
@@ -67,10 +69,12 @@ namespace Particles{
         }
     }
 
+    //Decelerates de given particle based on the decel field of the particle struct 
     void DecelerateParticle(Particle *particle){
         particle->speed_v = JMATH::Vec3Scale(particle->speed_v, particle->decel);
     }
 
+    //Loads the given particle on the given position by showing it and stablishing its movement
     void LoadParticle(Particle *particle, JMATH::Vec2 position){
         switch(particle->type){
             case ParticleType::PLAYER_DEATH:
@@ -90,6 +94,7 @@ namespace Particles{
         }
     }
 
+    //Updates the given particle current status based on its type
     void UpdateParticle(Particle *particle){
         if(particle->is_active){
             switch(particle->type){
@@ -108,12 +113,14 @@ namespace Particles{
         }
     }
 
+    //Draws the given particle on screen
     void DrawParticle(Particle *particle){
         if(particle->is_active){
             PolyLibJMATH::DrawPoly(particle->figure,true);
         }
     }
 
+    //Releases the dynamic memory of the given particle 
     void EmptyParticleMemory(Particle* particle){
         PolyLibJMATH::EmptyPolyMemory(&(particle->figure));
     }
