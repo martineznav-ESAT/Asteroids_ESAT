@@ -14,6 +14,7 @@
 namespace Players{
     JMATH::Vec3 *ship_coords = nullptr;
 
+    //Initializes Players.cc values
     void Init(){
         ship_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*5);
         *(ship_coords+0) = {1.0f, 0.0f};      // 1
@@ -24,6 +25,7 @@ namespace Players{
     }
 
 
+    //Creates and returns a new Ship struct with default values
     Ship NewShip(){
         Ship new_ship;
         PolyLibJMATH::InitPoly(
@@ -54,6 +56,7 @@ namespace Players{
         return new_ship;
     }
 
+    //Creates and returns a new Player struct with default values
     Player NewPlayer(){
         Player new_player;
         new_player.ship = NewShip();
@@ -73,18 +76,22 @@ namespace Players{
         return new_player;
     }
 
+    //Based on the given player counter, returns if the player is dead or not
     bool IsPlayerDead(Players::Player player){
         return player.dead_ltc < player.dead_lt;
     }
 
+    //Based on the given player counter, returns if the player is inmune or not
     bool IsPlayerImmune(Players::Player player){
         return player.inmunity_ltc < player.inmunity_lt;
     }
 
+    //Rotates a ship the amount of degrees per second given
     void RotateShip(Ship *ship, float degreesSecond){
         ship->figure.transform.rotation += degreesSecond/Utils::kFPS;
     }
 
+    //Augments the ship speed based on the acceleration field of its struct
     void AccelerateShip(Ship *ship){
         ship->speed_v = JMATH::Vec3Sum(ship->speed_v, JMATH::Vec3Scale(ship->fwd, ship->accel/Utils::kFPS));
         if(JMATH::Vec2Length(JMATH::Vec3ToVec2(ship->speed_v)) > ship->max_speed){
@@ -92,10 +99,12 @@ namespace Players{
         }
     }
 
+    //Reduces the ship speed based on the deceleration field of its struct
     void DecelerateShip(Ship *ship){
         ship->speed_v = JMATH::Vec3Scale(ship->speed_v, ship->decel);
     }
 
+    //Returns the exact coordenates of the head end point of a ship 
     JMATH::Vec2 GetShipHeadPoint(Ship *ship){
         return JMATH::Vec2Sum(
             ship->figure.transform.translation, 
@@ -103,6 +112,7 @@ namespace Players{
         );
     }
 
+    //Given a player, makes its ship to shoot one bullet on a straight line based on the rest of the shots status
     void ShipShoot(Player *player){
         int i;
         bool exists_unshot = false;
@@ -117,6 +127,8 @@ namespace Players{
         }
     }
 
+    //Given a player, makes its ship to shoot all of its 5 bullets simultaneously as a shotgun only
+    //if all 5 bullets are unactive at that time
     void ShipShotgunShoot(Player *player){
         JMATH::Vec3 aim_v;
         // printf("ShipShotgunShoot\n");
@@ -141,6 +153,7 @@ namespace Players{
         }
     }
 
+    //Adds lifes to a player if 10k points are obtained based on the life_up_score field
     void AddLifes(Player* player){
         if(player->lifes < 10){
             if(player->life_up_score/10000 > 0){
@@ -158,6 +171,7 @@ namespace Players{
 
     }
 
+    //Manages the adding of the given points to a player
     void AddPoints(Player* player, int points){
         player->life_up_score += points;
         // printf("LIFE UP SCORE %d\n", player->life_up_score/10000);
@@ -171,6 +185,7 @@ namespace Players{
         
     }
 
+    //Manages the removing of the given points to a player
     void RemovePoints(Player* player, int points){
         player->score -= points;
         if(player->score < 0){
@@ -178,6 +193,8 @@ namespace Players{
         }
     }
 
+    //Given the total amount of PowerUps based on PowerUps::PU_Type enum, and a memory block of tags
+    //Resets all the given tags time by renewing the tags to unactive ones
     void ResetPowerUpTagsTime(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
         // printf("ResetPowerUpTagsTime\n");
         for(int i = 0; i < total; i++){
@@ -186,6 +203,7 @@ namespace Players{
         }
     }
 
+    //Given a player, resets all its power ups turning them all off
     void ResetPlayerPowerUps(Player* player){
         if(player->pu_tags){
             switch (GameManager::game_status.actual_game->gamemode){
@@ -220,6 +238,7 @@ namespace Players{
         }
     }
 
+    //Makes a player reappear with inmunity on a point of the map based on the actual gamemode
     void RespawnPlayer(Player* player){
         player->inmunity_ltc = 0;
 
@@ -252,6 +271,7 @@ namespace Players{
         PolyLibJMATH::UpdatePoly(&(player->ship.figure));
     }
 
+    //Kills the player and manages its event and consequences
     void KillPlayer(Player* player){
         for(int i = 0; i < 4; i++){
             Particles::LoadParticle(
@@ -266,6 +286,8 @@ namespace Players{
         RespawnPlayer(player);
     }
 
+    //Activates a player HyperSpaceJump, teleporting it to a random position inside the map
+    //and giving or not inmunity to the player based on the consecutive_hs field
     void HyperSpacePlayer(Player* player){
         player->ship.figure.transform.translation = {
             Utils::GenerateRandomNumber(Utils::kWindowWidth-(player->ship.figure.transform.scale.x * 2))+player->ship.figure.transform.scale.x,
@@ -285,6 +307,7 @@ namespace Players{
         }
     }
 
+    //Returns the number of active shots the givenplayer has
     int GetPlayerActiveShots(Player *p){
         int count = 0;
         for(int i = 0; i < max_player_shots; i++){
@@ -296,6 +319,7 @@ namespace Players{
         return count;
     }
 
+    //Detects a player control inputs ingame based of on the player being player 1 or 2
     void PlayerInput(Player* p){
         if(GameManager::IsPlayer1(p)){
             //PLAYER 1 INPUT CONTROL
@@ -347,15 +371,14 @@ namespace Players{
 
 
             //DEBUG INPUT
-            if(esat::IsKeyDown('Q')){
-                KillPlayer(p);
-            }
+            // if(esat::IsKeyDown('Q')){
+            //     KillPlayer(p);
+            // }
 
-            if(esat::IsKeyDown('Z')){
-                p->life_up_score = 10000;
-                AddLifes(p);
-            }
-
+            // if(esat::IsKeyDown('Z')){
+            //     p->life_up_score = 10000;
+            //     AddLifes(p);
+            // }
 
 
         }else{
@@ -407,41 +430,46 @@ namespace Players{
             }
 
             //DEBUG INPUT
-            if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
-                KillPlayer(p);
-            }
+            // if(esat::IsSpecialKeyDown(esat::SpecialKey::kSpecialKey_Backspace)){
+            //     KillPlayer(p);
+            // }
 
-            if(esat::IsKeyDown('L')){
-                p->life_up_score = 10000;
-                AddLifes(p);
-            }
+            // if(esat::IsKeyDown('L')){
+            //     p->life_up_score = 10000;
+            //     AddLifes(p);
+            // }
         }
     }
 
+    //Updates the status of the given player ship shots 
     void UpdatePlayerShots(Players::Player* player){
         for(int i = 0; i < Players::max_player_shots; i++){
             Shots::UpdateShot(((player->ship.shots)+i));
         }
     }
 
+    //Updates the status of the given player ship death particles 
     void UpdatePlayerParticles(Players::Player* player){
         for(int i = 0; i < 4; i++){
             Particles::UpdateParticle((player->ship.death_particles+i));
         }
     }
 
+    //Updates the status of the given player forward vector 
     void UpdateShipFwd(Ship* ship){
         float radianBase = JMATH::DegreesToRadians(360.0f/ship->figure.t_vertices);
         float radianRotation = JMATH::DegreesToRadians(ship->figure.transform.rotation);
         ship->fwd = {cosf(radianRotation), sinf(radianRotation)};
     }
 
+    //Updates the status of the given power up tags based on the total given 
     void UpdatePowerUpTags(PowerUps::PU_Type total, PowerUps::PowerUpTag *tags){
         for(int i = 0; i < total; i++){
             PowerUps::UpdatePowerUpTag(tags+i);
         }
     }
 
+    //Updates the status of the given player power ups
     void UpdatePlayerPowerUps(Player* player){
         if(player->pu_tags){
             // printf("UpdatePlayerPowerUps Player %d\n", player->score);
@@ -460,12 +488,12 @@ namespace Players{
         }
     }
     
-
+    //Checks the posible collisions of a player
     void PlayerCollisions(Player* player){
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
 
-            //Ufo/Player Collisions in diferent gamemodes
-            //Ufo/Asteroids collisions is managed by Gameplay method "UpdateGameAsteroids()"
+            //Ufo/Player Collisions managed by the Ufo
+            //Asteroids/Player collisions managed by Gameplay method "UpdateGameAsteroids()"
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::MP_COOP:
                 case PlayedGames::Gamemode::MP_VS:
@@ -479,6 +507,7 @@ namespace Players{
         }
     }
 
+    //Updates the whole status of a player, its ship and captures the control inputs
     void UpdatePlayer(Player* player){
         // SAVE AND RETURN TO MAIN MENU INPUT
         if(esat::IsKeyDown('M')){
@@ -545,19 +574,21 @@ namespace Players{
         UpdatePlayerParticles(player);
     }
     
-
+    //Draws the given player ship shots
     void DrawPlayerShots(Players::Player player){
         for(int i = 0; i < Players::max_player_shots; i++){
             Shots::DrawShot(((player.ship.shots)+i));
         }
     }
 
+    //Draws the given player ship death particles
     void DrawPlayerParticles(Players::Player player){
         for(int i = 0; i < 4; i++){
             Particles::DrawParticle((player.ship.death_particles+i));
         }
     }
     
+    //Draws the given player ship propeller when accelerating
     void DrawPlayerPropeller(Player player){
         JMATH::Vec2 line1_P1, line2_P1, lines_P2;
         JMATH::Vec2 aux_v;
@@ -578,6 +609,7 @@ namespace Players{
         }
     }
 
+    //Returns if the given player has to be drawn completely or just the borders without filling it
     bool IsDrawPlayerSolid(Player player){
         bool is_draw_solid = false;
         switch (GameManager::game_status.actual_game->gamemode){
@@ -598,6 +630,7 @@ namespace Players{
         return is_draw_solid;
     }
 
+    //Draws everything related to the player in its current status
     void DrawPlayer(Player player){
         // printf("DrawPlayer INIT\n");
         if(player.is_active){
@@ -620,7 +653,7 @@ namespace Players{
         // printf("DrawPlayer END\n");
     }
 
-
+    //Releases the dynamic memory of the given player
     void EmptyPlayerMemory(Player* player){
         if(player->ship.shots){
             for(int i = 0; i < max_player_shots; i++){
