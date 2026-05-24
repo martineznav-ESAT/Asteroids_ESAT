@@ -34,10 +34,12 @@ namespace UserManager{
     void *user_list = nullptr;
     User empty_user;
 
+    //Initializes UserManager values
     void Init(){
         empty_user = NewUser();
     }
     
+    //Creates a new user with default values and returns it
     User NewUser(){
         User new_user;
         new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
@@ -75,6 +77,7 @@ namespace UserManager{
         return new_user;
     }
 
+    //Creates a new user baseed on the given one and returns it
     User NewUser(User old_user){
         User new_user;
         new_user.username = (char*) malloc(sizeof(char)*(kDefaultStrL+1));
@@ -111,6 +114,7 @@ namespace UserManager{
         return new_user;
     }
 
+    //Releases the dynamic memory used by the given user
     void EmptyUserMemory(User *user){
         free(user->username);
         free(user->password);
@@ -122,6 +126,7 @@ namespace UserManager{
         free(user->province);
     }
 
+    //Writes user info on the given opened file 
     void SaveUser(User user, FILE *dat_file){
         //char* values are writen with +1 length to ensure '\0' character has space to be saved 
         //(Should have been written the same way previously) 
@@ -171,6 +176,7 @@ namespace UserManager{
         }
     }
 
+    //Reads user info from the given opened file and returns the equivalent User struct 
     User LoadUser(FILE *dat_file){
         //char* values are read with +1 length to ensure '\0' character has space to be saved 
         //(Should have been written the same way previously) 
@@ -222,6 +228,7 @@ namespace UserManager{
         return aux_user;
     }
 
+    //Loads all registered users from the file located at user_list_dat_path on the user_list variable
     bool LoadRegisteredUsers(){
         TList::ListNode** aux_list = (TList::ListNode**) &user_list;
         bool is_loaded = TList::LoadList(aux_list, TList::ListType::USER, user_list_dat, user_list_dat_path);
@@ -230,6 +237,7 @@ namespace UserManager{
         return is_loaded;
     }
 
+    //Inserts the given user information to the user_list and saves the updated list on the user_list_dat_path file
     bool RegisterNewUser(User new_user){
         TList::ListInfo aux_info = {NULL};
         bool is_registered = true;
@@ -249,24 +257,28 @@ namespace UserManager{
         return is_registered;
     }
 
+    //Manages the credits addition to a user
     void AddCredits(User *user, int credits){
         if(!(user->is_admin)){
             user->credits += credits;
         }
     }
 
+    //Manages the credits removal from a user
     void RemoveCredits(User *user, int credits){
         if(!(user->is_admin)){
             user->credits -= credits;
         }
     }
 
+    //Makes sure all posibly open used files stay closed
     void CloseFiles(){
         if(user_list_dat != nullptr){
             fclose(user_list_dat);
         }
     }
 
+    //Releases all the dynamic memory used on the manager
     void EmptyMemory(){
         EmptyUserMemory(&empty_user);
     }

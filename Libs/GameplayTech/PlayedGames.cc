@@ -73,7 +73,7 @@ namespace PlayedGames{
         return new_game;
     }
 
-    //Writes the needed values of the given game user on the given opened file
+    //Writes the needed values of the given game user to the given opened file
     void SaveGameUser(UserManager::User *user , FILE *dat_file){
         TList::ListInfo aux_user_info = {NULL};
         // printf("\n\nSaveGameUser\n");
