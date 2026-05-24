@@ -494,6 +494,7 @@ namespace Players{
 
             //Ufo/Player Collisions managed by the Ufo
             //Asteroids/Player collisions managed by Gameplay method "UpdateGameAsteroids()"
+            //PowerUp/Player Collisions managed by PowerUps
             switch (GameManager::game_status.actual_game->gamemode){
                 case PlayedGames::Gamemode::MP_COOP:
                 case PlayedGames::Gamemode::MP_VS:

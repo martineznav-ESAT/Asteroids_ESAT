@@ -15,6 +15,7 @@ namespace PowerUps{
     JMATH::Vec3 **friendly_fire_icon_coords = nullptr;
     int last_pu_id = -1;
 
+    //Initializes the local coords of the FriendlyFire power up figures icon
     void InitFriendlyFireIcon(){
         friendly_fire_icon_coords = (JMATH::Vec3**) malloc(sizeof(JMATH::Vec3*) * ((int)FFIcons::FF_TOTAL_ICONS));
 
@@ -42,10 +43,12 @@ namespace PowerUps{
 
     }
 
+    //Initializes the PowerUpds.cc variables
     void Init(){
         InitFriendlyFireIcon();
     }
 
+    //Given a pick up power up, builds its icon to be the one that matches with the Shotgun Power Up
     void BuildShotgunIcons(PowerUp *p_up){
         JMATH::Mat3 tr_aux;
         float j = -0.5f;
@@ -73,6 +76,7 @@ namespace PowerUps{
     }
 
     
+    //Given a pick up power up, builds its icon to be the one that matches with the FriendlyFire Power Up
     void BuildFriendlyFireIcons(PowerUp *p_up){
         JMATH::Mat3 tr_aux;
         p_up->icon_figures = (PolyLibJMATH::Poly*) malloc(sizeof(PolyLibJMATH::Poly)*FFIcons::FF_TOTAL_ICONS);
@@ -118,6 +122,7 @@ namespace PowerUps{
         }
     }
 
+    //Builds the figures of the given power up icon based on its type
     void BuildIcons(PowerUp *p_up){
         switch(p_up->type){
             case SHOTGUN:
@@ -133,6 +138,7 @@ namespace PowerUps{
         }
     }
 
+    //Updates the given power up icon status
     void UpdateIcon(PowerUp *p_up){
         PolyLibJMATH::UpdatePoly(&(p_up->base_figure));
         switch (p_up->type){
@@ -156,6 +162,7 @@ namespace PowerUps{
         }
     }
 
+    //Creates a new power up based on the given type and palaces it on a position
     PowerUp NewPowerUp(PU_Type type, JMATH::Vec2 position){
         PowerUp new_powerUp;
         new_powerUp.id = ++last_pu_id;
@@ -183,6 +190,7 @@ namespace PowerUps{
         return new_powerUp;
     }
 
+    //Creates a new power up tag based on the given type that is unactive by default
     PowerUpTag NewPowerUpTag(PU_Type type){
         PowerUpTag new_powerUpTag;
 
@@ -202,19 +210,23 @@ namespace PowerUps{
         return new_powerUpTag;
     }
 
+    //Returns if the given power up is active
     bool IsPowerUpActive(PowerUp powerUp){
         return powerUp.duration_ltc < powerUp.duration_lt;
     }
     
+    //Returns if the given power up tag is active
     bool IsPowerUpActive(PowerUpTag powerUpTag){
         return powerUpTag.duration_ltc < powerUpTag.duration_lt;
     }
 
+    //Returns if the given power up should be blinking
     bool IsPowerUpBlinking(PowerUp powerUp){
         return (powerUp.duration_ltc >= powerUp.duration_lt-3000);
     }
 
-
+    //Spawns a random power up on the given asteroid position based on 
+    //the ones available on the actual gamemode 
     void GeneratePowerUp(void* asteroid){
         //At the moment, only when an asteroid is destroyed, power ups are generated.
         //But when incluiding Asteroids to the .h file there's an error, so is passed as void.
@@ -230,7 +242,6 @@ namespace PowerUps{
                 //Since MP_ALT gamemode is technically 2 separated single players alternating, 
                 //the available power ups are essentially the same 
 
-                //Currently no PowerUps 03/05/2026
                 if(PowerUps::PU_Type::TOTAL_PU_SP_TYPES > 0){
                     aux_info.powerUp_info = PowerUps::NewPowerUp(
                         (PowerUps::PU_Type)Utils::GenerateRandomNumber(PowerUps::PU_Type::TOTAL_PU_SP_TYPES), 
@@ -254,16 +265,18 @@ namespace PowerUps{
     }
 
 
-    //Scales the given PowerUp for the amount of the frame equivalent calculated value of a percentage during an specified amount of miliseconds.
+    //Scales the given PowerUp for the amount of the frame equivalent calculated value 
+    //of a percentage during an specified amount of miliseconds.
     //It scales up or down based on the is_growing parameter
-    void ScalePowerUpFramePercentageEquivalent(PowerUp *powerUp, float percentage_decimals, int time_ms, bool is_gowing){
-        if(is_gowing){
+    void ScalePowerUpFramePercentageEquivalent(PowerUp *powerUp, float percentage_decimals, int time_ms, bool is_growing){
+        if(is_growing){
             powerUp->base_figure.transform.scale = JMATH::Vec2Scale(powerUp->base_figure.transform.scale, 1 + (1.0f/((time_ms/1000.0f)*Utils::kFPS))*percentage_decimals);
         }else{
             powerUp->base_figure.transform.scale = JMATH::Vec2Scale(powerUp->base_figure.transform.scale, 1 - (1.0f/((time_ms/1000.0f)*Utils::kFPS))*percentage_decimals);
         }
     }
 
+    //Checks for the given powerup, its posible collisions with a player 
     bool PowerUpCollisions(PowerUp *powerUp){
         bool is_collided = false;
 
@@ -293,6 +306,7 @@ namespace PowerUps{
         return is_collided;
     }
 
+    //Updates the actual status of a power up
     void UpdatePowerUp(PowerUp *powerUp){
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             if(IsPowerUpActive(*powerUp) && !PowerUpCollisions(powerUp)){
@@ -311,6 +325,7 @@ namespace PowerUps{
         }
     }
 
+    //Updates the actual status of a power up tag
     void UpdatePowerUpTag(PowerUpTag *powerUpTag){
         if(
             GameManager::game_status.level == GameManager::Level::GAMEPLAY &&
@@ -321,6 +336,7 @@ namespace PowerUps{
         }
     }
 
+    //Draws on screen a power up icon
     void DrawIcon(PowerUp powerUp){
         PolyLibJMATH::DrawPoly(powerUp.base_figure, true, {255,255,255});
 
@@ -338,6 +354,7 @@ namespace PowerUps{
         }
     }
 
+    //Draws everything related to a power up in its current status
     void DrawPowerUp(PowerUp powerUp){
         if(IsPowerUpActive(powerUp)){
             // printf("DRAWING POWER UP %d\n",powerUp.id);
@@ -352,6 +369,7 @@ namespace PowerUps{
         }
     }
 
+    //Releases the dynamic memory of the given powerUp
     void EmptyPowerUpMemory(PowerUp *powerUp){
         PolyLibJMATH::EmptyPolyMemory(&(powerUp->base_figure));
         switch(powerUp->type){
@@ -364,6 +382,7 @@ namespace PowerUps{
         }
     }
 
+    //Releases the dynamic memory of PowerUps.cc variables
     void EmptyMemory(){
         //Memory release code structure with multiple Power Up Types in mind
         for (int type = 0; type < (int)PU_Type::TOTAL_PU_TYPES; type++){

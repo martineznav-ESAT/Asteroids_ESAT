@@ -14,6 +14,7 @@
 namespace Ufo{
     JMATH::Vec3 *ufo_coords = nullptr;
 
+    //Initializes Ufo.cc variable values
     void Init(){
         ufo_coords = (JMATH::Vec3*) malloc(sizeof(JMATH::Vec3)*8);
 
@@ -27,6 +28,7 @@ namespace Ufo{
         *(ufo_coords+7) = {-0.55f, 0.3f, 1.0f};     // 8
     }
 
+    //Creates an UfoShip struct with defaults values and returns it
     UfoShip NewUfo(){
         UfoShip new_ufo;
         PolyLibJMATH::InitPoly(
@@ -56,6 +58,7 @@ namespace Ufo{
         return new_ufo;
     }
 
+    //Destroys the given ufo deactivating it, asigning a new spawn counter and loading its death particles
     void DestroyUfo(UfoShip* ufo){
         switch (ufo->type){
             case UfoType::BIG:
@@ -75,6 +78,7 @@ namespace Ufo{
         ufo->spawn_ltc = 10000; 
     }
 
+    //Checks for the given Ufo posible collisions
     void UfoCollisions(UfoShip* ufo){
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
 
@@ -116,6 +120,7 @@ namespace Ufo{
         }
     }
 
+    //Small ufo fire logic
     void SmallUfoFireShot(UfoShip* ufo){
         JMATH::Vec2 aim_v;
         switch (GameManager::game_status.actual_game->gamemode){
@@ -185,6 +190,7 @@ namespace Ufo{
         );
     }
 
+    //Updates the current status of a ufo shot
     void UpdateUfoShot(UfoShip* ufo){
         // printf("UPDATE UFO SHOT\n");
         if(!(ufo->shot.is_active)){
@@ -216,6 +222,9 @@ namespace Ufo{
 
     }
 
+    //Makes the given ufo change direction trying to follow the closest diagonal to a player. 
+    //If the selected player is completely aligned horizontaly with the Ufo, 
+    //it will select no diagonal and got straight horizontaly instead 
     void UfoDirectionFollowPlayer(UfoShip* ufo){
         JMATH::Vec2 aim_v;
         switch (ufo->type){
@@ -284,6 +293,13 @@ namespace Ufo{
         }
     }
 
+    //Changes the direction of the given ufo to a random one.
+    //Has a 4 out of 250 posibilities of actually changing its current direction.
+    //In case it changes it will chose randomly between:
+    //  Diagonal Upwards
+    //  Diagonal Downwards
+    //  Straight horizontally
+    //  Direction closer to a player
     void RandomDirection(UfoShip* ufo){
         int random = Utils::GenerateRandomNumber(250);
         // printf("RANDOM DIRECTION %d\n",random);
@@ -304,10 +320,14 @@ namespace Ufo{
         }
     }
 
+    //Returns if a ufo is spawned or not
     bool IsUfoSpawned(UfoShip *ufo){
         return ufo->spawn_ltc >= ufo->spawn_lt;
     }
 
+    //Spawns the given ufo. Which means 
+    //its given a random position on the side borders of the map with a random direction
+    //and a random type setting it as active
     void SpawnUfo(UfoShip* ufo){
         Asteroids::Asteroid aux_asteroid;
         JMATH::Vec2 spawn_position = {0.0f,0.0f};
@@ -364,12 +384,14 @@ namespace Ufo{
         PolyLibJMATH::SavePrevDrawCoords(&(ufo->shot.bullet));
     }
 
+    //Updates the current status of the given ufo death particles
     void UpdateUfoParticles(UfoShip *ufo){
         for(int i = 0; i < 8; i++){
             Particles::UpdateParticle((ufo->death_particles+i));
         }
     }
 
+    //Updates the current status of everything related to the given ufo
     void UpdateUfo(UfoShip *ufo){
 
         // printf("UPDATE UFO %d\n", ufo->type);
@@ -412,12 +434,14 @@ namespace Ufo{
         }
     }
 
+    //Draws on screen the given ufo death particles
     void DrawUfoParticles(UfoShip ufo){
         for(int i = 0; i < 8; i++){
             Particles::DrawParticle((ufo.death_particles+i));
         }
     }
 
+    //Draws on screen all things related to the given ufo
     void DrawUfo(UfoShip ufo){
         if(GameManager::game_status.level == GameManager::Level::GAMEPLAY){
             Shots::DrawShot(&(ufo.shot));
@@ -444,6 +468,7 @@ namespace Ufo{
     }
 
 
+    //Releases the given ufo dynamic memory values
     void EmptyUfoMemory(UfoShip* ufo){
         PolyLibJMATH::EmptyPolyMemory(&(ufo->figure));
         for(int i = 0; i < 8; i++){

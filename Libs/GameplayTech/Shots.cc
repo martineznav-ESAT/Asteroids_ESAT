@@ -12,10 +12,12 @@
 
 namespace Shots{
 
+    //Initializes Shots.cc values (Currently unused but kept for code structuration)
     void Init(){
 
     }
 
+    //Creates a new shot struct and returns it with default values
     Shot NewShot(){
         Shot new_shot;
         PolyLibJMATH::InitPoly(
@@ -35,6 +37,7 @@ namespace Shots{
         return new_shot;
     }
 
+    //Fires the given shot based on the rest of the parameters
     void FireShot(Shot *shot, JMATH::Vec2 spawn_point, float rotation, JMATH::Vec3 direction_v, float speed){
         // printf("DISPARAR\n");
         AudioLib::PlaySound(AudioLib::SoundsType::FIRE);
@@ -46,11 +49,13 @@ namespace Shots{
         PolyLibJMATH::SaveDrawCoords(&(shot->bullet));
     }
 
+    //Deactivates the given shot properly
     void DestroyShot(Shot *shot){
         shot->is_active = false;
         shot->lt_count = shot->life_time;
     }
 
+    //Updates the current shot status
     void UpdateShot(Shot *shot){
         if(shot->is_active){
             PolyLibJMATH::MovePoly(&(shot->bullet), (shot->speed_v));
@@ -63,6 +68,7 @@ namespace Shots{
         }
     }
 
+    //Draws the given shot on screen
     void DrawShot(Shot *shot){
         if(shot->is_active){
             PolyLibJMATH::DrawPoly(shot->bullet,true);
