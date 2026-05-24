@@ -30,26 +30,33 @@ namespace MainMenu{
 
 
     //ACTIONS
+
+    //Loads the PlayMenu for a new game
     void PlayAction(){
         PlayMenu::Load();
     }
 
+    //Loads the LoadGameMenu
     void LoadGameAction(){
         LoadGameMenu::Load();
     }
 
+    //Loads the Highscores screen
     void HighScoreAction(){
         HighscoresMenu::Load();
     }
 
+    //Closes the game
     void QuitAction(){
         GameManager::game_status.level = GameManager::Level::QUIT;
     }
 
+    //Loads the login menu to change the main logged user
     void ChangeUserAction(){
         LoginMenu::Load(GameManager::Level::MAIN_MENU);
     }
 
+    //Loads the admin menu for user management
     void AdminAction(){
         AdminMenu::Load();
     }
@@ -289,6 +296,8 @@ namespace MainMenu{
     }
 
     //MAIN MENU DRAW
+
+    //Draws the game title
     void DrawTitle(){
         UILib::Text title = {
             {255,255,255,255},
@@ -305,6 +314,7 @@ namespace MainMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
+    //Draws all the menu items
     void DrawMenuItems(){
         for(int i = 0; i < (int)MainMenuItems::TOTAL_ITEMS; i++){
             UILib::DrawItem(*(menu_items+i));
@@ -317,6 +327,7 @@ namespace MainMenu{
         DrawMenuItems();
     }
 
+    //Releases all dynamic memory used on the main menu
     void EmptyMemory(){
         for(int i = 0; i < (int)MainMenuItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);

@@ -36,6 +36,7 @@ namespace LoginMenu{
     int error_dialog_lt = 3000;
     float error_dialog_ltc = error_dialog_lt;
 
+    //Draws the ErrorDialog on screen based on its current state
     void ShowErrorDialog(){
         if(error_dialog_ltc < error_dialog_lt){
             UILib::DrawText(
@@ -46,6 +47,8 @@ namespace LoginMenu{
         }
     }
 
+    //Verifies if the given user contains valid content to concede the login.
+    //Shows custom error dialogs based on the exception.
     bool VerifyLogin(UserManager::User **user){
         TList::ListNode* aux_tn = nullptr;
         bool is_verified = false;
@@ -87,6 +90,8 @@ namespace LoginMenu{
     }
 
     //ACTIONS
+
+    //Executes the login logic based on the previous screen the user came from
     void LoginAction(){
         UserManager::User* aux_p2 = nullptr;
         switch(prev_level){
@@ -109,11 +114,12 @@ namespace LoginMenu{
         }
     }
     
-
+    //Opens the register menu as a client
     void RegisterAction(){
         RegisterMenu::Load(GameManager::Level::LOGIN_MENU);
     }
 
+    //Loads the previous level the user came from
     void BackAction(){
         switch(prev_level){
             case GameManager::Level::MAIN_MENU:
@@ -317,6 +323,7 @@ namespace LoginMenu{
 
     //LOGIN MENU LOAD
     
+    //Empties all the text inputs on the menu
     void CleanForm(bool is_admin = false){
         strcpy((menu_items + LoginItems::USER_TI)->item.text_item.input_text.text, "\0");
         strcpy((menu_items + LoginItems::USER_TI)->item.text_item.pointer, "|\0");
@@ -385,6 +392,7 @@ namespace LoginMenu{
 
     //LOGIN MENU DRAW
 
+    //Draws all the menu items
     void DrawMenuItems(){
         for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){
             UILib::DrawItem(*(menu_items+i));
@@ -395,9 +403,9 @@ namespace LoginMenu{
     void Draw(){
         DrawMenuItems();
         ShowErrorDialog();
-        
     }
 
+    //Releases login menu dynamic memory
     void EmptyMemory(){
         //printf("EmptyItemMemory FINO?\n");
         for(int i = 0; i < (int)LoginItems::TOTAL_ITEMS; i++){

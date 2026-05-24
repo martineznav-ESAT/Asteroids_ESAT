@@ -25,25 +25,34 @@ namespace PlayMenu{
     int selected_item = -1;
 
     //ACTIONS
+
+    //Loads a new game on Single Player mode
     void SinglePlayerAction(){
         Gameplay::Load(PlayedGames::Gamemode::SP);
     }
 
+    //Prepares for the creation of a new game in MP_ALT mode. 
+    //Loads the login menu for the second player to login
     void MpAltAction(){
         GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_ALT;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
+    //Prepares for the creation of a new game in MP_VS mode. 
+    //Loads the login menu for the second player to login
     void MpVsAction(){
         GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_VS;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
+    //Prepares for the creation of a new game in MP_COOP mode. 
+    //Loads the login menu for the second player to login
     void MpCoopAction(){
         GameManager::game_status.load_game_aux_mp_gamemode = PlayedGames::Gamemode::MP_COOP;
         LoginMenu::Load(GameManager::Level::PLAY_MENU);
     }
 
+    //Returns to the main menu
     void BackAction(){
         MainMenu::Load();
     }
@@ -273,6 +282,7 @@ namespace PlayMenu{
         DrawMenuItems();
     }
 
+    //Releases all dynamic memory used on the menu
     void EmptyMemory(){
         for(int i = 0; i < (int)PlayMenuItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);

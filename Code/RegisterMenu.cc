@@ -38,6 +38,7 @@ namespace RegisterMenu{
     int error_dialog_lt = 3000;
     float error_dialog_ltc = error_dialog_lt;
 
+    //Draws the error dialog based on its current state
     void ShowErrorDialog(){
         if(error_dialog_ltc < error_dialog_lt){
             UILib::DrawText(
@@ -49,6 +50,8 @@ namespace RegisterMenu{
     }
 
     //ACTIONS
+
+    //Returns to the previous screen 
     void BackAction(){
         if(prev_level == GameManager::Level::ADMIN_MENU){
             AdminMenu::Load();
@@ -57,6 +60,8 @@ namespace RegisterMenu{
         }
     }
 
+    //Adds to the user list a new one with the values on the menu items and saves the list.
+    //Can return custom exception error dialogs
     void SaveNewUser(){
         UserManager::EmptyUserMemory(&form_user);
         form_user = UserManager::NewUser();
@@ -97,6 +102,10 @@ namespace RegisterMenu{
         }
     }
 
+    //Saves the information on the screen menu items as the values of the user 
+    //whose memory direction is the one determined by form_user_edit and saves the updated list 
+    //on the users file.
+    //Can returns custom exception error dialogs
     void SaveRegisteredUser(){
         strcpy(form_user_edit->username, (menu_items+RegisterItems::USERNAME_TI)->item.text_item.input_text.text);
         strcpy(form_user_edit->password, (menu_items + RegisterItems::PASSWORD_TI)->item.text_item.input_text.text);
@@ -128,9 +137,8 @@ namespace RegisterMenu{
         }
     }
 
-    //Copies form/menu_items values into User form_user with the corresponding typing conversions 
-    //and saves the user on registered users list/tree. 
-    //After finishing the registration, goes back to one of the possible previous pages before registration
+    //Executes the saving logic based on edit_mode. 
+    //After finishing the registration, goes back to the previous page
     void SaveAction(){
         if(edit_mode){
             SaveRegisteredUser();
@@ -369,6 +377,7 @@ namespace RegisterMenu{
         );
     }
 
+    //Initializes all menu checkboxes
     void InitCheckboxes(){
         Utils::Collider first_left_side = {{(Utils::kWindowWidth*0.5f)-250, 100}, JMATH::Vec2Sub({(Utils::kWindowWidth*0.5f)-50, 150},{0.0f, 4.0f})};
         Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 120}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 155}};
@@ -501,10 +510,12 @@ namespace RegisterMenu{
     }
 
     //REGISTER MENU LOAD
-    //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
-    //The fields CREDITS and ADMIN will not be modifieable.
-    //Same goes to the Username TextInput if the menu is opened in edit mode
+
+    //Returns if the menu item at the given id is currently editable or not
     bool IsUneditable(RegisterItems r_item){
+        //In case its the first ever user being registered, or in case the logged user is not an admin (or there's no logged user at all)
+        //The fields CREDITS and ADMIN will not be modifieable.
+        //Same goes to the Username TextInput if the menu is opened in edit mode
         return (
             ((r_item == RegisterItems::CREDITS_TI || r_item == RegisterItems::ADMIN_CHK) &&
             (
@@ -517,6 +528,7 @@ namespace RegisterMenu{
         );
     }
 
+    //Returns the form to its empty default values
     void CleanForm(bool is_admin = false){
         strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, "\0");
         UILib::AdjustPointerLength(&((menu_items + RegisterItems::USERNAME_TI)->item.text_item));
@@ -557,6 +569,7 @@ namespace RegisterMenu{
         (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = is_admin;
     }
 
+    //Loads the form values based on the given user to edit
     void LoadFormUserEdit(UserManager::User *user_edit){
         form_user_edit = user_edit;
         strcpy((menu_items + RegisterItems::USERNAME_TI)->item.text_item.input_text.text, form_user_edit->username);
@@ -606,6 +619,7 @@ namespace RegisterMenu{
         (menu_items + RegisterItems::ADMIN_CHK)->item.chk_item.is_checked = form_user_edit->is_admin;
     }
 
+    //Loads the whole Register Menu
     //Based on the level/screen you come from, the Register Menu will be loaded differently
     void Load(GameManager::Level level_p, UserManager::User *user_edit){
         GameManager::game_status.level = GameManager::Level::REGISTER_MENU;
@@ -713,6 +727,7 @@ namespace RegisterMenu{
 
     //REGISTER MENU DRAW
 
+    //Draws all menu items
     void DrawMenuItems(){
         Utils::Collider first_right_side = {{(Utils::kWindowWidth*0.5f)+40, 120}, {(Utils::kWindowWidth*0.5f)+40 + (Utils::kBaseFontSize*14), 155}};
         JMATH::Vec2 margin_y = {0.0f, 57.5f};
@@ -735,6 +750,7 @@ namespace RegisterMenu{
         ShowErrorDialog();
     }
 
+    //Releases the dynamic memory used on the Register screen
     void EmptyMemory(){
         for(int i = 0; i < (int)RegisterItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);
