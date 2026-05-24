@@ -52,7 +52,7 @@ void InitGame(){
 
 // Launches the current screen/level update functions needed 
 void UpdateGame(){
-    GameManager::DebugUpdate();
+    // GameManager::DebugUpdate();
     switch(GameManager::game_status.level){
         case GameManager::Level::LOGIN_MENU :
             LoginMenu::Update();
