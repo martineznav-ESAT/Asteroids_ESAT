@@ -33,7 +33,7 @@ namespace LoadGameMenu{
     bool is_last_page = false;
 
     //Loads the unfinished games for the current user for the specific page.
-    //More precisely, puts the ListNode corresponding to the loaded_games_page delivered as parameter as the head of the page
+    //More precisely, puts the ListNode corresponding to the actual page as the head of the page
     //and updates the corresponding buttons.
     void LoadGamesPage(int page = 0){
         TList::ListNode** aux_list = (TList::ListNode**) &user_games;
@@ -58,12 +58,15 @@ namespace LoadGameMenu{
     }
 
     //ACTIONS
+
+    //Loads the given game for the user to play it
     void PlayAction(void *game){
         if(!Gameplay::Load( *((PlayedGames::PlayedGame*) game) )){
             printf("GAME NOT FOUND. COULD NOT LOAD\n");
         }
     }
 
+    //Removes the given game from existance
     void DeleteAction(void *game){
         TList::ListNode** aux_list = (TList::ListNode**) &(PlayedGames::game_list);
         TList::ListInfo aux_info = {NULL};
@@ -88,16 +91,19 @@ namespace LoadGameMenu{
         printf("ASDASDASDASD4\n");
     }
 
+    //Loads the previous page
     void PrevPageAction(){
         page_number--;
         LoadGamesPage(page_number);
     }
 
+    //Loads the next page
     void NextPageAction(){
         page_number++;
         LoadGamesPage(page_number);
     }
 
+    //Returns to the main menu
     void BackAction(){
         MainMenu::Load();
     }
@@ -261,14 +267,16 @@ namespace LoadGameMenu{
         );
     }
 
-    //Whole Admin Menu initializer
+    //Whole LoadGame Menu initializer
     void Init(){
         InitMenuItems();
         InitButtons();
     }
 
-    //LOADGAME MENU LOAD
+    //LOADGAME MENU END
 
+    //Given a game list node, checks if the given game node user is the same as the one 
+    //currently logged in and if this same game is unfinished
     bool IsLoggedUserUnfinishedGame(TList::ListNode *game_node){
         return (
             game_node->info.game_info.p1_user == GameManager::game_status.logged_user && 
@@ -276,6 +284,7 @@ namespace LoadGameMenu{
         );
     }
 
+    //Sorts the loaded unfinished user games. Mainly used while loading said games
     void SortUserGamesWhileLoading(){
         bool is_end_comparisons = false;
         PlayedGames::PlayedGame aux_game;
@@ -294,6 +303,7 @@ namespace LoadGameMenu{
         }
     }
 
+    //Loads the current user unfinished games ordered by time
     void LoadUserGames(){
         page_number = 0;
         TList::ClearList(&user_games);
@@ -305,7 +315,7 @@ namespace LoadGameMenu{
         }
     }
 
-    //Loads the Admin menu
+    //Loads the LoadGame menu
     void Load(){
         LoadUserGames();
         LoadGamesPage();
@@ -315,7 +325,7 @@ namespace LoadGameMenu{
 
     //LOADGAME MENU UPDATE
 
-    //Whole Admin Menu update method
+    //Whole LoadGame Menu update method
     void Update(){
 
         //Unselect Menu item on click
@@ -366,6 +376,8 @@ namespace LoadGameMenu{
     }
 
     //LOADGAME MENU DRAW
+
+    // Draws the menu title
     void DrawTitle(){
         UILib::Text title = {
             {255,255,255,255},
@@ -382,6 +394,8 @@ namespace LoadGameMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
+    
+    //Draws the information of the given game last save datetime 
     void DrawGameItemDatetime(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
         char* time_buffer = (char*) malloc(sizeof(char)*18);
         tm time_struct = Utils::TimestampToStructTM(game.save_time);
@@ -409,6 +423,7 @@ namespace LoadGameMenu{
         free(time_buffer);
     }
 
+    //Draws the information of the given game
     void DrawGameItem(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
         UILib::DrawText(
             coord,
@@ -435,6 +450,7 @@ namespace LoadGameMenu{
 
     }
 
+    //Draws the information of the current page list games
     void DrawGameItems(JMATH::Vec2 base_coord, JMATH::Vec2 margin_v, float list_font_size){
         TList::ListNode* aux_list = loaded_games_page;
 
@@ -444,6 +460,8 @@ namespace LoadGameMenu{
         }
     }
 
+    
+    //Draws the whole game list info
     void DrawGameList(){
         float list_font_size = Utils::kBaseFontSize * 1.5f;
 
@@ -466,6 +484,7 @@ namespace LoadGameMenu{
         DrawGameItems(base_coord, margin_v, list_font_size);
     }
 
+    //Draws the interactive menu items
     void DrawMenuItems(){
         for(int i = 0; i < (int)LoadGameMenuItems::TOTAL_ITEMS; i++){
             switch((LoadGameMenuItems)i){
@@ -488,13 +507,14 @@ namespace LoadGameMenu{
         }
     }
 
-    //Whole Admin Menu draw method
+    //Whole LoadGame Menu draw method
     void Draw(){
         DrawTitle();
         DrawGameList();
         DrawMenuItems();
     }
 
+    //Releases all dynamic memory used in LoadGameMenu.cc
     void EmptyMemory(){
         for(int i = 0; i < (int)LoadGameMenuItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);
