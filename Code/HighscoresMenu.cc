@@ -30,15 +30,17 @@ namespace HighscoresMenu{
     UILib::UI_Item *menu_items = nullptr;
     int selected_item = -1;
 
-
     //ACTIONS
+
+    //Returns to the main menu
     void BackAction(){
         MainMenu::Load();
     }
 
     //HIGHSCORES MENU INIT
 
-    //Given a ListNode* as an index, moves all the highscores underneath leaving room for the index value to fill with the second parameter
+    //Given a ListNode* as an index, moves all the highscores underneath leaving room 
+    //for the index value to fill with the second parameter
     void DisplaceAndFillHighScores(TList::ListNode *index, TList::ListInfo info){
         TList::ListInfo aux = {NULL};
         
@@ -49,7 +51,8 @@ namespace HighscoresMenu{
         }
     }
 
-
+    //Tries to add the score of the given game to the top 10 scores. 
+    //Returns if it succeed or not
     bool AddHighScoreGame(TList::ListInfo game){
         bool is_comparison_end = false;
         
@@ -68,7 +71,7 @@ namespace HighscoresMenu{
         return is_comparison_end;
     }
 
-    //Sets the parameter list with the top 10 PlayedGames with highest scores registered based on all games played;
+    //Sets the top_games list with the top 10 PlayedGames with highest scores registered based on all games played;
     void UpdateHighScores(){
         //Searches for the top 10 games on the game_list of all played games
         for(TList::ListNode *game = (TList::ListNode*) PlayedGames::game_list; game!=nullptr; game = game->next){
@@ -80,6 +83,7 @@ namespace HighscoresMenu{
         // TList::PrintList(top_games);
     }
 
+    //Initializes the top_games list based on the highscores file. THe list is loaded with "empty" values if no file is found
     void InitEmptyHighscores(){
         TList::ClearList(&top_games);
         top_games = TList::CreateList();
@@ -198,6 +202,8 @@ namespace HighscoresMenu{
     }
 
     //HIGHSCORES MENU DRAW
+
+    //Draws the menu title
     void DrawTitle(){
         UILib::Text title = {
             {255,255,255,255},
@@ -214,6 +220,7 @@ namespace HighscoresMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
+    //Draws the highscore information of the given game
     void DrawHighScore(JMATH::Vec2 coord, float font_size, PlayedGames::PlayedGame game){
 
         UILib::DrawText(
@@ -337,6 +344,7 @@ namespace HighscoresMenu{
         
     }
 
+    //Draws all 10 highscores
     void DrawGameScores(){
         float list_font_size = Utils::kBaseFontSize * 2.0f;
         int i = 0;
@@ -353,6 +361,7 @@ namespace HighscoresMenu{
         }
     }
 
+    //Draws the menu interactive items
     void DrawMenuItems(){
         for(int i = 0; i < (int)HighscoresMenuItems::TOTAL_ITEMS; i++){
             UILib::DrawItem(*(menu_items+i));
@@ -366,12 +375,14 @@ namespace HighscoresMenu{
         DrawMenuItems();
     }
 
+    //Makes sure the highscore files stay closed
     void CloseFiles(){
         if(highscores_dat != nullptr){
             fclose(highscores_dat);
         }
     }
 
+    //Releases all dynamic memory used in HighscoresMenu.cc
     void EmptyMemory(){
         for(int i = 0; i < (int)HighscoresMenuItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);

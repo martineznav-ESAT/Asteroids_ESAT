@@ -31,7 +31,7 @@ namespace AdminMenu{
     int page_number = 0;
     bool is_last_page = false;
 
-    //Loads de users for the specific page.
+    //Loads the users for the specific page.
     //More precisely, puts the ListNode corresponding to the user_page delivered as parameter as the head of the page
     //and updates the corresponding buttons.
     void LoadUserPage(int page = 0){
@@ -68,10 +68,13 @@ namespace AdminMenu{
     }
 
     //ACTIONS
+
+    //Loads the register menu in admin edit mode for the given user
     void EditAction(void *u){
         RegisterMenu::Load(GameManager::Level::ADMIN_MENU, (UserManager::User*) u);
     }
 
+    //Deletes the given user from the user list
     void DeleteAction(void *u){
         TList::ListNode** aux_list = (TList::ListNode**) &(UserManager::user_list);
         TList::ListInfo aux_info = {NULL};
@@ -88,20 +91,24 @@ namespace AdminMenu{
         LoadUserPage(page_number);
     }
 
+    //Loads the previous page
     void PrevPageAction(){
         page_number--;
         LoadUserPage(page_number);
     }
 
+    //Loads the next page
     void NextPageAction(){
         page_number++;
         LoadUserPage(page_number);
     }
 
+    //Opens the register menu in creation mode with admin permission
     void CreateAction(){
         RegisterMenu::Load(GameManager::Level::ADMIN_MENU);
     }
 
+    //Returns to the previous menu, in this case the main menu
     void BackAction(){
         MainMenu::Load();
     }
@@ -358,6 +365,8 @@ namespace AdminMenu{
     }
 
     //ADMIN MENU DRAW
+
+    //Draws the menu main title
     void DrawTitle(){
         UILib::Text title = {
             {255,255,255,255},
@@ -374,6 +383,7 @@ namespace AdminMenu{
         esat::DrawSetTextFont("./Assets/Fonts/Hyperspace.ttf");
     }
 
+    //Draws the menu items related with a given user
     void DrawUserItem(JMATH::Vec2 coord, float font_size, UserManager::User user){
         UILib::DrawText(
             coord,
@@ -416,6 +426,7 @@ namespace AdminMenu{
 
     }
 
+    //Draws all the menu items related for all the users in the current page
     void DrawUserItems(JMATH::Vec2 base_coord, JMATH::Vec2 margin_v, float list_font_size){
         TList::ListNode* aux_list = user_page;
 
@@ -425,6 +436,7 @@ namespace AdminMenu{
         }
     }
 
+    //Draws the whole user list table of the current
     void DrawUserList(){
         float list_font_size = Utils::kBaseFontSize * 1.5f;
 
@@ -447,6 +459,7 @@ namespace AdminMenu{
         DrawUserItems(base_coord, margin_v, list_font_size);
     }
 
+    //Draws all the interactive menu items based on their current state
     void DrawMenuItems(){
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
             switch((AdminMenuItems)i){
@@ -476,6 +489,7 @@ namespace AdminMenu{
         DrawMenuItems();
     }
 
+    //Releases all the AdminMenu.cc dynamic memory used
     void EmptyMemory(){
         for(int i = 0; i < (int)AdminMenuItems::TOTAL_ITEMS; i++){
             UILib::EmptyItemMemory(menu_items+i);

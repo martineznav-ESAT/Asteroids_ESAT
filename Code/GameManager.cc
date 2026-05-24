@@ -27,6 +27,7 @@ namespace GameManager{
         PlayedGames::Gamemode::SP
     };
 
+    //Loads the first screen that is shown when opening depending on the existence of registered users
     void LoadInitLevel(){
         // printf("LoadRegisteredUsers\n");
         if (UserManager::LoadRegisteredUsers()){
@@ -38,6 +39,7 @@ namespace GameManager{
         }
     }
 
+    //For gameplay in MP_ALT gamemode. Alternates the playing player and loads the corresponding level
     void AlternateActivePlayer(){
         if(game_status.actual_game->gamemode == PlayedGames::Gamemode::MP_ALT){
             game_status.actual_game->is_player1_turn = !game_status.actual_game->is_player1_turn;
@@ -53,10 +55,12 @@ namespace GameManager{
         }
     }
 
+    //Returns if the given player is the player 1 of the actual session
     bool IsPlayer1(Players::Player *player){
         return &(GameManager::game_status.actual_game->p1) == player;
     }
 
+    //Returns the memory location of the player that is not the provided as parameter
     Players::Player* GetOtherPlayer(Players::Player *player){
         Players::Player* return_player;
         if(IsPlayer1(player)){
@@ -69,28 +73,28 @@ namespace GameManager{
     }
 
     //Debug Level switch by F1-F7 keyboard input
-    void DebugUpdate(){
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){
-            LoginMenu::Load(game_status.level);
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F2)){
-            RegisterMenu::Load(game_status.level);
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F3)){
-            MainMenu::Load();
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F4)){
-            PlayMenu::Load();
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F5)){
-            HighscoresMenu::Load();
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F6)){
-            AdminMenu::Load();
-        }
-        if(esat::IsSpecialKeyDown(esat::kSpecialKey_F7)){
-            game_status.level = GAMEPLAY;
-        }
-    }
+    // void DebugUpdate(){
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F1)){
+    //         LoginMenu::Load(game_status.level);
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F2)){
+    //         RegisterMenu::Load(game_status.level);
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F3)){
+    //         MainMenu::Load();
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F4)){
+    //         PlayMenu::Load();
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F5)){
+    //         HighscoresMenu::Load();
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F6)){
+    //         AdminMenu::Load();
+    //     }
+    //     if(esat::IsSpecialKeyDown(esat::kSpecialKey_F7)){
+    //         game_status.level = GAMEPLAY;
+    //     }
+    // }
 
 }

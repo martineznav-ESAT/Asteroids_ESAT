@@ -37,6 +37,7 @@ namespace Gameplay{
     bool new_highscore_p1 = false;
     bool new_highscore_p2 = false;
 
+    //Cleans the gameplay lists and generates new starting round asteroids based on the actual player round and gamemode
     void GenerateAsteroidRound(){
         TList::ListInfo asteroid_aux_info = {NULL};
         TList::ListInfo particle_aux_info = {NULL};
@@ -115,6 +116,7 @@ namespace Gameplay{
 
     //Gameplay UPDATE
 
+    //Respawns the given player. Mainly used when the game for the same player is starting
     void LoadPlayerOnLoadGameplayLevelRespawn(Players::Player *p){
         p->dead_ltc = p->dead_lt;
         for(int i = 0; i < Players::max_player_shots; i++){
@@ -129,6 +131,8 @@ namespace Gameplay{
         Players::RespawnPlayer(p);
     }
 
+    //Loads the actual corresponding level of the game.
+    //The respawn parameters lets you chose if you want the players to be respawned or not
     void LoadGameplayLevel(bool respawn){
         GameManager::game_status.actual_game->p1.inmunity_ltc = 0;
         GameManager::game_status.actual_game->p2.inmunity_ltc = 0;
@@ -164,6 +168,7 @@ namespace Gameplay{
         }
     }
 
+    //Increases the player/s round and loads it
     void AdvanceRound(){
         switch (GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::SP:
@@ -187,6 +192,7 @@ namespace Gameplay{
         LoadGameplayLevel(false);
     }
 
+    //Returns if there is a collision between the given asteroid and anything related to a player
     bool AsteroidPlayerCollisions(Asteroids::Asteroid *asteroid, Players::Player *p){
         bool is_collided = false;
         is_collided = Collisions::CollisionAsteroidPlayerShots(
@@ -208,6 +214,7 @@ namespace Gameplay{
         return is_collided;
     }
 
+    //Updates the current state of the active asteroids in the game
     void UpdateGameAsteroids(){
         Asteroids::Asteroid *asteroid_aux;
         bool is_collided;
@@ -288,6 +295,7 @@ namespace Gameplay{
     }
     
 
+    //Updates the current state of the active asteroid death particles in the game
     void UpdateGameAsteroidsParticles(){
         for(TList::ListNode *p = asteroid_particles; p!=nullptr; p = p->next){
             Particles::UpdateParticle(p->info.particle_info);
@@ -295,6 +303,7 @@ namespace Gameplay{
     }
     
 
+    //Updates the current state of the players in the game
     void UpdatePlayers(){
         switch (GameManager::game_status.actual_game->gamemode){
             case PlayedGames::Gamemode::SP:
@@ -318,6 +327,7 @@ namespace Gameplay{
         }
     }
 
+    //Executes the logic of the game ending, its management and starts the counter for the GameOver title to appear
     void GameOver(){
         TList::ListInfo aux_info = {NULL};
         GameManager::game_status.actual_game->is_finished = true;
@@ -410,6 +420,7 @@ namespace Gameplay{
         // printf("GAMEOVER SWITCH\n");
     }
 
+    //Checks if the conditions for a game over are fullfilled and starts the logic if that's the case
     void CheckGameOver(){
         if(GameManager::game_status.actual_game->gamemode == PlayedGames::Gamemode::SP){
             if(GameManager::game_status.actual_game->p1.lifes <= 0){
@@ -422,6 +433,7 @@ namespace Gameplay{
         }
     }
 
+    //Updates the current state of the game over title
     void UpdateGameOverScreen(){
         gameover_title_ltc += 1000/Utils::kFPS;
         if(gameover_title_ltc >= gameover_title_lt){
@@ -443,12 +455,14 @@ namespace Gameplay{
         }
     }
 
+    //Updates the current state of the spawned powerups
     void UpdatePowerUps(){
         for(TList::ListNode *aux = spawned_power_ups; aux != nullptr; aux = aux->next){
             PowerUps::UpdatePowerUp(&(aux->info.powerUp_info));
         }
     }
 
+    //Updates the current state of the background beat sound
     void UpdateBeat(){
         if(beat_ltc < beat_lt){
             beat_ltc += 1000/Utils::kFPS;
@@ -489,7 +503,7 @@ namespace Gameplay{
 
     //Gameplay LOAD
     
-    //Loads the Gameplay
+    //Loads the Gameplay screen for a new game
     void Load(PlayedGames::Gamemode gm, UserManager::User* p2 = nullptr){
         TList::ListInfo aux_game_info = {NULL};
         PlayedGames::PlayedGame *aux_actual_game = nullptr;
@@ -537,6 +551,7 @@ namespace Gameplay{
         LoadGameplayLevel(true);
     }
 
+    //Loads the Gameplay screen for a loaded game
     bool Load(PlayedGames::PlayedGame loaded_game){
         bool is_loaded = false;
         TList::ListInfo aux_game_info = {NULL};
@@ -593,18 +608,22 @@ namespace Gameplay{
     }
 
     //Gameplay DRAW
+
+    //Draws the active asteroids on screen
     void DrawGameAsteroids(){
         for(TList::ListNode *p = asteroid_ingame; p!=nullptr; p = p->next){
             PolyLibJMATH::DrawPoly(p->info.asteroid_info.figure,false);
         }
     }
 
+    //Draws the active death particles of the asteroids on screen
     void DrawGameAsteroidsParticles(){
         for(TList::ListNode *p = asteroid_particles; p!=nullptr; p = p->next){
             Particles::DrawParticle(p->info.particle_info);
         }
     }
 
+    //Draws the Player 1 lifes UI
     void DrawP1Lifes(PlayedGames::PlayedGame actual_game){
         float base_height = Utils::kBaseFontSize*2.0f + p1_life_figure.transform.scale.x+10.0f;
         float base_width =  p1_life_figure.transform.scale.x+10.0f;
@@ -616,6 +635,7 @@ namespace Gameplay{
         }
     }
 
+    //Draws the Player 2 lifes UI
     void DrawP2Lifes(PlayedGames::PlayedGame actual_game){
         float base_height = Utils::kBaseFontSize*2.0f + p2_life_figure.transform.scale.x+10.0f;
         float base_width = p2_life_figure.transform.scale.x+10.0f;
@@ -627,6 +647,7 @@ namespace Gameplay{
         }
     }
 
+    //Draws the Player 1 UI
     void DrawP1UI(PlayedGames::PlayedGame actual_game){
         UILib::DrawText(
             {20.0f,Utils::kBaseFontSize*2.0f},
@@ -647,6 +668,7 @@ namespace Gameplay{
         );
     }
 
+    //Draws the Player 2 UI
     void DrawP2UI(PlayedGames::PlayedGame actual_game){
         UILib::DrawText(
             {Utils::kWindowWidth - ((Utils::kBaseFontSize*2.0f)*2.5f),Utils::kBaseFontSize*2.0f},
@@ -667,6 +689,7 @@ namespace Gameplay{
         );
     }
 
+    //Draws the sum of both players score at the top center of the screen
     void DrawCoopScore(PlayedGames::PlayedGame actual_game){
         UILib::DrawIntToText(
             {(Utils::kWindowWidth*0.5f) - ((Utils::kBaseFontSize*2.0f)*2.0f),Utils::kBaseFontSize*2.0f},
@@ -680,6 +703,7 @@ namespace Gameplay{
     }
     
 
+    //Draws the game players ships and its resources on screen
     void DrawPlayers(PlayedGames::PlayedGame actual_game){
 
         switch (actual_game.gamemode){
@@ -704,6 +728,7 @@ namespace Gameplay{
         }
     }
 
+    //Draws the whole Game UI on screen
     void DrawGameUI(PlayedGames::PlayedGame actual_game){
         switch (actual_game.gamemode){
             case PlayedGames::Gamemode::SP:
@@ -741,6 +766,7 @@ namespace Gameplay{
         }
     }
 
+    //Draws the Game over title on screen
     void DrawGameOverScreen(){
         UILib::Text game_over_txt;
         UILib::Text highscore_p1_txt;
@@ -826,6 +852,7 @@ namespace Gameplay{
         }
     }
 
+    //Draws the active power ups on screen
     void DrawPowerUps(){
         for(TList::ListNode *aux = spawned_power_ups; aux != nullptr; aux = aux->next){
             PowerUps::DrawPowerUp(aux->info.powerUp_info);
@@ -853,6 +880,7 @@ namespace Gameplay{
         }
     }
 
+    //Releases the dynamic memory used
     void EmptyMemory(){
         Ufo::EmptyUfoMemory(&ufo);
         TList::ClearList(&asteroid_ingame);
