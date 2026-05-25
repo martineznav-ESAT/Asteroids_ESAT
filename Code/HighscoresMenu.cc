@@ -94,10 +94,10 @@ namespace HighscoresMenu{
             //If there is no highscores list to load, creates an empty one
             for(int i = 0; i < 10 ; i++){
                 // printf("i = %d\n",i);
+                PlayedGames::last_game_id--;
                 aux_info.game_info = PlayedGames::NewGame();
                 
                 aux_info.game_info.game_id = i-100;
-                PlayedGames::last_game_id--;
                 
                 aux_info.game_info.p1_user = &(UserManager::empty_user);
                 aux_info.game_info.p2_user = &(UserManager::empty_user);

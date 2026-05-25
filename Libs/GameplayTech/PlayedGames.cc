@@ -197,6 +197,7 @@ namespace PlayedGames{
     //is returned as a result
     PlayedGame LoadGame(FILE *dat_file){
         PlayedGame loaded_game = NewGame();
+        last_game_id--;
 
         if(dat_file != NULL){
             // printf("START LOADING\n");
