@@ -50,7 +50,7 @@ namespace PlayedGames{
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
 
         PlayedGame new_game;
-        new_game.game_id = TList::ListLength(*aux_list);
+        new_game.game_id = ++last_game_id;
         new_game.gamemode = game->gamemode;
         new_game.p1_user = game->p1_user;
         new_game.p2_user = game->p2_user;

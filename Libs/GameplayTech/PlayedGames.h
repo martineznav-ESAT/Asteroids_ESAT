@@ -35,6 +35,8 @@ namespace PlayedGames{
     extern FILE *game_list_dat;
     extern char *game_list_dat_path;
 
+    extern int last_game_id = -1;
+    
     extern void *game_list; 
 
     extern char **gamemode_texts;

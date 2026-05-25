@@ -97,6 +97,7 @@ namespace HighscoresMenu{
                 aux_info.game_info = PlayedGames::NewGame();
                 
                 aux_info.game_info.game_id = i-100;
+                PlayedGames::last_game_id--;
                 
                 aux_info.game_info.p1_user = &(UserManager::empty_user);
                 aux_info.game_info.p2_user = &(UserManager::empty_user);
