@@ -20,6 +20,8 @@ namespace PlayedGames{
     //To work with the ListNode typing while aiming the same memory direction with a pointer anidation
     void *game_list = nullptr; 
 
+    int last_game_id = -1;
+
     char **gamemode_texts;
 
     //Creates a new game with default values
@@ -27,7 +29,7 @@ namespace PlayedGames{
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
 
         PlayedGame new_game;
-        new_game.game_id = TList::ListLength(*aux_list);
+        new_game.game_id = ++last_game_id;
         new_game.gamemode = Gamemode::SP;
         new_game.p1_user = nullptr;
         new_game.p2_user = nullptr;
@@ -224,6 +226,14 @@ namespace PlayedGames{
     bool LoadGameList(){
         TList::ListNode** aux_list = (TList::ListNode**) &game_list;
         bool is_loaded = TList::LoadList(aux_list, TList::ListType::PLAYED_GAME, game_list_dat, game_list_dat_path);
+
+        if(is_loaded){
+            for(TList::ListNode *aux = *aux_list; aux->next != nullptr; aux = aux->next){
+                if(last_game_id <= aux->info.game_info.game_id){
+                    last_game_id = aux->info.game_info.game_id;
+                }
+            }
+        }
 
         // printf("%p || %p\n",*aux_list,user_list);
         return is_loaded;
